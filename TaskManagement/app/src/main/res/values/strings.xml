@@ -16,10 +16,63 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="onProcess">Đang xử lý....</string>
 
+    <!--    Task    -->
+    <string name="delete_confirmation">Xác nhận</string>
+    <string name="sureToDelete">Bạn chắc chắn muốn xóa ?</string>
+    <string name="yes">Đồng ý</string>
+    <string name="no">Không</string>
+    <string name="confirmation">Công việc hoàn thành !</string>
+    <string name="addtask">Đơn thêm công việc</string>
+    <string name="add">Thêm</string>
+    <string name="addtitle">Điền chi tiết công việc của bạn theo đơn</string>
+    <string name="tasks">Danh sách công việc</string>
+    <string name="tasktitle">Tiêu đề</string>
+    <string name="taskdesc">Mô tả</string>
+    <string name="taskdate">Ngày kết thúc</string>
+    <string name="tasktime">Giờ kết thúc</string>
+    <string name="taskpriority">Độ ưu tiên</string>
+    <string name="taskstatus">Trạng thái</string>
+    <string name="sureToMarkAsComplete">Bạn muốn đánh dấu công việc này là hoàn thành ?</string>
+    <string name="congrats_you_have_completed_the_task_successfully">Chúc mừng! Bạn đã hoàn thành công việc</string>
+    <string name="notcreate">Bạn chưa tạo công việc!!</string>
+    <string name="notcreategroup">Bạn chưa tạo nhóm!!</string>
+    <string-array name="taskstatusarr">
+        <item>TODO</item>
+        <item>DOING</item>
+        <item>COMPLETED</item>
+    </string-array>
+    <string-array name="taskprioarr">
+        <item>LOW</item>
+        <item>MEDIUM</item>
+        <item>HIGH</item>
+    </string-array>
+    <!--    Category-->
+    <string name="title">Danh mục</string>
+    <string name="cate_name">Tên danh mục</string>
+    <string name="create">Tạo</string>
+    <string name="edit">Cập nhật</string>
+    <string name="click_tag">clicktag</string>
     <!-- Main tab name    -->
     <string-array name="mainTab">
         <item>Công việc của tôi</item>
         <item>Công việc tôi giao</item>
         <item>Biểu đồ</item>
     </string-array>
+    <string name="personal">Cá nhân</string>
+    <string name="group">Nhóm</string>
+    <string name="chart">Biểu đồ</string>
+    <string name="settingtab">Cấu hình</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--    Setting-->
+    <string name="indate">Đúng ngày</string>
+    <string name="before3Day">3 ngày</string>
+    <string name="before7Day">7 ngày</string>
+    <string name="profile">Thông tin</string>
+    <string name="about_me">Cá nhân</string>
+    <string name="stedit">Sửa</string>
+    <string name="contact">Liên hệ</string>
+    <string name="setting">Cấu hình</string>
+    <string name="changepass">Đôi mật khẩu</string>
+    <string name="logout">Đăng xuất</string>
 </resources>

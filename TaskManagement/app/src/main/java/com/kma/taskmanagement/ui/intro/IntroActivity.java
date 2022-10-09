@@ -19,6 +19,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.ScreenItem;
 import com.kma.taskmanagement.ui.main.MainActivity;
+import com.kma.taskmanagement.utils.Constants;
+import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,17 +100,10 @@ public class IntroActivity extends AppCompatActivity {
 
                 }
 
-                if (position == mList.size()-1) { // when we rech to the last screen
-
-                    // TODO : show the GETSTARTED Button and hide the indicator and the next button
+                if (position == mList.size()-1) {
 
                     loaddLastScreen();
-
-
                 }
-
-
-
             }
         });
 
@@ -139,27 +134,14 @@ public class IntroActivity extends AppCompatActivity {
             }
         });
 
-
-
-        // Get Started button click listener
-
         btnGetStarted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-
-                //open main activity
-
                 Intent mainActivity = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(mainActivity);
-                // also we need to save a boolean value to storage so next time when the user run the app
-                // we could know that he is already checked the intro screen activity
-                // i'm going to use shared preferences to that process
                 savePrefsData();
                 finish();
-
-
-
             }
         });
 
@@ -177,24 +159,20 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     private boolean restorePrefData() {
-
-
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
-        Boolean isIntroActivityOpnendBefore = pref.getBoolean("isIntroOpnend",false);
+//        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
+//        Boolean isIntroActivityOpnendBefore = pref.getBoolean("isIntroOpnend",false);
+        String key = Constants.INTRO;
+        Boolean isIntroActivityOpnendBefore = SharedPreferencesUtil.getInstance(getApplicationContext()).getBooleanFromSharedPreferences(key);
         return  isIntroActivityOpnendBefore;
-
-
-
     }
 
     private void savePrefsData() {
-
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean("isIntroOpnend",true);
-        editor.commit();
-
-
+        String key = Constants.INTRO;
+        SharedPreferencesUtil.getInstance(getApplicationContext()).storeBooleanInSharedPreferences(key, true);
+//        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
+//        SharedPreferences.Editor editor = pref.edit();
+//        editor.putBoolean("isIntroOpnend",true);
+//        editor.commit();
     }
 
     // show the GETSTARTED Button and hide the indicator and the next button

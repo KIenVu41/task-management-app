@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,11 +45,11 @@ public class LoginActivity extends AppCompatActivity {
     TextView gotoRegister;
     @BindView(R.id.btnLogin)
     Button btnLogin;
-    @BindView(R.id.progressBar)
-    ProgressBar progressBar;
+//    @BindView(R.id.progressBar)
+//    ProgressBar progressBar;
+    ProgressDialog progressDialog;
 
     private UserViewModel userViewModel;
-    private final CompositeDisposable mDisposable = new CompositeDisposable();
     private UserRepository userRepository = new UserRepositoryImpl();
 
     @Override
@@ -56,54 +58,40 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         ButterKnife.bind(this);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(true);
         userViewModel =  new ViewModelProvider(this, new UserViewModelFactory(userRepository)).get(UserViewModel.class);
 
-        userViewModel.getProgress().observe(this, new Observer<Integer>() {
+        userViewModel.getProgress().observe(this, new Observer<String>() {
             @Override
-            public void onChanged(Integer visibility) {
-                progressBar.setVisibility(visibility);
+            public void onChanged(String value) {
+                if(value.equals("Thành công")) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
+                }
+                progressDialog.setMessage(value);
+                progressDialog.show();
             }
         });
 
-       userViewModel.getLoginResult().observe(this, new Observer<String>() {
+       userViewModel.getResult().observe(this, new Observer<Token>() {
             @Override
-            public void onChanged(String s) {
-                Log.d("TAG", s);
-                if(!s.equals("")) {
-                    SharedPreferencesUtil.getInstance(getApplicationContext()).storeUserToken(Constants.TOKEN +"kienvu41", s );
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            public void onChanged(Token token) {
+                if(token != null) {
+                    saveGlobalInfor(token);
+                    SharedPreferencesUtil.getInstance(getApplicationContext()).storeUserToken(Constants.TOKEN + GlobalInfor.username, token.getToken() );
+                    Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
                     startActivity(intent);
                 }
             }
         });
 
         btnLogin.setOnClickListener(view -> {
-//            mDisposable.add(userViewModel.login(new LoginRequest(pass, username))
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(token -> onHandleSucces(token) ,
-//                            throwable -> Log.e("", "Unable to register", throwable)));
-//                    .subscribe(new SingleObserver<Token>() {
-//                        @Override
-//                        public void onSubscribe(Disposable d) {
-//
-//                        }
-//
-//                        @Override
-//                        public void onSuccess(Token token) {
-//                            if (!token.getToken().equals("")) {
-//                                Log.d("TAG", token.getToken());
-//                                SharedPreferencesUtil.getInstance(getApplicationContext()).storeUserToken(Constants.TOKEN +"kienvu41", token.getToken() );
-//                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                                startActivity(intent);
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onError(Throwable e) {
-//                            Log.d("TAG", "err" + e.getMessage());
-//                        }
-//                    }));
             String username = edtEmail.getText().toString();
             String pass = edtPass.getText().toString();
             userViewModel.login(username, pass);
@@ -112,32 +100,16 @@ public class LoginActivity extends AppCompatActivity {
         gotoRegister.setOnClickListener(view -> {
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
+            finish();
         });
     }
 
-    public void onHandleSucces(Token token) {
-        if (!token.getToken().equals("")) {
-            Log.d("TAG", token.getToken());
-            SharedPreferencesUtil.getInstance(getApplicationContext()).storeUserToken(Constants.TOKEN +"kienvu41", token.getToken() );
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
-    }
-
-    public void saveGlobakInfor(User user) {
-        GlobalInfor.id = user.getId();
-        GlobalInfor.username = user.getUsername();
-        GlobalInfor.password = user.getPassword();
-        GlobalInfor.sex = user.getSex();
-        GlobalInfor.email = user.getEmail();
-        GlobalInfor.phone = user.getPhone();
-        GlobalInfor.url_image = user.getUrl_image();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // clear all the subscriptions
-        mDisposable.clear();
+    public void saveGlobalInfor(Token token) {
+        GlobalInfor.id = token.getUserId();
+        GlobalInfor.username = token.getUsername();
+        GlobalInfor.sex = token.getSex();
+        GlobalInfor.email = token.getEmail();
+        GlobalInfor.phone = token.getPhone();
+        GlobalInfor.url_image = token.getUrlImage();
     }
 }

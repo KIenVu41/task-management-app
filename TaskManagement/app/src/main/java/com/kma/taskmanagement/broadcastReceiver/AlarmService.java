@@ -18,7 +18,8 @@ import com.kma.taskmanagement.ui.main.fragments.PersonTaskFragment;
 
 public class AlarmService extends IntentService {
     private static final int NOTIFICATION_ID = 3;
-
+    String title, desc, content;
+    int type;
     public AlarmService() {
         super(AlarmService.class.getSimpleName());
     }
@@ -33,6 +34,17 @@ public class AlarmService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
                 NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        title = intent.getStringExtra("TITLE");
+        desc = intent.getStringExtra("DESC");
+        type = intent.getIntExtra("TYPE", 0);
+        if(type == 0) {
+            content = "Đến hạn công việc " + title;
+        } else if(type == 1) {
+            content = "Còn 3 ngày là đến hạn công việc " + title;
+        } else {
+            content = "Còn 7 ngày là đến hạn công việc " + title;
+        }
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("111",
                     "CHANEL_REMIND",
@@ -42,8 +54,8 @@ public class AlarmService extends IntentService {
         }
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "111")
                 .setSmallIcon(R.mipmap.ic_launcher) // notification icon
-                .setContentTitle("Remind") // title for notification
-                .setContentText("Deadline!!1")// message for notification
+                .setContentTitle("Nhắc nhở") // title for notification
+                .setContentText(content)// message for notification
                 .setAutoCancel(true); // clear notification after click
         mNotificationManager.notify(0, mBuilder.build());
     }

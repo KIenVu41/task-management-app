@@ -14,10 +14,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 
 import java.text.SimpleDateFormat;
@@ -40,10 +43,20 @@ import butterknife.Unbinder;
 
 import static android.content.Context.ALARM_SERVICE;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.broadcastReceiver.AlarmBroadcastReceiver;
 import com.kma.taskmanagement.data.model.Task;
+import com.kma.taskmanagement.data.repository.TaskRepository;
+import com.kma.taskmanagement.data.repository.impl.TaskRepositoryImpl;
+import com.kma.taskmanagement.ui.common.CustomSpinner;
+import com.kma.taskmanagement.ui.main.TaskViewModel;
+import com.kma.taskmanagement.ui.main.TaskViewModelFactory;
+import com.kma.taskmanagement.utils.Constants;
+import com.kma.taskmanagement.utils.DateUtils;
+import com.kma.taskmanagement.utils.GlobalInfor;
+import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 
 public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
     Unbinder unbinder;
@@ -55,26 +68,42 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
     EditText taskDate;
     @BindView(R.id.taskTime)
     EditText taskTime;
-    @BindView(R.id.taskEvent)
-    EditText taskEvent;
+    @BindView(R.id.spinnerPrio)
+    CustomSpinner dropdownPrio;
+    @BindView(R.id.spinnerStatus)
+    CustomSpinner dropdownStatus;
     @BindView(R.id.addTask)
     Button addTask;
-    int taskId;
     boolean isEdit;
     Task task;
     int mYear, mMonth, mDay;
     int mHour, mMinute;
-    setRefreshListener setRefreshListener;
+    long cateId, taskId;
     AlarmManager alarmManager;
     TimePickerDialog timePickerDialog;
     DatePickerDialog datePickerDialog;
+    TaskViewModel taskViewModel;
+    private String token = "";
+    private TaskRepository taskRepository = new TaskRepositoryImpl();
     public static int count = 0;
 
+    private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
-    public void setTaskId(int taskId, boolean isEdit, setRefreshListener setRefreshListener) {
-        this.taskId = taskId;
+        @Override
+        public void onStateChanged(@NonNull View bottomSheet, int newState) {
+            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                dismiss();
+            }
+        }
+
+        @Override
+        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+        }
+    };
+
+    public void setTaskAction(boolean isEdit, long cateId) {
         this.isEdit = isEdit;
-        this.setRefreshListener = setRefreshListener;
+        this.cateId = cateId;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -86,8 +115,11 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
         unbinder = ButterKnife.bind(this, contentView);
         dialog.setContentView(contentView);
         alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
+        setupSpinner();
+        token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
+        taskViewModel = new ViewModelProvider(requireActivity(), new TaskViewModelFactory(taskRepository)).get(TaskViewModel.class);
         addTask.setOnClickListener(view -> {
-//            if(validateFields())
+            if(validateFields())
                 createTask();
         });
 //        if (isEdit) {
@@ -130,31 +162,43 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
         });
     }
 
-//    public boolean validateFields() {
-//        if(addTaskTitle.getText().toString().equalsIgnoreCase("")) {
-//            Toast.makeText(activity, "Please enter a valid title", Toast.LENGTH_SHORT).show();
-//            return false;
-//        }
-//        else if(addTaskDescription.getText().toString().equalsIgnoreCase("")) {
-//            Toast.makeText(activity, "Please enter a valid description", Toast.LENGTH_SHORT).show();
-//            return false;
-//        }
-//        else if(taskDate.getText().toString().equalsIgnoreCase("")) {
-//            Toast.makeText(activity, "Please enter date", Toast.LENGTH_SHORT).show();
-//            return false;
-//        }
-//        else if(taskTime.getText().toString().equalsIgnoreCase("")) {
-//            Toast.makeText(activity, "Please enter time", Toast.LENGTH_SHORT).show();
-//            return false;
-//        }
-//        else if(taskEvent.getText().toString().equalsIgnoreCase("")) {
-//            Toast.makeText(activity, "Please enter an event", Toast.LENGTH_SHORT).show();
-//            return false;
-//        }
-//        else {
-//            return true;
-//        }
-//    }
+    public void setupSpinner() {
+        ArrayAdapter adapterPrio = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, getActivity().getResources().getStringArray(R.array.taskprioarr));
+        adapterPrio.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+        dropdownPrio.setAdapter(adapterPrio);
+
+        ArrayAdapter adapterStatus = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, getActivity().getResources().getStringArray(R.array.taskstatusarr));
+        adapterStatus.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+        if(!isEdit) {
+            dropdownStatus.setEnabled(false);
+            dropdownStatus.setClickable(false);
+        } else {
+            dropdownStatus.setEnabled(true);
+            dropdownStatus.setClickable(true); }
+            dropdownStatus.setAdapter(adapterStatus);
+    }
+
+    public boolean validateFields() {
+        if(addTaskTitle.getText().toString().equalsIgnoreCase("")) {
+            Toast.makeText(requireActivity(), "Please enter a valid title", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if(addTaskDescription.getText().toString().equalsIgnoreCase("")) {
+            Toast.makeText(requireActivity(), "Please enter a valid description", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if(taskDate.getText().toString().equalsIgnoreCase("")) {
+            Toast.makeText(requireActivity(), "Please enter date", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if(taskTime.getText().toString().equalsIgnoreCase("")) {
+            Toast.makeText(requireActivity(), "Please enter time", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
 
     @Override
     public void onDestroyView() {
@@ -162,54 +206,53 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
     private void createTask() {
+       String title = addTaskTitle.getText().toString();
+       String desc = addTaskDescription.getText().toString();
+       String endDate = taskDate.getText().toString();
+       String endTime = taskTime.getText().toString();
+       String prio = dropdownPrio.getSelectedItem().toString().toLowerCase();
+       String status = dropdownStatus.getSelectedItem().toString().toLowerCase();
+
+       String[] items1 = endDate.split("-");
+       String ddEnd = items1[0];
+       String monthEnd = items1[1];
+       String yearEnd = items1[2];
+
+       String[] itemTime1 = endTime.split(":");
+       String hourEnd = itemTime1[0];
+       String minEnd = itemTime1[1];
+
+       String startDate = DateUtils.getLocalDate();
+       String[] items2 = startDate.split(" ");
+       String dateStart = items2[0];
+       String timeStart = items2[1];
+
+       String startDateFormat = dateStart +"T" + timeStart + "Z";
+       String endDateFormat =  DateUtils.convert(ddEnd, monthEnd, yearEnd) + "T" + DateUtils.convertTime(hourEnd, minEnd) + "Z";
+       taskViewModel.addTask(Constants.BEARER + token, new Task("", cateId, "", desc, endDateFormat, title, GlobalInfor.username, prio,  startDateFormat, status, null));
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                taskViewModel.getAllTasks(Constants.BEARER + token);
+            }
+        },500);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            createAnAlarm();
+            createAnAlarm(title, desc, endDate, endTime);
         }
-//        class saveTaskInBackend extends AsyncTask<Void, Void, Void> {
-//            @SuppressLint("WrongThread")
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//                Task createTask = new Task();
-//                createTask.setTaskTitle(addTaskTitle.getText().toString());
-//                createTask.setTaskDescrption(addTaskDescription.getText().toString());
-//                createTask.setDate(taskDate.getText().toString());
-//                createTask.setLastAlarm(taskTime.getText().toString());
-//                createTask.setEvent(taskEvent.getText().toString());
-//
-//
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Void aVoid) {
-//                super.onPostExecute(aVoid);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    createAnAlarm();
-//                }
-//                setRefreshListener.refresh();
-//                Toast.makeText(getActivity(), "Your event is been added", Toast.LENGTH_SHORT).show();
-//                dismiss();
-//
-//            }
-//        }
-//        saveTaskInBackend st = new saveTaskInBackend();
-//        st.execute();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public void createAnAlarm() {
+    public void createAnAlarm(String title, String desc, String date, String time) {
         try {
-            String[] items1 = "30-9-2022".toString().split("-");
+            String[] items1 = date.split("-");
             String dd = items1[0];
             String month = items1[1];
             String year = items1[2];
 
-            String[] itemTime = "00:15".toString().split(":");
+            String[] itemTime = time.split(":");
             String hour = itemTime[0];
             String min = itemTime[1];
-
-//            Calendar cur_cal = new GregorianCalendar();
-//            cur_cal.setTimeInMillis(System.currentTimeMillis());
 
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour)); // hour
@@ -217,17 +260,22 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
             cal.set(Calendar.DATE, Integer.parseInt(dd)); //dd
+            cal.set(Calendar.MONTH, Integer.parseInt(month) - 1);
+            cal.set(Calendar.YEAR, Integer.parseInt(year));
 
             if(cal.getTimeInMillis() < System.currentTimeMillis()) {
-                cal.add(Calendar.DAY_OF_YEAR, 1);
+                return;
+//                cal.add(Calendar.DAY_OF_YEAR, 1);
             }
-
+            int typeRemind = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getIntFromSharedPreferences(Constants.REMIND + GlobalInfor.username);
             Intent alarmIntent = new Intent(getActivity(), AlarmBroadcastReceiver.class);
-            alarmIntent.putExtra("TITLE", addTaskTitle.getText().toString());
-            alarmIntent.putExtra("DESC", addTaskDescription.getText().toString());
-            alarmIntent.putExtra("DATE", taskDate.getText().toString());
-            alarmIntent.putExtra("TIME", taskTime.getText().toString());
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),count, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmIntent.setAction(title);
+            alarmIntent.putExtra("TITLE", title);
+            alarmIntent.putExtra("DESC", desc);
+            alarmIntent.putExtra("DATE", date);
+            alarmIntent.putExtra("TIME", time);
+            alarmIntent.putExtra("TYPE", typeRemind);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),1, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -236,31 +284,10 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
                     alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
                 }
                 count ++;
-
-//                PendingIntent intent = PendingIntent.getBroadcast(getActivity(), count, alarmIntent, 0);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() - 600000, intent);
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() - 600000, intent);
-//                    } else {
-//                        alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() - 600000, intent);
-//                    }
-//                }
-//                count ++;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-
-
-    private void setDataInUI() {
-        addTaskTitle.setText(task.getTaskTitle());
-        addTaskDescription.setText(task.getTaskDescrption());
-        taskDate.setText(task.getDate());
-        taskTime.setText(task.getLastAlarm());
-        taskEvent.setText(task.getEvent());
     }
 
     public interface setRefreshListener {

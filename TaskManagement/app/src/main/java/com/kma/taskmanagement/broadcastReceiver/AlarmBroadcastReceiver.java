@@ -9,6 +9,8 @@ import com.kma.taskmanagement.ui.common.AlarmActivity;
 public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
     String title, desc, date, time;
+    int type;
+
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -16,6 +18,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
         desc = intent.getStringExtra("DESC");
         date = intent.getStringExtra("DATE");
         time = intent.getStringExtra("TIME");
+        type = intent.getIntExtra("TYPE", 0);
 //        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
 //            // Set the alarm here.
 //            Toast.makeText(context, "Alarm just rang...", Toast.LENGTH_SHORT).show();
@@ -32,14 +35,20 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
 //        Toast.makeText(context, "Broadcast receiver called", Toast.LENGTH_SHORT).show();
 
         Intent newIntent = new Intent(context, AlarmService.class);
+        newIntent.putExtra("TITLE", title);
+        newIntent.putExtra("DESC", desc);
+        newIntent.putExtra("TYPE", type);
+        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startService(newIntent);
 
-        Intent i = new Intent(context, AlarmActivity.class);
-        i.putExtra("TITLE", title);
-        i.putExtra("DESC", desc);
-        i.putExtra("DATE", date);
-        i.putExtra("TIME", time);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(i);
+        if (type == 0) {
+            Intent i = new Intent(context, AlarmActivity.class);
+            i.putExtra("TITLE", title);
+            i.putExtra("DESC", desc);
+            i.putExtra("DATE", date);
+            i.putExtra("TIME", time);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(i);
+        }
     }
 }

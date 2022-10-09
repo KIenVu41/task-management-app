@@ -1,13 +1,26 @@
 package com.kma.taskmanagement.data.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class User {
-    private long id;
+    private Long id;
+    @SerializedName("email")
     private String email;
     private String password;
     private String phone;
     private String sex;
     private String url_image;
     private String username;
+
+    public User(Long id, String email, String password, String phone, String sex, String url_image, String username) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.sex = sex;
+        this.url_image = url_image;
+        this.username = username;
+    }
 
     public long getId() {
         return id;

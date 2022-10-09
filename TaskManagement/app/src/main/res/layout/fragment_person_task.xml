@@ -18,34 +18,63 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hello"
+                android:text="@string/tasks"
                 android:layout_marginTop="20dp"
                 android:textColor="@color/colorAccent"
-                android:textSize="18sp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="All tasks"
                 android:textStyle="bold"
-                android:textColor="@color/colorAccent"
-                android:textSize="28sp"
-                tools:ignore="MissingPrefix" />
+                android:textSize="@dimen/sp21"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_margin="@dimen/dp16">
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Danh mục"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textColor="@color/colorAccent"-->
+<!--                    android:textSize="28sp"-->
+<!--                    android:layout_alignRight="@+id/spinner1"-->
+<!--                    android:layout_alignParentStart="true"-->
+<!--                    android:layout_alignLeft="@+id/spinner1"/>-->
+
+                <com.kma.taskmanagement.ui.common.CustomSpinner
+                    android:id="@+id/spinner1"
+                    android:layout_width="@dimen/dp150"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_spinner"
+                    android:popupBackground="@drawable/blue_outline_white_background"
+                    android:overlapAnchor="false"
+                    android:spinnerMode="dropdown" />
+
+                <ImageView
+                    android:id="@+id/ivAction"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="right|center"
+                    android:background="@drawable/ic_add"
+                    android:layout_alignRight="@+id/spinner1" />
+
+                <ImageView
+                    android:id="@+id/ivFind"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="right|center"
+                    android:background="@drawable/ic_baseline_search_24"
+                    android:layout_alignRight="@+id/ivAction"
+                    android:layout_alignParentRight="true"/>
+            </LinearLayout>
 
         </LinearLayout>
-
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="right|center"
-            android:background="@drawable/calendar"
-            android:id="@+id/calendar"/>
-
     </FrameLayout>
 
     <LinearLayout
@@ -59,15 +88,33 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <ImageView
-                android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:id="@+id/noDataImage"
-                android:layout_gravity="center"/>
+            <LinearLayout
+                android:id="@+id/llAnimation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center">
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/animationView"
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
+                    app:lottie_rawRes="@raw/group_gears"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/notcreate"
+                    android:textAlignment="center"
+                    android:textStyle="bold"/>
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:visibility="gone"
                 android:id="@+id/taskRecycler"/>
 
         </FrameLayout>
@@ -75,7 +122,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="70dp"
-            android:text="Add Task"
+            android:text="@string/add"
             android:drawablePadding="10dp"
             android:paddingTop="10dp"
             android:id="@+id/addTask"

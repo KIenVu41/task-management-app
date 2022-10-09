@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.kma.taskmanagement.ui.main.fragment.GroupTaskFragment;
+import com.kma.taskmanagement.ui.main.fragments.GroupTaskFragment;
 import com.kma.taskmanagement.ui.main.fragments.ChartFragment;
 import com.kma.taskmanagement.ui.main.fragments.PersonTaskFragment;
 

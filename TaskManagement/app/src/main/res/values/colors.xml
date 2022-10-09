@@ -32,5 +32,14 @@
     <color name="intro_description_color">#656565</color>
 
     <!-- main    -->
+    <color name="red">#ff6767</color>
+    <color name="orange">#ffb067</color>
+    <color name="green">#67ffae</color>
+    <color name="COLOR_BUTTON">#2680F6</color>
+    <color name="WHITE_COLOR">#fff</color>
 
+<!--    infor-->
+    <color name="grey">#E9EAEE</color>
+    <color name="yellow">#F8BA0F</color>
+    <color name="goodgrey">#535353</color>
 </resources>

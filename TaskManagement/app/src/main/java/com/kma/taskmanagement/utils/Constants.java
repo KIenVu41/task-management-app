@@ -10,6 +10,12 @@ public class Constants {
     // emulator
     public static final String BASE_URL = "http://10.0.2.2:3000/";
 
+    // Auth
+    public static final String BEARER = "Bearer ";
     // shared preferences
+    public static final String SHARED_PREFERENCES_KEY = "com.kma.task";
     public static final String TOKEN = "token_";
+    public static final String INTRO = "isIntroOpnend";
+    public static final String REMIND = "DATE_REMINDER_";
+    public static final String CATE_INDEX = "CATE_INDEX_";
 }

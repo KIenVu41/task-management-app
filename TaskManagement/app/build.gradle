@@ -40,6 +40,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
     implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.4.1'
+    implementation 'com.github.mrmike:ok2curl:0.7.0'
 
     // recyclerview
     def recyclerview_version = "1.2.1"
@@ -66,6 +67,14 @@ dependencies {
     // Lotie
     def lottieVersion = "5.2.0"
     implementation "com.airbnb.android:lottie:$lottieVersion"
+
+    // navigation drawer
+    implementation "com.github.shrikanth7698:Custom-Navigation-Drawer:v0.0.1"
+
+    // dot indicator
+    implementation "com.tbuonomo:dotsindicator:4.3"
+    // folding cell
+    implementation 'com.ramotion.foldingcell:folding-cell:1.2.3'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

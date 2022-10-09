@@ -1,12 +1,12 @@
 package com.kma.taskmanagement.data.model;
 
 public class RegisterRequest {
-    private String email;
-    private int id;
-    private String password;
-    private String phone;
-    private String url_image;
-    private String username;
+    public String email;
+    public int id;
+    public String password;
+    public String phone;
+    public String url_image;
+    public String username;
 
     public RegisterRequest(String email, int id, String password, String phone, String url_image, String username) {
         this.email = email;
@@ -63,5 +63,17 @@ public class RegisterRequest {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public String toString() {
+        return "RegisterRequest{" +
+                "email='" + email + '\'' +
+                ", id=" + id +
+                ", password='" + password + '\'' +
+                ", phone='" + phone + '\'' +
+                ", url_image='" + url_image + '\'' +
+                ", username='" + username + '\'' +
+                '}';
     }
 }

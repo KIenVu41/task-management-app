@@ -22,141 +22,138 @@
             android:scaleType="centerCrop" />
 
         <TextView
-            fontPath="fonts/nunito_extra_bold.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
-            android:text="Add a task"
+            android:text="@string/addtask"
             android:textColor="@android:color/black"
-            android:textSize="22sp"
-            tools:ignore="MissingPrefix" />
+            android:textSize="22sp" />
 
         <TextView
-            fontPath="fonts/nunito_light.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:text="Fill the details below to add a task into your TODO"
+            android:text="@string/addtitle"
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:alpha="0.8"
-            android:textSize="18sp"
-            tools:ignore="MissingPrefix" />
+            android:textSize="18sp" />
 
         <TextView
             android:layout_marginLeft="3dp"
-            fontPath="fonts/nunito_light.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:text="Task title"
-            tools:ignore="MissingPrefix" />
+            android:text="@string/tasktitle" />
 
         <EditText
             android:textSize="14sp"
-            fontPath="fonts/nunito_light.ttf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:singleLine="true"
             android:background="@drawable/btn_border"
             android:padding="10dp"
-            android:id="@+id/addTaskTitle"
-            tools:ignore="MissingPrefix" />
+            android:id="@+id/addTaskTitle" />
 
         <TextView
             android:layout_marginLeft="3dp"
-            fontPath="fonts/nunito_light.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:text="Task description"
-            tools:ignore="MissingPrefix" />
+            android:text="@string/taskdesc" />
 
         <EditText
             android:textSize="14sp"
-            fontPath="fonts/nunito_light.ttf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:singleLine="true"
             android:background="@drawable/btn_border"
             android:padding="10dp"
-            android:id="@+id/addTaskDescription"
-            tools:ignore="MissingPrefix" />
+            android:id="@+id/addTaskDescription" />
 
         <TextView
-            android:layout_marginLeft="3dp"
-            fontPath="fonts/nunito_light.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
             android:layout_marginTop="30dp"
-            android:text="Task date"
-            tools:ignore="MissingPrefix" />
+            android:text="@string/taskdate" />
 
         <EditText
             android:textSize="14sp"
-            fontPath="fonts/nunito_light.ttf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:singleLine="true"
             android:background="@drawable/btn_border"
             android:padding="10dp"
-            android:id="@+id/taskDate"
-            tools:ignore="MissingPrefix" />
+            android:id="@+id/taskDate" />
 
         <TextView
             android:layout_marginLeft="3dp"
-            fontPath="fonts/nunito_light.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:text="Task time"
-            tools:ignore="MissingPrefix" />
+            android:text="@string/tasktime" />
 
         <EditText
             android:textSize="14sp"
-            fontPath="fonts/nunito_light.ttf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:singleLine="true"
             android:background="@drawable/btn_border"
             android:padding="10dp"
-            android:id="@+id/taskTime"
-            tools:ignore="MissingPrefix" />
+            android:id="@+id/taskTime" />
 
         <TextView
             android:layout_marginLeft="3dp"
-            fontPath="fonts/nunito_light.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:text="Add an event"
-            tools:ignore="MissingPrefix" />
+            android:text="@string/taskpriority" />
 
-        <EditText
-            android:textSize="14sp"
-            fontPath="fonts/nunito_light.ttf"
+        <com.kma.taskmanagement.ui.common.CustomSpinner
+            android:id="@+id/spinnerPrio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_spinner"
+            android:textSize="14sp"
             android:layout_marginTop="5dp"
-            android:singleLine="true"
-            android:background="@drawable/btn_border"
             android:padding="10dp"
-            android:id="@+id/taskEvent"
-            tools:ignore="MissingPrefix" />
+            android:popupBackground="@drawable/blue_outline_white_background"
+            android:overlapAnchor="false"
+            android:spinnerMode="dropdown" />
 
-        <Button
+        <TextView
+            android:layout_marginLeft="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/taskstatus" />
+
+        <com.kma.taskmanagement.ui.common.CustomSpinner
+            android:id="@+id/spinnerStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_spinner"
+            android:textSize="14sp"
+            android:layout_marginTop="5dp"
+            android:padding="10dp"
+            android:popupBackground="@drawable/blue_outline_white_background"
+            android:overlapAnchor="false"
+            android:spinnerMode="dropdown" />
+
+        <androidx.appcompat.widget.AppCompatButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/addTask"
-            android:text="Add task"
+            android:text="@string/add"
             android:background="@drawable/btn_background"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/white"
             android:layout_marginTop="40dp" />
 
     </LinearLayout>

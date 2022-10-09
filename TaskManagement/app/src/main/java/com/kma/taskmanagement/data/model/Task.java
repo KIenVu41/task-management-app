@@ -1,100 +1,131 @@
 package com.kma.taskmanagement.data.model;
 
+import java.util.List;
+
 public class Task {
-    int taskId;
-    String taskTitle;
-    String date;
-    String taskDescrption;
-    boolean isComplete;
-    String firstAlarmTime;
-    String secondAlarmTime;
-    String lastAlarm;
-    String event;
+    private long id;
+    private String assigner_name;
+    private long category_id;
+    private String code;
+    private String description;
+    private String end_date;
+    private String name;
+    private String performer_name;
+    private String priority;
+    private String start_date;
+    private String status;
+    private List<SubTask> sub_tasks = null;
 
     public Task() {
     }
 
-    public Task(int taskId, String taskTitle, String date, String taskDescrption, boolean isComplete, String firstAlarmTime, String secondAlarmTime, String lastAlarm, String event) {
-        this.taskId = taskId;
-        this.taskTitle = taskTitle;
-        this.date = date;
-        this.taskDescrption = taskDescrption;
-        this.isComplete = isComplete;
-        this.firstAlarmTime = firstAlarmTime;
-        this.secondAlarmTime = secondAlarmTime;
-        this.lastAlarm = lastAlarm;
-        this.event = event;
+    public Task(String assigner_name, long category_id, String code, String description, String end_date, String name, String performer_name, String priority, String start_date, String status, List<SubTask> sub_tasks) {
+        this.assigner_name = assigner_name;
+        this.category_id = category_id;
+        this.code = code;
+        this.description = description;
+        this.end_date = end_date;
+        this.name = name;
+        this.performer_name = performer_name;
+        this.priority = priority;
+        this.start_date = start_date;
+        this.status = status;
+        this.sub_tasks = sub_tasks;
     }
 
-    public int getTaskId() {
-        return taskId;
+    public long getId() {
+        return id;
     }
 
-    public void setTaskId(int taskId) {
-        this.taskId = taskId;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public String getTaskTitle() {
-        return taskTitle;
+    public String getAssigner_name() {
+        return assigner_name;
     }
 
-    public void setTaskTitle(String taskTitle) {
-        this.taskTitle = taskTitle;
+    public void setAssigner_name(String assigner_name) {
+        this.assigner_name = assigner_name;
     }
 
-    public String getDate() {
-        return date;
+    public long getCategory_id() {
+        return category_id;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setCategory_id(long category_id) {
+        this.category_id = category_id;
     }
 
-    public String getTaskDescrption() {
-        return taskDescrption;
+    public String getCode() {
+        return code;
     }
 
-    public void setTaskDescrption(String taskDescrption) {
-        this.taskDescrption = taskDescrption;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public boolean isComplete() {
-        return isComplete;
+    public String getDescription() {
+        return description;
     }
 
-    public void setComplete(boolean complete) {
-        isComplete = complete;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getFirstAlarmTime() {
-        return firstAlarmTime;
+    public String getEnd_date() {
+        return end_date;
     }
 
-    public void setFirstAlarmTime(String firstAlarmTime) {
-        this.firstAlarmTime = firstAlarmTime;
+    public void setEnd_date(String end_date) {
+        this.end_date = end_date;
     }
 
-    public String getSecondAlarmTime() {
-        return secondAlarmTime;
+    public String getName() {
+        return name;
     }
 
-    public void setSecondAlarmTime(String secondAlarmTime) {
-        this.secondAlarmTime = secondAlarmTime;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastAlarm() {
-        return lastAlarm;
+    public String getPerformer_name() {
+        return performer_name;
     }
 
-    public void setLastAlarm(String lastAlarm) {
-        this.lastAlarm = lastAlarm;
+    public void setPerformer_name(String performer_name) {
+        this.performer_name = performer_name;
     }
 
-    public String getEvent() {
-        return event;
+    public String getPriority() {
+        return priority;
     }
 
-    public void setEvent(String event) {
-        this.event = event;
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public String getStart_date() {
+        return start_date;
+    }
+
+    public void setStart_date(String start_date) {
+        this.start_date = start_date;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<SubTask> getSub_tasks() {
+        return sub_tasks;
+    }
+
+    public void setSub_tasks(List<SubTask> sub_tasks) {
+        this.sub_tasks = sub_tasks;
     }
 }
