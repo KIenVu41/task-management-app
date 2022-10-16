@@ -20,6 +20,7 @@ import java.util.function.LongToDoubleFunction;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
+import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -31,7 +32,7 @@ public class UserViewModel extends ViewModel {
     private UserRepository userRepository;
     MutableLiveData<String> mProgressMutableData = new MutableLiveData<>();
     MutableLiveData<Token> mLoginResultMutableData = new MutableLiveData<>();
-    MutableLiveData<Token> mUpdateResultMutableData = new MutableLiveData<>();
+    MutableLiveData<User> mUpdateResultMutableData = new MutableLiveData<>();
     MutableLiveData<String> mRegisterResultMutableData = new MutableLiveData<>();
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
@@ -93,22 +94,43 @@ public class UserViewModel extends ViewModel {
         userRepository.update(token, id, user)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
+                .subscribe(new Observer<User>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onComplete() {
-                        mProgressMutableData.postValue("Hoàn thành");
+                    public void onNext(User user) {
+                        mUpdateResultMutableData.setValue(user);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         mProgressMutableData.postValue("Lỗi " + e.getMessage());
                     }
+
+                    @Override
+                    public void onComplete() {
+                        mProgressMutableData.postValue("Hoàn thành");
+                    }
                 });
+//                .subscribe(new CompletableObserver() {
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//                        mProgressMutableData.postValue("Hoàn thành");
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        mProgressMutableData.postValue("Lỗi " + e.getMessage());
+//                    }
+//                });
 //                .subscribe(new SingleObserver<Token>() {
 //                    @Override
 //                    public void onSubscribe(Disposable d) {
@@ -132,7 +154,7 @@ public class UserViewModel extends ViewModel {
         return mLoginResultMutableData;
     }
 
-    public LiveData<Token> getUpdateResult(){
+    public LiveData<User> getUpdateResult(){
         return mUpdateResultMutableData;
     }
 

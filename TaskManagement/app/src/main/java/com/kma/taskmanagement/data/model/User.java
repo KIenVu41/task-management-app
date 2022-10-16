@@ -77,4 +77,17 @@ public class User {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", phone='" + phone + '\'' +
+                ", sex='" + sex + '\'' +
+                ", url_image='" + url_image + '\'' +
+                ", username='" + username + '\'' +
+                '}';
+    }
 }

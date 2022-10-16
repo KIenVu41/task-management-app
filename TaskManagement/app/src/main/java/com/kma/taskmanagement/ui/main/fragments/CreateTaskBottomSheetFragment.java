@@ -32,6 +32,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -205,6 +207,7 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
         super.onDestroyView();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void createTask() {
        String title = addTaskTitle.getText().toString();
        String desc = addTaskDescription.getText().toString();
@@ -213,6 +216,7 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
        String prio = dropdownPrio.getSelectedItem().toString().toLowerCase();
        String status = dropdownStatus.getSelectedItem().toString().toLowerCase();
 
+       //yyyy-MM-dd-HH-mm-ss.zzz
        String[] items1 = endDate.split("-");
        String ddEnd = items1[0];
        String monthEnd = items1[1];
@@ -222,13 +226,17 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
        String hourEnd = itemTime1[0];
        String minEnd = itemTime1[1];
 
-       String startDate = DateUtils.getLocalDate();
-       String[] items2 = startDate.split(" ");
-       String dateStart = items2[0];
-       String timeStart = items2[1];
+//       String startDate = DateUtils.getLocalDate();
+//       String[] items2 = startDate.split(" ");
+//       String dateStart = items2[0];
+//       String timeStart = items2[1];
 
-       String startDateFormat = dateStart +"T" + timeStart + "Z";
-       String endDateFormat =  DateUtils.convert(ddEnd, monthEnd, yearEnd) + "T" + DateUtils.convertTime(hourEnd, minEnd) + "Z";
+       //String startDateFormat = dateStart + "-" + timeStart.replace(":", "-");
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        String startDateFormat = now.format(format).replace(" ", "T") + "Z";
+        String endDateFormat =  DateUtils.convert(ddEnd, monthEnd, yearEnd) + "T" + DateUtils.convertTime(hourEnd, minEnd) + ":00.000Z";
+
        taskViewModel.addTask(Constants.BEARER + token, new Task("", cateId, "", desc, endDateFormat, title, GlobalInfor.username, prio,  startDateFormat, status, null));
 
         new Handler().postDelayed(new Runnable() {
@@ -245,7 +253,9 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void createAnAlarm(String title, String desc, String date, String time) {
         try {
-            String[] items1 = date.split("-");
+            int typeRemind = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getIntFromSharedPreferences(Constants.REMIND + GlobalInfor.username);
+            String dateProcess = DateUtils.findDateByType(typeRemind);
+            String[] items1 = dateProcess.split("-");
             String dd = items1[0];
             String month = items1[1];
             String year = items1[2];
@@ -253,6 +263,7 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
             String[] itemTime = time.split(":");
             String hour = itemTime[0];
             String min = itemTime[1];
+
 
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour)); // hour
@@ -265,9 +276,7 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
 
             if(cal.getTimeInMillis() < System.currentTimeMillis()) {
                 return;
-//                cal.add(Calendar.DAY_OF_YEAR, 1);
             }
-            int typeRemind = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getIntFromSharedPreferences(Constants.REMIND + GlobalInfor.username);
             Intent alarmIntent = new Intent(getActivity(), AlarmBroadcastReceiver.class);
             alarmIntent.setAction(title);
             alarmIntent.putExtra("TITLE", title);

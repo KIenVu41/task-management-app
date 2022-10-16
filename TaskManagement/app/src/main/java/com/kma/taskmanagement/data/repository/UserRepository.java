@@ -17,7 +17,9 @@ public interface UserRepository {
 //    Completable signUp(RegisterRequest registerRequest);
     void singUp(RegisterRequest registerRequest, HandleResponse handleResponse);
 //    Single<Token> singin(LoginRequest loginRequest);
-    Completable update(String token, long id, User user);
+    Observable<User> update(String token, long id, User user);
+
+    Observable<User> getInfo(String token, long userId);
 
     void singin(LoginRequest loginRequest, HandleResponse handleResponse);
 }

@@ -3,9 +3,12 @@ package com.kma.taskmanagement.data.remote;
 import com.kma.taskmanagement.data.model.LoginRequest;
 import com.kma.taskmanagement.data.model.RegisterRequest;
 import com.kma.taskmanagement.data.model.RegisterResponse;
+import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.data.model.Token;
 import com.kma.taskmanagement.data.model.User;
 import com.kma.taskmanagement.ui.user.RegisterActivity;
+
+import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -25,6 +28,9 @@ public interface UserService {
     @POST("login")
     Call<Token> login(@Body LoginRequest loginRequest);
 
+    @GET("api/v1/users/{id}")
+    Observable<User> getInfo(@Header("Authorization") String authHeader, @Path("id") long userId);
+
     @PUT("api/v1/users/{id}")
-    Completable update(@Header("Authorization") String authHeader, @Path("id") long userId, @Body User user);
+    Observable<User> update(@Header("Authorization") String authHeader, @Path("id") long userId, @Body User user);
 }

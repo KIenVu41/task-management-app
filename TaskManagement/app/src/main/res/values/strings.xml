@@ -46,6 +46,7 @@
         <item>MEDIUM</item>
         <item>HIGH</item>
     </string-array>
+    <string name="invitetitle">Bạn có lời mời tham gia nhóm</string>
     <!--    Category-->
     <string name="title">Danh mục</string>
     <string name="cate_name">Tên danh mục</string>
@@ -69,6 +70,8 @@
     <string name="before3Day">3 ngày</string>
     <string name="before7Day">7 ngày</string>
     <string name="profile">Thông tin</string>
+    <string name="info">Info</string>
+    <string name="invite">Lời mời</string>
     <string name="about_me">Cá nhân</string>
     <string name="stedit">Sửa</string>
     <string name="contact">Liên hệ</string>

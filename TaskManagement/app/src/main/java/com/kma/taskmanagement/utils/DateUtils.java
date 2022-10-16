@@ -50,4 +50,18 @@ public class DateUtils {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         return formatter.format(calendar.getTime());
     }
+
+    public static String findDateByType(int type) {
+        Calendar cal = Calendar.getInstance();
+        if(type == 0) {
+            cal.add(Calendar.DATE, 0);
+        } else if(type == 1) {
+            cal.add(Calendar.DATE, -3);
+        } else {
+            cal.add(Calendar.DATE, -7);
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        return sdf.format(cal.getTimeInMillis());
+    }
 }

@@ -85,7 +85,7 @@ public class PersonTaskFragment extends Fragment {
 
     RecyclerView taskRecycler;
     TextView addTask;
-    ImageView noDataImage;
+    ImageView calendar;
     ImageView ivAction, ivFind;
     LinearLayout linearLayout;
     TaskAdapter taskAdapter;
@@ -95,6 +95,7 @@ public class PersonTaskFragment extends Fragment {
     public static int count = 0;
     AlarmManager alarmManager;
     CustomAdapter customAdapter;
+    ShowCalendarViewBottomSheet showCalendarViewBottomSheet;
     String token = "";
     private CategoryViewModel categoryViewModel;
     private TaskViewModel taskViewModel;
@@ -171,6 +172,7 @@ public class PersonTaskFragment extends Fragment {
                     taskRecycler.setVisibility(View.VISIBLE);
                     taskList = tasks;
                     taskAdapter.setList(taskList);
+                    showCalendarViewBottomSheet.setList(taskList);
                 } else {
                     llAnimation.setVisibility(View.VISIBLE);
                     taskRecycler.setVisibility(View.GONE);
@@ -197,9 +199,10 @@ public class PersonTaskFragment extends Fragment {
         linearLayout = view.findViewById(R.id.linearLayout);
         ivAction = view.findViewById(R.id.ivAction);
         ivFind = view.findViewById(R.id.ivFind);
+        calendar = view.findViewById(R.id.calendar);
         dropdown = view.findViewById(R.id.spinner1);
         llAnimation = view.findViewById(R.id.llAnimation);
-
+        showCalendarViewBottomSheet = new ShowCalendarViewBottomSheet();
         dropdown.setSpinnerEventsListener(new CustomSpinner.OnSpinnerEventsListener() {
             @Override
             public void onPopupWindowOpened(Spinner spinner) {
@@ -231,6 +234,11 @@ public class PersonTaskFragment extends Fragment {
         ivFind.setOnClickListener(view -> {
             long id = customAdapter.getItem(dropdown.getSelectedItemPosition()).getId();
             taskViewModel.getTasksByCategory(Constants.BEARER + token, id);
+        });
+        calendar.setOnClickListener(view -> {
+//            showCalendarViewBottomSheet = new ShowCalendarViewBottomSheet();
+//            showCalendarViewBottomSheet.setList(taskList);
+            showCalendarViewBottomSheet.show(getChildFragmentManager(), showCalendarViewBottomSheet.getTag());
         });
     }
 

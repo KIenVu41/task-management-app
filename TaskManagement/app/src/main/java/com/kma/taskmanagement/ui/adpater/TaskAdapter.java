@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -62,13 +64,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         Task task = taskList.get(position);
         holder.title.setText(task.getName());
         holder.description.setText(task.getDescription());
-        holder.status.setText(task.getStatus());
+        //holder.status.setText(task.getStatus());
         holder.options.setOnClickListener(view -> showPopUpMenu(view, position));
+        if(task.getStatus().equals("low")) {
+            holder.spinnerStatus.setSelection(0, true);
+        } else if(task.getStatus().equals("medium")) {
+            holder.spinnerStatus.setSelection(1, true);
+        } else if(task.getStatus().equals("high")) {
+            holder.spinnerStatus.setSelection(2, true);
+        }
 
         try {
             date = inputDateFormat.parse(task.getEnd_date());
             outputDateString = dateFormat.format(date);
-            String receivedDateTime = task.getEnd_date();
             String[] items1 = outputDateString.split(" ");
             String day = items1[0];
             String dd = items1[1];
@@ -129,30 +137,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 //        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 //        dialog.show();
 //    }
-//
-//
-//    private void deleteTaskFromId(int taskId, int position) {
-//        class GetSavedTasks extends AsyncTask<Void, Void, List<Task>> {
-//            @Override
-//            protected List<Task> doInBackground(Void... voids) {
-//                DatabaseClient.getInstance(context)
-//                        .getAppDatabase()
-//                        .dataBaseAction()
-//                        .deleteTaskFromId(taskId);
-//
-//                return taskList;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(List<Task> tasks) {
-//                super.onPostExecute(tasks);
-//                removeAtPosition(position);
-//                setRefreshListener.refresh();
-//            }
-//        }
-//        GetSavedTasks savedTasks = new GetSavedTasks();
-//        savedTasks.execute();
-//    }
 
     private void removeAtPosition(int position) {
         taskList.remove(position);
@@ -180,8 +164,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         TextView title;
         @BindView(R.id.description)
         TextView description;
-        @BindView(R.id.status)
-        TextView status;
+//        @BindView(R.id.status)
+//        TextView status;
+        @BindView(R.id.spinnerStatus)
+        Spinner spinnerStatus;
         @BindView(R.id.options)
         ImageView options;
         @BindView(R.id.time)
@@ -190,6 +176,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         TaskViewHolder(@NonNull View view) {
             super(view);
             ButterKnife.bind(this, view);
+
+            ArrayAdapter adapterStatus = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, context.getResources().getStringArray(R.array.taskstatusarr));
+            spinnerStatus.setAdapter(adapterStatus);
         }
     }
 

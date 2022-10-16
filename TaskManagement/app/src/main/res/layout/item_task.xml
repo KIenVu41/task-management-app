@@ -111,19 +111,43 @@
                 android:textSize="12sp"
                 android:textColor="@android:color/black"/>
 
-            <TextView
+<!--            <Spinner-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="right"-->
+<!--                android:layout_marginTop="@dimen/dp10"-->
+<!--                android:gravity="right"-->
+<!--                android:paddingLeft="@dimen/dp10"-->
+<!--                android:paddingTop="@dimen/dp5"-->
+<!--                android:paddingRight="@dimen/dp15"-->
+<!--                android:paddingBottom="@dimen/dp5"-->
+<!--                />-->
+
+            <com.kma.taskmanagement.ui.common.CustomSpinner
+                android:id="@+id/spinnerStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:text="COMPLETED"
-                android:textSize="12sp"
-                android:id="@+id/status"
+                android:background="@android:color/transparent"
                 android:layout_gravity="right"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp" />
+                android:gravity="right"
+                android:layout_marginTop="@dimen/dp10"
+                android:textSize="@dimen/sp8"
+                android:popupBackground="@drawable/blue_outline_white_background"
+                android:overlapAnchor="false"
+                android:spinnerMode="dropdown" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textColor="@android:color/black"-->
+<!--                android:text="COMPLETED"-->
+<!--                android:textSize="12sp"-->
+<!--                android:id="@+id/status"-->
+<!--                android:layout_gravity="right"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:paddingLeft="10dp"-->
+<!--                android:paddingRight="10dp"-->
+<!--                android:paddingTop="5dp"-->
+<!--                android:paddingBottom="5dp" />-->
 
         </LinearLayout>
 

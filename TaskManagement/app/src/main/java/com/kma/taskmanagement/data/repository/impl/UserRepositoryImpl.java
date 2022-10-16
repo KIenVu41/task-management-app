@@ -46,8 +46,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Completable update(String token, long id, User user) {
+    public Observable<User> update(String token, long id, User user) {
         return userService.update(token, id, user);
+    }
+
+    @Override
+    public Observable<User> getInfo(String token, long userId) {
+        return userService.getInfo(token, userId);
     }
 
     @Override

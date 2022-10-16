@@ -24,12 +24,7 @@ public class RetrofitInstance {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new CurlInterceptor(new Loggable() {
-                @Override
-                public void log(String message) {
-                    Log.v("Ok2Curl", message);
-                }
-            })).build();
+            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)

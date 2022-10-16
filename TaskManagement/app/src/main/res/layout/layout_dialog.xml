@@ -5,16 +5,9 @@
     android:padding="@dimen/dp16">
 
     <EditText
-        android:id="@+id/edit_username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Username" />
-
-    <EditText
         android:id="@+id/edit_phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/edit_username"
         android:layout_alignParentStart="true"
         android:hint="Phone"
         android:inputType="phone" />

@@ -1,11 +1,15 @@
 package com.kma.taskmanagement.ui.main;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -16,12 +20,18 @@ import android.widget.Button;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.data.remote.request.InviteRequest;
+import com.kma.taskmanagement.data.repository.GroupRepository;
+import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
 import com.kma.taskmanagement.ui.intro.IntroActivity;
 import com.kma.taskmanagement.ui.main.fragments.ChartFragment;
 import com.kma.taskmanagement.ui.main.fragments.GroupTaskFragment;
 import com.kma.taskmanagement.ui.main.fragments.PersonTaskFragment;
 import com.kma.taskmanagement.ui.main.fragments.SettingFragment;
+import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.DateUtils;
+import com.kma.taskmanagement.utils.GlobalInfor;
+import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.shrikanthravi.customnavigationdrawer2.data.MenuItem;
 import com.shrikanthravi.customnavigationdrawer2.widget.SNavigationDrawer;
 
@@ -45,22 +55,15 @@ public class MainActivity extends AppCompatActivity {
 //    @BindView(R.id.view_pager2)
 //    public ViewPager2 viewPager2;
 //    public TaskPagerAdapter adapter;
+    private GroupViewModel groupViewModel;
+    private GroupRepository groupRepository = new GroupRepositoryImpl();
+    private String token = "";
+
     SNavigationDrawer sNavigationDrawer;
     int color1=0;
     Class fragmentClass;
     public static Fragment fragment;
-//    @BindView(R.id.btnExit)
-//    Button btnExit;
-//    @OnClick(R.id.btnExit) void exit() {
-//
-//        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
-//        SharedPreferences.Editor editor = pref.edit();
-//        editor.putBoolean("isIntroOpnend",false);
-//        editor.commit();
-//        Intent mainActivity = new Intent(getApplicationContext(), IntroActivity.class );
-//        startActivity(mainActivity);
-//        finish();
-//    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,12 +104,22 @@ public class MainActivity extends AppCompatActivity {
             fragmentManager.beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(R.id.frameLayout, fragment).commit();
         }
 
-
+        groupViewModel =  new ViewModelProvider(this, new GroupViewModelFactory(groupRepository)).get(GroupViewModel.class);
+        token = SharedPreferencesUtil.getInstance(getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
+        groupViewModel.getInvites(Constants.BEARER + token);
+        groupViewModel.getInviteResponse().observeForever(new Observer<List<InviteRequest>>() {
+            @Override
+            public void onChanged(List<InviteRequest> inviteRequests) {
+                if (inviteRequests != null && inviteRequests.size() != 0) {
+                    for(InviteRequest ir: inviteRequests) {
+                        openDialog(ir);
+                    }
+                }
+            }
+        });
         sNavigationDrawer.setOnMenuItemClickListener(new SNavigationDrawer.OnMenuItemClickListener() {
             @Override
             public void onMenuItemClicked(int position) {
-                System.out.println("Position "+position);
-
                 switch (position){
                     case 0:{
                         color1 = R.color.red;
@@ -171,5 +184,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void openDialog(InviteRequest ir) {
+        AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(
+                this);
+
+        alertDialog2.setTitle(getResources().getString(R.string.invite));
+
+        alertDialog2.setMessage(getResources().getString(R.string.invitetitle));
+        alertDialog2.setIcon(R.drawable.ic_baseline_group_24);
+        alertDialog2.setCancelable(true);
+
+        ir.setInvitation_id(ir.getId());
+        alertDialog2.setPositiveButton(getResources().getString(R.string.yes),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ir.setIs_accept(true);
+                        groupViewModel.join(Constants.BEARER + token, ir);
+                    }
+                });
+        alertDialog2.setNegativeButton(getResources().getString(R.string.no),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Write your code here to execute after dialog
+                        ir.setIs_accept(false);
+                        groupViewModel.join(Constants.BEARER + token, ir);
+                        dialog.cancel();
+                    }
+                });
+
+        alertDialog2.show();
     }
 }

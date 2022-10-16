@@ -18,8 +18,13 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.User;
+import com.kma.taskmanagement.data.remote.request.GroupRequest;
+import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.UserRepository;
+import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
 import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
+import com.kma.taskmanagement.ui.main.GroupViewModel;
+import com.kma.taskmanagement.ui.main.GroupViewModelFactory;
 import com.kma.taskmanagement.ui.user.UserViewModel;
 import com.kma.taskmanagement.ui.user.UserViewModelFactory;
 import com.kma.taskmanagement.utils.Constants;
@@ -29,10 +34,21 @@ import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 public class AddGroupDialog extends AppCompatDialogFragment {
     private EditText editTextGName, editTextGCode;
     private String token = "";
+    private GroupViewModel groupViewModel;
+    private GroupRepository groupRepository = new GroupRepositoryImpl();
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        groupViewModel.getResponse().observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                if(s != null) {
+                    Log.d("TAG", s);
+                }
+            }
+        });
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view;
@@ -49,7 +65,14 @@ public class AddGroupDialog extends AppCompatDialogFragment {
                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
+                        String name = editTextGName.getText().toString();
+                        String member = editTextGCode.getText().toString();
 
+                        GroupRequest groupRequest = new GroupRequest();
+                        groupRequest.setName(name);
+                        groupRequest.setMember_name(member);
+                        groupViewModel.addGroup(Constants.BEARER + token, groupRequest);
                     }
                 });
 
@@ -63,5 +86,7 @@ public class AddGroupDialog extends AppCompatDialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        groupViewModel =  new ViewModelProvider(this, new GroupViewModelFactory(groupRepository)).get(GroupViewModel.class);
+
     }
 }

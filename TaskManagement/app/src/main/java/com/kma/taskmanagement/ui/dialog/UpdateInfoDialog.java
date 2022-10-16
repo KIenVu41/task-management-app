@@ -30,7 +30,7 @@ import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 
 public class UpdateInfoDialog extends AppCompatDialogFragment {
-    private EditText editTextUsername, editTextEmail, editTextPhone;
+    private EditText editTextEmail, editTextPhone;
     private RadioGroup radioGroup;
     private RadioButton radioSexButton;
     private UserViewModel userViewModel;
@@ -51,6 +51,17 @@ public class UpdateInfoDialog extends AppCompatDialogFragment {
                 Log.d("TAG", s);
             }
         });
+        userViewModel.getUpdateResult().observe(getActivity(), new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+                if(user != null) {
+                    Log.d("TAG", "update " + user.toString());
+                    GlobalInfor.sex = user.getSex();
+                    GlobalInfor.email = user.getEmail();
+                    GlobalInfor.phone = user.getPhone();
+                }
+            }
+        });
         builder.setView(view)
                 .setTitle("Cập nhật")
                 .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -62,7 +73,6 @@ public class UpdateInfoDialog extends AppCompatDialogFragment {
                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String username = editTextUsername.getText().toString();
                         String phone = editTextPhone.getText().toString();
                         String email = editTextEmail.getText().toString();
                         int selectedId = radioGroup.getCheckedRadioButtonId();
@@ -71,11 +81,10 @@ public class UpdateInfoDialog extends AppCompatDialogFragment {
 
                         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
 
-                        userViewModel.update(Constants.BEARER + token, GlobalInfor.id, new User(null, email, "kocopass", phone, sex, "", username));
+                        userViewModel.update(Constants.BEARER + token, GlobalInfor.id, new User(null, email, "kocopass", phone, sex, "", null));
                     }
                 });
 
-        editTextUsername = view.findViewById(R.id.edit_username);
         editTextPhone = view.findViewById(R.id.edit_phone);
         editTextEmail = view.findViewById(R.id.edit_email);
         radioGroup = view.findViewById(R.id.radioGroup);

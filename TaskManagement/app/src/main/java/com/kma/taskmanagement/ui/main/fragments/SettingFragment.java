@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,8 +17,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.data.model.User;
+import com.kma.taskmanagement.data.repository.UserRepository;
+import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
 import com.kma.taskmanagement.ui.dialog.UpdateInfoDialog;
 import com.kma.taskmanagement.ui.user.LoginActivity;
+import com.kma.taskmanagement.ui.user.UserViewModel;
+import com.kma.taskmanagement.ui.user.UserViewModelFactory;
 import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.DateUtils;
 import com.kma.taskmanagement.utils.GlobalInfor;
@@ -26,6 +33,8 @@ public class SettingFragment extends Fragment {
 
     TextView tvInDate, tv3Day, tv7Day, tvUsername, tvSex, tvPhone, tvEmail, tvEdit;
     Button btnLogout;
+    private UserViewModel userViewModel;
+    private UserRepository userRepository = new UserRepositoryImpl();
 
     public SettingFragment() {
         // Required empty public constructor
@@ -40,6 +49,7 @@ public class SettingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        userViewModel =  new ViewModelProvider(this, new UserViewModelFactory(userRepository)).get(UserViewModel.class);
         return inflater.inflate(R.layout.fragment_setting, container, false);
     }
 
@@ -108,6 +118,7 @@ public class SettingFragment extends Fragment {
                 SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).storeUserToken(token, "");
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
+                getActivity().onBackPressed();
             }
         });
     }
@@ -160,5 +171,18 @@ public class SettingFragment extends Fragment {
             tv7Day.setBackgroundResource(R.drawable.chart_bg_right_focus);
             tv7Day.setTextColor(this.getResources().getColor(R.color.WHITE_COLOR));
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("TAG", "resume");
+        initData();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("TAG", "stop");
     }
 }
