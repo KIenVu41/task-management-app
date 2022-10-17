@@ -12,6 +12,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface TaskService {
@@ -24,6 +25,9 @@ public interface TaskService {
 
     @GET("api/v1/tasks/category/{id}")
     Observable<List<Task>> getTasksByCategory(@Header("Authorization") String authHeader, @Path("id") long cateId);
+
+    @PUT("api/v1/tasks/{id}")
+    Completable updateTask(@Header("Authorization") String authHeader, @Path("id") long taskId,  @Body Task task);
 
     @DELETE("api/v1/tasks/{id}")
     Completable deleteTask(@Header("Authorization") String authHeader, @Path("id") long taskId);

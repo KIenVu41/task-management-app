@@ -14,6 +14,7 @@ import io.reactivex.CompletableObserver;
 import io.reactivex.Observer;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -22,6 +23,7 @@ public class TaskViewModel extends ViewModel {
     private TaskRepository taskRepository;
     MutableLiveData<String> mResponseMutableData = new MutableLiveData<>();
     MutableLiveData<List<Task>> mResultMutableData = new MutableLiveData<>();
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public TaskViewModel(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
@@ -103,6 +105,15 @@ public class TaskViewModel extends ViewModel {
                         mResponseMutableData.postValue("Hoàn thành");
                     }
                 });
+    }
+
+    public void update(String token, long id, Task task) {
+        mResponseMutableData.postValue("Đang xử lý...");
+        compositeDisposable.add(
+                taskRepository.updateTask(token, id, task)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(() -> mResponseMutableData.postValue("Hoàn thành"), t -> mResponseMutableData.postValue("Lỗi " + t.getMessage())));
     }
 
     public void deleteTask(String token, long id) {

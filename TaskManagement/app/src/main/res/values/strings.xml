@@ -23,6 +23,7 @@
     <string name="no">Không</string>
     <string name="confirmation">Công việc hoàn thành !</string>
     <string name="addtask">Đơn thêm công việc</string>
+    <string name="updatetask">Đơn sửa công việc</string>
     <string name="add">Thêm</string>
     <string name="addtitle">Điền chi tiết công việc của bạn theo đơn</string>
     <string name="tasks">Danh sách công việc</string>
@@ -31,6 +32,7 @@
     <string name="taskdate">Ngày kết thúc</string>
     <string name="tasktime">Giờ kết thúc</string>
     <string name="taskpriority">Độ ưu tiên</string>
+    <string name="taskassign">Giao cho</string>
     <string name="taskstatus">Trạng thái</string>
     <string name="sureToMarkAsComplete">Bạn muốn đánh dấu công việc này là hoàn thành ?</string>
     <string name="congrats_you_have_completed_the_task_successfully">Chúc mừng! Bạn đã hoàn thành công việc</string>
@@ -42,11 +44,12 @@
         <item>COMPLETED</item>
     </string-array>
     <string-array name="taskprioarr">
-        <item>LOW</item>
+        <item>LOWEST</item>
         <item>MEDIUM</item>
         <item>HIGH</item>
     </string-array>
     <string name="invitetitle">Bạn có lời mời tham gia nhóm</string>
+    <string name="memberquantity">Số thành viên: </string>
     <!--    Category-->
     <string name="title">Danh mục</string>
     <string name="cate_name">Tên danh mục</string>

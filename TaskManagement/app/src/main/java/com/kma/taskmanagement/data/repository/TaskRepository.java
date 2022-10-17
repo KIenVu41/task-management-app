@@ -17,5 +17,7 @@ public interface TaskRepository {
 
     Observable<List<Task>> getTasksByCategory(String token, long id);
 
+    Completable updateTask(String token, long id, Task task);
+
     Completable deleteTask(String token, long id);
 }

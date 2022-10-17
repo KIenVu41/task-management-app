@@ -41,6 +41,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     private Context context;
     private LayoutInflater inflater;
+    private long cateId;
     public List<Task> taskList;
     public SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
     public SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -106,6 +107,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 //                    break;
                 case R.id.menuUpdate:
                     CreateTaskBottomSheetFragment createTaskBottomSheetFragment = new CreateTaskBottomSheetFragment();
+                    createTaskBottomSheetFragment.setTaskAction(true, cateId, task);
                     createTaskBottomSheetFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), createTaskBottomSheetFragment.getTag());
                     break;
                 case R.id.menuComplete:
@@ -152,6 +154,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return 0;
     }
 
+    public void setCateId(long cateId) {
+        this.cateId = cateId;
+    }
 
     public class TaskViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.day)

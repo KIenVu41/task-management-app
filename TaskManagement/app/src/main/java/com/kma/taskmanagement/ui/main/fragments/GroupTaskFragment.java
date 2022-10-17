@@ -1,5 +1,10 @@
 package com.kma.taskmanagement.ui.main.fragments;
 
+import static android.content.Context.ALARM_SERVICE;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -7,6 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
@@ -19,9 +26,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.broadcastReceiver.AlarmBroadcastReceiver;
+import com.kma.taskmanagement.data.model.Group;
+import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.data.remote.request.InviteRequest;
 import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
+import com.kma.taskmanagement.ui.adpater.GroupAdapter;
 import com.kma.taskmanagement.ui.dialog.AddGroupDialog;
 import com.kma.taskmanagement.ui.dialog.UpdateInfoDialog;
 import com.kma.taskmanagement.ui.main.GroupViewModel;
@@ -29,6 +40,7 @@ import com.kma.taskmanagement.ui.main.GroupViewModelFactory;
 import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
+import com.kma.taskmanagement.utils.SwipeToDeleteCallback;
 import com.learnoset.materialdialogs.AppUpdateDialog;
 
 import java.util.List;
@@ -42,6 +54,7 @@ public class GroupTaskFragment extends Fragment {
     private LinearLayout llAnimation;
     private RecyclerView groupTaskRecycler;
     private TextView tvAddGroup;
+    private GroupAdapter groupAdapter;
     private GroupViewModel groupViewModel;
     private GroupRepository groupRepository = new GroupRepositoryImpl();
     private String token = "";
@@ -69,27 +82,28 @@ public class GroupTaskFragment extends Fragment {
         groupViewModel =  new ViewModelProvider(this, new GroupViewModelFactory(groupRepository)).get(GroupViewModel.class);
         initView(view);
         setOnClick();
+        setAdapter();
+        enableSwipeToDelete();
 
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
-        //groupViewModel.getInvites(Constants.BEARER + token);
-//        groupViewModel.getInviteResponse().observe(getActivity(), new Observer<List<InviteRequest>>() {
-//            @Override
-//            public void onChanged(List<InviteRequest> inviteRequests) {
-//                if (inviteRequests != null) {
-//                    Log.d("TAG", "invite " + inviteRequests.toString());
-//                    openDialog();
-//                }
-//            }
-//        });
-//        groupViewModel.getInviteResponse().observeForever(new Observer<List<InviteRequest>>() {
-//            @Override
-//            public void onChanged(List<InviteRequest> inviteRequests) {
-//                if (inviteRequests != null) {
-//                    Log.d("TAG", "invite " + inviteRequests.toString());
-//                    openDialog();
-//                }
-//            }
-//        });
+        groupViewModel.getGroups(Constants.BEARER + token);
+
+        groupViewModel.getGroupResponse().observe(getActivity(), new Observer<List<Group>>() {
+            @Override
+            public void onChanged(List<Group> groups) {
+                Log.d("TAG", groups.toString());
+                if(groups.size() != 0) {
+                    Log.d("TAG", groups.toString());
+                    llAnimation.setVisibility(View.GONE);
+                    groupTaskRecycler.setVisibility(View.VISIBLE);
+                    groupAdapter.submitList(groups);
+                } else {
+                    llAnimation.setVisibility(View.VISIBLE);
+                    groupTaskRecycler.setVisibility(View.GONE);
+                }
+                groupAdapter.submitList(groups);
+            }
+        });
     }
 
     private void initView(View view) {
@@ -103,5 +117,27 @@ public class GroupTaskFragment extends Fragment {
            AddGroupDialog addGroupDialog = new AddGroupDialog();
            addGroupDialog.show(getChildFragmentManager(), "add group dialog");
         });
+    }
+
+    private void setAdapter() {
+        groupAdapter = new GroupAdapter( Group.itemCallback , getActivity());
+        groupTaskRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        groupTaskRecycler.setAdapter(groupAdapter);
+    }
+
+    private void enableSwipeToDelete() {
+        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getActivity().getApplicationContext()) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                final int position = viewHolder.getAbsoluteAdapterPosition();
+                final Group group = groupAdapter.getCurrentList().get(position);
+
+                groupViewModel.delete(Constants.BEARER + token, group.getId());
+            }
+        };
+
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+        itemTouchhelper.attachToRecyclerView(groupTaskRecycler);
+
     }
 }

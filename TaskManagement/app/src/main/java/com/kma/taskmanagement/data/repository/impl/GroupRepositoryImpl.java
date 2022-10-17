@@ -35,4 +35,14 @@ public class GroupRepositoryImpl implements GroupRepository {
     public Observable<List<InviteRequest>> getInvites(String authHeader) {
         return groupService.getInvites(authHeader);
     }
+
+    @Override
+    public Observable<List<Group>> getGroups(String authHeader) {
+        return groupService.getGroups(authHeader);
+    }
+
+    @Override
+    public Completable delete(String authHeader, long groupId) {
+        return groupService.delete(authHeader, groupId);
+    }
 }

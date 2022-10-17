@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/edit_gname"
         android:layout_alignParentStart="true"
-        android:hint="Mã nhóm"
+        android:hint="Tên thành viên"
         android:inputType="text" />
 
 </RelativeLayout>

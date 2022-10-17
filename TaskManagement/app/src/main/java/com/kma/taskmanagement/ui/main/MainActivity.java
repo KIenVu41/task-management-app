@@ -104,19 +104,19 @@ public class MainActivity extends AppCompatActivity {
             fragmentManager.beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(R.id.frameLayout, fragment).commit();
         }
 
-        groupViewModel =  new ViewModelProvider(this, new GroupViewModelFactory(groupRepository)).get(GroupViewModel.class);
-        token = SharedPreferencesUtil.getInstance(getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
-        groupViewModel.getInvites(Constants.BEARER + token);
-        groupViewModel.getInviteResponse().observeForever(new Observer<List<InviteRequest>>() {
-            @Override
-            public void onChanged(List<InviteRequest> inviteRequests) {
-                if (inviteRequests != null && inviteRequests.size() != 0) {
-                    for(InviteRequest ir: inviteRequests) {
-                        openDialog(ir);
-                    }
-                }
-            }
-        });
+//        groupViewModel =  new ViewModelProvider(this, new GroupViewModelFactory(groupRepository)).get(GroupViewModel.class);
+//        token = SharedPreferencesUtil.getInstance(getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
+//        groupViewModel.getInvites(Constants.BEARER + token);
+//        groupViewModel.getInviteResponse().observeForever(new Observer<List<InviteRequest>>() {
+//            @Override
+//            public void onChanged(List<InviteRequest> inviteRequests) {
+//                if (inviteRequests != null && inviteRequests.size() != 0) {
+//                    for(InviteRequest ir: inviteRequests) {
+//                        openDialog(ir);
+//                    }
+//                }
+//            }
+//        });
         sNavigationDrawer.setOnMenuItemClickListener(new SNavigationDrawer.OnMenuItemClickListener() {
             @Override
             public void onMenuItemClicked(int position) {

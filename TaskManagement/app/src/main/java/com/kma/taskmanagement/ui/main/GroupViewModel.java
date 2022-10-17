@@ -72,10 +72,27 @@ public class GroupViewModel extends ViewModel {
                 }));
     }
 
+    public void getGroups(String token) {
+        mResponseMutableData.postValue("Đang xử lý...");
+        compositeDisposable.add(groupRepository.getGroups(token)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(list -> mResultMutableData.setValue(list), t ->  mResponseMutableData.postValue("Lỗi " + t.getMessage())));
+    }
+
     public void join(String token, InviteRequest ir) {
         mResponseMutableData.postValue("Đang xử lý...");
         compositeDisposable.add(
                 groupRepository.join(token, ir)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(() -> mResponseMutableData.postValue("Hoàn thành"), t -> mResponseMutableData.postValue("Lỗi " + t.getMessage())));
+    }
+
+    public void delete(String token, long id) {
+        mResponseMutableData.postValue("Đang xử lý...");
+        compositeDisposable.add(
+                groupRepository.delete(token, id)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> mResponseMutableData.postValue("Hoàn thành"), t -> mResponseMutableData.postValue("Lỗi " + t.getMessage())));
@@ -87,6 +104,10 @@ public class GroupViewModel extends ViewModel {
 
     public LiveData<List<InviteRequest>> getInviteResponse(){
         return mInviteMutableData;
+    }
+
+    public LiveData<List<Group>> getGroupResponse(){
+        return mResultMutableData;
     }
 
     @Override

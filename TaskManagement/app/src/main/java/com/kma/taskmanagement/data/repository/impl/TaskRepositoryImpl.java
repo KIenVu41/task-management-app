@@ -35,6 +35,11 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
+    public Completable updateTask(String token, long id, Task task) {
+        return taskService.updateTask(token, id, task);
+    }
+
+    @Override
     public Completable deleteTask(String token, long id) {
         return taskService.deleteTask(token, id);
     }

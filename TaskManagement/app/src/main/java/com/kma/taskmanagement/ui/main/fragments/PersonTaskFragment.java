@@ -185,8 +185,11 @@ public class PersonTaskFragment extends Fragment {
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 
         addTask.setOnClickListener(view1 -> {
+            if(customAdapter.getCount() == 0) {
+                return;
+            }
             CreateTaskBottomSheetFragment createTaskBottomSheetFragment = new CreateTaskBottomSheetFragment();
-            createTaskBottomSheetFragment.setTaskAction(false, customAdapter.getItem(dropdown.getSelectedItemPosition()).getId());
+            createTaskBottomSheetFragment.setTaskAction(false, customAdapter.getItem(dropdown.getSelectedItemPosition()).getId(), null);
             createTaskBottomSheetFragment.show(getActivity().getSupportFragmentManager(), createTaskBottomSheetFragment.getTag());
         });
 
@@ -234,6 +237,19 @@ public class PersonTaskFragment extends Fragment {
         ivFind.setOnClickListener(view -> {
             long id = customAdapter.getItem(dropdown.getSelectedItemPosition()).getId();
             taskViewModel.getTasksByCategory(Constants.BEARER + token, id);
+        });
+        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                taskAdapter.setCateId(customAdapter.getItem(dropdown.getSelectedItemPosition()).getId());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+            }
+
         });
         calendar.setOnClickListener(view -> {
 //            showCalendarViewBottomSheet = new ShowCalendarViewBottomSheet();
@@ -336,8 +352,7 @@ public class PersonTaskFragment extends Fragment {
                     final Task task = taskAdapter.taskList.get(position);
 
                     taskViewModel.deleteTask(Constants.BEARER + token, task.getId());
-//                    taskAdapter.taskList.remove(position);
-//                   taskAdapter.notifyItemRemoved(position);
+
                     Intent intent  = new Intent(getActivity(), AlarmBroadcastReceiver.class);
                     intent.setAction(task.getName());
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
