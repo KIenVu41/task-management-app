@@ -9,22 +9,25 @@ public class Task {
     private String code;
     private String description;
     private String end_date;
+    private Long group_id;
     private String name;
     private String performer_name;
     private String priority;
     private String start_date;
     private String status;
     private List<SubTask> sub_tasks = null;
+    private List<Group> group_output_dto;
 
     public Task() {
     }
 
-    public Task(String assigner_name, long category_id, String code, String description, String end_date, String name, String performer_name, String priority, String start_date, String status, List<SubTask> sub_tasks) {
+    public Task(String assigner_name, long category_id, String code, String description, String end_date, Long group_id, String name, String performer_name, String priority, String start_date, String status, List<SubTask> sub_tasks) {
         this.assigner_name = assigner_name;
         this.category_id = category_id;
         this.code = code;
         this.description = description;
         this.end_date = end_date;
+        this.group_id = group_id;
         this.name = name;
         this.performer_name = performer_name;
         this.priority = priority;
@@ -81,6 +84,14 @@ public class Task {
         this.end_date = end_date;
     }
 
+    public long getGroup_id() {
+        return group_id;
+    }
+
+    public void setGroup_id(long group_id) {
+        this.group_id = group_id;
+    }
+
     public String getName() {
         return name;
     }
@@ -127,5 +138,13 @@ public class Task {
 
     public void setSub_tasks(List<SubTask> sub_tasks) {
         this.sub_tasks = sub_tasks;
+    }
+
+    public List<Group> getGroup_output_dto() {
+        return group_output_dto;
+    }
+
+    public void setGroup_output_dto(List<Group> group_output_dto) {
+        this.group_output_dto = group_output_dto;
     }
 }

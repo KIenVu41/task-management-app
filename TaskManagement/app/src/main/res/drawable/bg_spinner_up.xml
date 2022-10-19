@@ -9,7 +9,7 @@
 
                     <solid android:color="@color/WHITE_COLOR"/>
                     <padding android:right="@dimen/dp12"
-                        android:left="@dimen/dp12"/>
+                        android:left="@dimen/dp20"/>
                     <corners android:radius="@dimen/dp4"/>
                 </shape>
 

@@ -81,4 +81,7 @@
     <string name="setting">Cấu hình</string>
     <string name="changepass">Đôi mật khẩu</string>
     <string name="logout">Đăng xuất</string>
+<!--    Dialog-->
+    <string name="select">Chọn</string>
+    <string name="cancel">Hủy</string>
 </resources>

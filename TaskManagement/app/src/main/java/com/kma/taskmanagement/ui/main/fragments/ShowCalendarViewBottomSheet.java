@@ -5,12 +5,14 @@ import android.app.Dialog;
 import android.os.Build;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.EventDay;
+import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.kma.taskmanagement.R;
@@ -60,6 +62,25 @@ public class ShowCalendarViewBottomSheet extends BottomSheetDialogFragment {
         dialog.setContentView(contentView);
         calendarView.setHeaderColor(R.color.colorAccent);
         calendarView.setEvents(getHighlitedDays());
+        calendarView.setOnDayClickListener(new OnDayClickListener() {
+            @Override
+            public void onDayClick(EventDay eventDay) {
+                String note = "";
+                for(Task task: tasks) {
+                    Calendar cal = Calendar.getInstance();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    try {
+                        Date endDate = sdf.parse(task.getEnd_date());
+                        if(eventDay.getCalendar().getTime().equals(endDate)) {
+                            note += task.getName() + "\n";
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Toast.makeText(getActivity(), "Bạn có công việc \n" + note, Toast.LENGTH_SHORT).show();
+            }
+        });
         back.setOnClickListener(view -> dialog.dismiss());
     }
 

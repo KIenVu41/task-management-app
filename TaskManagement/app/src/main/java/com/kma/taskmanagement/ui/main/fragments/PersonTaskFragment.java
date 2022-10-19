@@ -3,6 +3,7 @@ package com.kma.taskmanagement.ui.main.fragments;
 import static android.content.Context.ALARM_SERVICE;
 
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
@@ -86,22 +87,26 @@ public class PersonTaskFragment extends Fragment {
     RecyclerView taskRecycler;
     TextView addTask;
     ImageView calendar;
-    ImageView ivAction, ivFind;
+    ImageView ivAction, ivFind, ivFilter, ivRefresh;
     LinearLayout linearLayout;
     TaskAdapter taskAdapter;
-    CustomSpinner dropdown;
+    CustomSpinner dropdown, spinnerPrio, spinnerStatus;
     LinearLayout llAnimation;
     List<Task> taskList = new ArrayList<>();
     public static int count = 0;
-    AlarmManager alarmManager;
     CustomAdapter customAdapter;
+    Dialog filterDialog;
+    TextView okay_text, cancel_text;
     ShowCalendarViewBottomSheet showCalendarViewBottomSheet;
     String token = "";
+    long cateId;
     private CategoryViewModel categoryViewModel;
     private TaskViewModel taskViewModel;
     private CategoryRepository categoryRepository = new CategoryRepositoryImpl();
     private TaskRepository taskRepository = new TaskRepositoryImpl();
     List<Category> categories = new ArrayList<>();
+    String[] prios = new String[]{"", "LOWEST", "MEDIUM", "HIGH"};
+    String[] statuss = new String[]{"", "TODO", "DOING", "COMPLETED"};
 
     public PersonTaskFragment() {
         // Required empty public constructor
@@ -197,11 +202,14 @@ public class PersonTaskFragment extends Fragment {
     }
 
     public void initView(View view) {
+        filterDialog = new Dialog(getActivity());
         taskRecycler = view.findViewById(R.id.taskRecycler);
         addTask = view.findViewById(R.id.addTask);
         linearLayout = view.findViewById(R.id.linearLayout);
         ivAction = view.findViewById(R.id.ivAction);
         ivFind = view.findViewById(R.id.ivFind);
+        ivFilter = view.findViewById(R.id.ivFilter);
+        ivRefresh = view.findViewById(R.id.ivRefresh);
         calendar = view.findViewById(R.id.calendar);
         dropdown = view.findViewById(R.id.spinner1);
         llAnimation = view.findViewById(R.id.llAnimation);
@@ -238,10 +246,19 @@ public class PersonTaskFragment extends Fragment {
             long id = customAdapter.getItem(dropdown.getSelectedItemPosition()).getId();
             taskViewModel.getTasksByCategory(Constants.BEARER + token, id);
         });
+
+        ivRefresh.setOnClickListener(view -> {
+            taskViewModel.getAllTasks(Constants.BEARER + token);
+        });
+        ivFilter.setOnClickListener(view -> {
+            openFilterDialog();
+        });
+
         dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                cateId = customAdapter.getItem(dropdown.getSelectedItemPosition()).getId();
                 taskAdapter.setCateId(customAdapter.getItem(dropdown.getSelectedItemPosition()).getId());
             }
 
@@ -297,51 +314,21 @@ public class PersonTaskFragment extends Fragment {
     }
 
     public void setUpAdapter() {
-        taskAdapter = new TaskAdapter(getContext(), taskList);
+        taskAdapter = new TaskAdapter(getContext(), taskList, new HandleClickListener() {
+            @Override
+            public void onLongClick(View view) {
+
+            }
+
+            @Override
+            public void onTaskClick(Task task, String status) {
+                task.setStatus(status);
+                task.setCategory_id(cateId);
+                taskViewModel.update(Constants.BEARER + token, task.getId(), task);
+            }
+        });
         taskRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         taskRecycler.setAdapter(taskAdapter);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public void createAnAlarm() {
-        try {
-            String[] items1 = "03-10-2022".toString().split("-");
-            String dd = items1[0];
-            String month = items1[1];
-            String year = items1[2];
-
-            String[] itemTime = "20:15".toString().split(":");
-            String hour = itemTime[0];
-            String min = itemTime[1];
-            Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour)); // hour
-            cal.set(Calendar.MINUTE, Integer.parseInt(min)); // min
-            cal.set(Calendar.SECOND, 0);
-            cal.set(Calendar.MILLISECOND, 0);
-            cal.set(Calendar.DATE, Integer.parseInt(dd)); //dd
-
-            if (cal.getTimeInMillis() < System.currentTimeMillis()) {
-                return;
-            }
-
-            Intent alarmIntent = new Intent(getActivity(), AlarmBroadcastReceiver.class);
-            alarmIntent.putExtra("TITLE", "xxx");
-            alarmIntent.putExtra("DESC", "ss");
-            alarmIntent.putExtra("DATE", "zzz");
-            alarmIntent.putExtra("TIME", "zzz");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), count, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
-                } else {
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
-                }
-                count++;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void enableSwipeToDelete() {
@@ -372,7 +359,49 @@ public class PersonTaskFragment extends Fragment {
             ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
             itemTouchhelper.attachToRecyclerView(taskRecycler);
 
-        }
+    }
+
+    private void openFilterDialog() {
+        filterDialog.setContentView(R.layout.layout_filter_dialog);
+        filterDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        filterDialog.setCancelable(false);
+
+        okay_text = filterDialog.findViewById(R.id.okay_text);
+        cancel_text = filterDialog.findViewById(R.id.cancel_text);
+        spinnerPrio = filterDialog.findViewById(R.id.filterPrio);
+        spinnerStatus = filterDialog.findViewById(R.id.filterStatus);
+
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, statuss);
+        spinnerStatus.setAdapter(statusAdapter);
+
+        ArrayAdapter<String> prioAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, prios);
+        spinnerPrio.setAdapter(prioAdapter);
+
+        okay_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String status = spinnerStatus.getSelectedItem().toString();
+                String prio = spinnerPrio.getSelectedItem().toString();
+                if(!status.equals("") && prio.equals("")) {
+                    taskViewModel.filterPersonalTaskByStatus(Constants.BEARER + token, cateId, status);
+                } else if(status.equals("") && !prio.equals("")) {
+                    taskViewModel.filterPersonalTaskByPrio(Constants.BEARER + token, cateId, prio);
+                } else if(!status.equals("") && !prio.equals("")) {
+                    taskViewModel.filterPersonalTaskByPrioAndStatus(Constants.BEARER + token, cateId, prio, status);
+                }
+                filterDialog.dismiss();
+            }
+        });
+
+        cancel_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filterDialog.dismiss();
+            }
+        });
+
+        filterDialog.show();
+    }
 
     @Override
     public void onPause() {

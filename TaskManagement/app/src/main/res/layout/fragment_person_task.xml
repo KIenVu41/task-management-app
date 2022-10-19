@@ -49,28 +49,49 @@
 
                 <com.kma.taskmanagement.ui.common.CustomSpinner
                     android:id="@+id/spinner1"
-                    android:layout_width="@dimen/dp150"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:background="@drawable/bg_spinner"
+                    android:textAlignment="textEnd"
                     android:popupBackground="@drawable/blue_outline_white_background"
                     android:overlapAnchor="false"
                     android:spinnerMode="dropdown" />
 
                 <ImageView
                     android:id="@+id/ivAction"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="right|center"
                     android:background="@drawable/ic_add"
                     android:layout_alignRight="@+id/spinner1" />
 
                 <ImageView
                     android:id="@+id/ivFind"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="right|center"
                     android:background="@drawable/ic_baseline_search_24"
                     android:layout_alignRight="@+id/ivAction"
+                    android:layout_alignParentRight="true"/>
+
+                <ImageView
+                    android:id="@+id/ivFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center"
+                    android:background="@drawable/ic_baseline_filter_list_24"
+                    android:layout_alignRight="@+id/ivFind"
+                    android:layout_alignParentRight="true"/>
+
+                <ImageView
+                    android:id="@+id/ivRefresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center"
+                    android:background="@drawable/ic_baseline_refresh_24"
+                    android:visibility="gone"
+                    android:layout_alignRight="@+id/ivFilter"
                     android:layout_alignParentRight="true"/>
             </LinearLayout>
 

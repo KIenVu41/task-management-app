@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Task;
+import com.kma.taskmanagement.listener.HandleClickListener;
 import com.kma.taskmanagement.ui.main.MainActivity;
 import com.kma.taskmanagement.ui.main.fragments.CreateTaskBottomSheetFragment;
 
@@ -45,12 +47,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public List<Task> taskList;
     public SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
     public SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private HandleClickListener handleClickListener;
     Date date = null;
     String outputDateString = null;
 
-    public TaskAdapter(Context context, List<Task> taskList) {
+    public TaskAdapter(Context context, List<Task> taskList, HandleClickListener handleClickListener) {
         this.context = context;
         this.taskList = taskList;
+        this.handleClickListener = handleClickListener;
     }
 
     @NonNull
@@ -67,14 +71,24 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.description.setText(task.getDescription());
         //holder.status.setText(task.getStatus());
         holder.options.setOnClickListener(view -> showPopUpMenu(view, position));
-        if(task.getStatus().equals("low")) {
+        if(task.getStatus().equals("TODO")) {
             holder.spinnerStatus.setSelection(0, true);
-        } else if(task.getStatus().equals("medium")) {
+        } else if(task.getStatus().equals("DOING")) {
             holder.spinnerStatus.setSelection(1, true);
-        } else if(task.getStatus().equals("high")) {
+        } else if(task.getStatus().equals("COMPLETED")) {
             holder.spinnerStatus.setSelection(2, true);
         }
+        holder.spinnerStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                handleClickListener.onTaskClick(task, adapterView.getSelectedItem().toString());
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         try {
             date = inputDateFormat.parse(task.getEnd_date());
             outputDateString = dateFormat.format(date);

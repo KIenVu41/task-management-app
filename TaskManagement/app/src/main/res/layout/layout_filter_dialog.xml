@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/tvFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Lọc danh sách"
+        android:textColor="@color/COLOR_BUTTON"
+        android:textSize="@dimen/sp21"
+        android:layout_marginBottom="@dimen/dp20"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/llFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvFilter"
+        android:layout_marginLeft="@dimen/dp10"
+        android:layout_marginRight="@dimen/dp10"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/COLOR_BUTTON"
+            android:text="Status"/>
+        <com.kma.taskmanagement.ui.common.CustomSpinner
+            android:id="@+id/filterStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_spinner"
+            android:layout_marginTop="@dimen/dp10"
+            android:textSize="@dimen/sp12"
+            android:popupBackground="@drawable/blue_outline_white_background"
+            android:overlapAnchor="false"
+            android:spinnerMode="dropdown" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/COLOR_BUTTON"
+            android:text="Priority"/>
+
+        <com.kma.taskmanagement.ui.common.CustomSpinner
+            android:id="@+id/filterPrio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_spinner"
+            android:layout_marginTop="@dimen/dp10"
+            android:textSize="@dimen/sp12"
+            android:popupBackground="@drawable/blue_outline_white_background"
+            android:overlapAnchor="false"
+            android:spinnerMode="dropdown" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/llFilter"
+        android:layout_margin="15dp"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/okay_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="100dp"
+            android:text="@string/select"
+            android:textColor="@color/COLOR_BUTTON"
+            android:textSize="@dimen/sp14"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/cancel_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="100dp"
+            android:layout_toRightOf="@id/okay_text"
+            android:text="@string/cancel"
+            android:textStyle="bold"
+            android:textColor="#FF0000"
+            android:textSize="@dimen/sp14" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
