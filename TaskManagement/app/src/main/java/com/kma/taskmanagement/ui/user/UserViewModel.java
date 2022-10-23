@@ -12,6 +12,7 @@ import com.kma.taskmanagement.data.model.RegisterRequest;
 import com.kma.taskmanagement.data.model.RegisterResponse;
 import com.kma.taskmanagement.data.model.Token;
 import com.kma.taskmanagement.data.model.User;
+import com.kma.taskmanagement.data.remote.request.ChangePassRequest;
 import com.kma.taskmanagement.data.repository.UserRepository;
 import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
 import com.kma.taskmanagement.listener.HandleResponse;
@@ -34,6 +35,7 @@ public class UserViewModel extends ViewModel {
     MutableLiveData<Token> mLoginResultMutableData = new MutableLiveData<>();
     MutableLiveData<User> mUpdateResultMutableData = new MutableLiveData<>();
     MutableLiveData<String> mRegisterResultMutableData = new MutableLiveData<>();
+    MutableLiveData<Integer> mCPResultMutableData = new MutableLiveData<>();
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     public UserViewModel(UserRepository userRepository) {
@@ -150,6 +152,29 @@ public class UserViewModel extends ViewModel {
 //                });
     }
 
+    public void changePass(String token, ChangePassRequest changePassRequest) {
+        mCPResultMutableData.postValue(0);
+        userRepository.changepass(token, changePassRequest)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        mCPResultMutableData.postValue(1);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mCPResultMutableData.postValue(-1);
+                    }
+                });
+    }
+
     public LiveData<Token> getResult(){
         return mLoginResultMutableData;
     }
@@ -164,6 +189,10 @@ public class UserViewModel extends ViewModel {
 
     public LiveData<String> getProgress(){
         return mProgressMutableData;
+    }
+
+    public LiveData<Integer> getChangePass(){
+        return mCPResultMutableData;
     }
 
 

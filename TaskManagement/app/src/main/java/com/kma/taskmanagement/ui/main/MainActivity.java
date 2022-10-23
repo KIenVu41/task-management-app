@@ -26,6 +26,7 @@ import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
 import com.kma.taskmanagement.ui.intro.IntroActivity;
 import com.kma.taskmanagement.ui.main.fragments.ChartFragment;
 import com.kma.taskmanagement.ui.main.fragments.GroupTaskFragment;
+import com.kma.taskmanagement.ui.main.fragments.ManageGroupTaskFragment;
 import com.kma.taskmanagement.ui.main.fragments.PersonTaskFragment;
 import com.kma.taskmanagement.ui.main.fragments.SettingFragment;
 import com.kma.taskmanagement.utils.Constants;
@@ -128,7 +129,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                     case 1:{
                         color1 = R.color.orange;
-                        fragmentClass = GroupTaskFragment.class;
+                        //fragmentClass = GroupTaskFragment.class;
+                        fragmentClass = ManageGroupTaskFragment.class;
                         break;
                     }
                     case 2:{

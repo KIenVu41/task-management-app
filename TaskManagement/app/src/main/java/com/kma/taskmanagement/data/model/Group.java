@@ -63,7 +63,7 @@ public class Group {
                 ", member_name=" + member.toString() +
                 ", name='" + name + '\'' +
                 ", code='" + code + '\'' +
-                ", leader_nam='" + leader_name + '\'' +
+                ", leader_name='" + leader_name + '\'' +
                 '}';
     }
 

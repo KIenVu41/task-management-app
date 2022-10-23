@@ -93,7 +93,6 @@ public class PersonTaskFragment extends Fragment {
     CustomSpinner dropdown, spinnerPrio, spinnerStatus;
     LinearLayout llAnimation;
     List<Task> taskList = new ArrayList<>();
-    public static int count = 0;
     CustomAdapter customAdapter;
     Dialog filterDialog;
     TextView okay_text, cancel_text;

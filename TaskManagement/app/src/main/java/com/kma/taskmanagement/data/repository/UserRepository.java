@@ -4,12 +4,14 @@ import com.kma.taskmanagement.data.model.LoginRequest;
 import com.kma.taskmanagement.data.model.RegisterRequest;
 import com.kma.taskmanagement.data.model.Token;
 import com.kma.taskmanagement.data.model.User;
+import com.kma.taskmanagement.data.remote.request.ChangePassRequest;
 import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
 import com.kma.taskmanagement.listener.HandleResponse;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import retrofit2.http.Body;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 
@@ -22,4 +24,6 @@ public interface UserRepository {
     Observable<User> getInfo(String token, long userId);
 
     void singin(LoginRequest loginRequest, HandleResponse handleResponse);
+
+    Completable changepass(String authHeader, ChangePassRequest changePassRequest);
 }

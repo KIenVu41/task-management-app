@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.broadcastReceiver.AlarmBroadcastReceiver;
@@ -61,6 +62,11 @@ public class GroupTaskFragment extends Fragment {
 
     public GroupTaskFragment() {
         // Required empty public constructor
+    }
+
+    public static GroupTaskFragment newInstance() {
+        GroupTaskFragment fragment = new GroupTaskFragment();
+        return fragment;
     }
 
     @Override
@@ -131,7 +137,10 @@ public class GroupTaskFragment extends Fragment {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
                 final int position = viewHolder.getAbsoluteAdapterPosition();
                 final Group group = groupAdapter.getCurrentList().get(position);
-
+                if(!group.getLeader_name().equals(GlobalInfor.username)) {
+                    Toast.makeText(getActivity(), "Bạn không phải leader", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 groupViewModel.delete(Constants.BEARER + token, group.getId());
             }
         };

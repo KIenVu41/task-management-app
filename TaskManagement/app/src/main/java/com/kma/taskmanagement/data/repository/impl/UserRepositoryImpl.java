@@ -7,6 +7,7 @@ import com.kma.taskmanagement.data.model.Token;
 import com.kma.taskmanagement.data.model.User;
 import com.kma.taskmanagement.data.remote.RetrofitInstance;
 import com.kma.taskmanagement.data.remote.UserService;
+import com.kma.taskmanagement.data.remote.request.ChangePassRequest;
 import com.kma.taskmanagement.data.repository.UserRepository;
 import com.kma.taskmanagement.listener.HandleResponse;
 
@@ -73,5 +74,10 @@ public class UserRepositoryImpl implements UserRepository {
                 handleResponse.onFailure(t);
             }
         });
+    }
+
+    @Override
+    public Completable changepass(String authHeader, ChangePassRequest changePassRequest) {
+        return userService.changepass(authHeader, changePassRequest);
     }
 }

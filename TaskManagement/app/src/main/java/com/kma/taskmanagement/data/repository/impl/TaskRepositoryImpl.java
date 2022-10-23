@@ -65,6 +65,26 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
+    public Observable<List<Task>> getAssign(String authHeader) {
+        return taskService.getAssign(authHeader);
+    }
+
+    @Override
+    public Observable<List<Task>> getAssignByPrio(String authHeader, String priorityType) {
+        return taskService.getAssignByPrio(authHeader, priorityType);
+    }
+
+    @Override
+    public Observable<List<Task>> getAssignByStatus(String authHeader, String statusType) {
+        return taskService.getAssignByStatus(authHeader, statusType);
+    }
+
+    @Override
+    public Observable<List<Task>> getAssignByPrioAndStatus(String authHeader, String priorityType, String statusType) {
+        return taskService.getAssignByPrioAndStatus(authHeader, priorityType, statusType);
+    }
+
+    @Override
     public Completable updateTask(String token, long id, Task task) {
         return taskService.updateTask(token, id, task);
     }

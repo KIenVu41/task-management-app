@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/dp16">
+
+    <EditText
+        android:id="@+id/edtOld"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:hint="Mật khẩu cũ"
+        android:inputType="textPassword"
+        android:drawableRight="@drawable/ic_baseline_lock_24"/>
+
+    <EditText
+        android:id="@+id/edtNew"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edtOld"
+        android:layout_alignParentStart="true"
+        android:hint="Mật khẩu mới"
+        android:inputType="textPassword"
+        android:drawableRight="@drawable/ic_baseline_lock_24"/>
+
+    <EditText
+        android:id="@+id/edtRe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edtNew"
+        android:layout_alignParentStart="true"
+        android:hint="Nhập lại"
+        android:inputType="textPassword"
+        android:drawableRight="@drawable/ic_baseline_lock_24"/>
+
+</RelativeLayout>

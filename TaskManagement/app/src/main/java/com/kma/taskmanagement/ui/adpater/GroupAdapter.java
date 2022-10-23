@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.ui.main.fragments.CreateTaskBottomSheetFragment;
 import com.kma.taskmanagement.ui.main.fragments.GroupTaskBottomSheetFragment;
+import com.kma.taskmanagement.utils.GlobalInfor;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -71,6 +73,11 @@ public class GroupAdapter extends ListAdapter<Group, GroupAdapter.GroupHolder> {
         }
 
        public void showPopUpMenu(View view, Group group) {
+            if(!group.getLeader_name().equals(GlobalInfor.username)) {
+
+                Toast.makeText(context, "Bạn không phải leader", Toast.LENGTH_SHORT).show();
+                return;
+            }
            PopupMenu popupMenu = new PopupMenu(context, view);
            popupMenu.getMenuInflater().inflate(R.menu.group_menu, popupMenu.getMenu());
            popupMenu.setOnMenuItemClickListener(item -> {

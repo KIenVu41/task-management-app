@@ -18,8 +18,10 @@ import android.widget.TextView;
 
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.User;
+import com.kma.taskmanagement.data.remote.request.ChangePassRequest;
 import com.kma.taskmanagement.data.repository.UserRepository;
 import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
+import com.kma.taskmanagement.ui.dialog.ChangePassDialog;
 import com.kma.taskmanagement.ui.dialog.UpdateInfoDialog;
 import com.kma.taskmanagement.ui.user.LoginActivity;
 import com.kma.taskmanagement.ui.user.UserViewModel;
@@ -32,7 +34,7 @@ import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 public class SettingFragment extends Fragment {
 
     TextView tvInDate, tv3Day, tv7Day, tvUsername, tvSex, tvPhone, tvEmail, tvEdit;
-    Button btnLogout;
+    Button btnLogout, btnChangepass;
     private UserViewModel userViewModel;
     private UserRepository userRepository = new UserRepositoryImpl();
 
@@ -72,6 +74,7 @@ public class SettingFragment extends Fragment {
          tvPhone = v.findViewById(R.id.tvPhone);
          tvEmail = v.findViewById(R.id.tvEmail);
          tvEdit = v.findViewById(R.id.tvEdit);
+         btnChangepass = v.findViewById(R.id.changepass);
          btnLogout = v.findViewById(R.id.btnLogout);
     }
 
@@ -109,6 +112,11 @@ public class SettingFragment extends Fragment {
             UpdateInfoDialog updateDialog = new UpdateInfoDialog();
             updateDialog.show(getChildFragmentManager(), "update info dialog");
         });
+        btnChangepass.setOnClickListener(view -> {
+                    ChangePassDialog changePassDialog = new ChangePassDialog();
+                    changePassDialog.show(getChildFragmentManager(), "change pass dialog");
+        }
+        );
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

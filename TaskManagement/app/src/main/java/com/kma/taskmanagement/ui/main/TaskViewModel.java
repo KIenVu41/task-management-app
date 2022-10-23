@@ -275,6 +275,118 @@ public class TaskViewModel extends ViewModel {
                 });
     }
 
+    public void getAssign(String token) {
+        mResponseMutableData.postValue("Đang xử lý...");
+        taskRepository.getAssign(token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Task>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Task> tasks) {
+                        mResultMutableData.setValue(tasks);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mResponseMutableData.postValue("Lỗi " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        mResponseMutableData.postValue("Hoàn thành");
+                    }
+                });
+    }
+
+    public void getAssignByPrio(String token, String priorityType) {
+        mResponseMutableData.postValue("Đang xử lý...");
+        taskRepository.getAssignByPrio(token, priorityType)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Task>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Task> tasks) {
+                        mResultMutableData.setValue(tasks);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mResponseMutableData.postValue("Lỗi " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        mResponseMutableData.postValue("Hoàn thành");
+                    }
+                });
+    }
+
+    public void getAssignByStatus(String token, String statusType) {
+        mResponseMutableData.postValue("Đang xử lý...");
+        taskRepository.getAssignByStatus(token, statusType)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Task>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Task> tasks) {
+                        mResultMutableData.setValue(tasks);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mResponseMutableData.postValue("Lỗi " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        mResponseMutableData.postValue("Hoàn thành");
+                    }
+                });
+    }
+
+    public void getAssignByPrioAndStatus(String token, String priorityType, String statusType) {
+        mResponseMutableData.postValue("Đang xử lý...");
+        taskRepository.getAssignByPrioAndStatus(token, priorityType, statusType)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Task>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Task> tasks) {
+                        mResultMutableData.setValue(tasks);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mResponseMutableData.postValue("Lỗi " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        mResponseMutableData.postValue("Hoàn thành");
+                    }
+                });
+    }
+
     public void update(String token, long id, Task task) {
         mResponseMutableData.postValue("Đang xử lý...");
         compositeDisposable.add(

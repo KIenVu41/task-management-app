@@ -38,6 +38,11 @@
     <string name="congrats_you_have_completed_the_task_successfully">Chúc mừng! Bạn đã hoàn thành công việc</string>
     <string name="notcreate">Bạn chưa tạo công việc!!</string>
     <string name="notcreategroup">Bạn chưa tạo nhóm!!</string>
+    <string name="notcreateassign">Bạn chưa giao việc!!</string>
+    <string name="notcreateassignmytask">Bạn không có việc nhóm!!</string>
+    <string name="grouptitle">Danh sách nhóm</string>
+    <string name="assigntitle">Danh sách công việc tôi giao</string>
+    <string name="mytasktitle">Danh sách công việc nhóm</string>
     <string-array name="taskstatusarr">
         <item>TODO</item>
         <item>DOING</item>
@@ -81,7 +86,7 @@
     <string name="setting">Cấu hình</string>
     <string name="changepass">Đôi mật khẩu</string>
     <string name="logout">Đăng xuất</string>
-<!--    Dialog-->
+    <!--    Dialog-->
     <string name="select">Chọn</string>
     <string name="cancel">Hủy</string>
 </resources>

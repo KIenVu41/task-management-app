@@ -30,6 +30,14 @@ public interface TaskRepository {
 
     Observable<List<Task>> getAllTasksByStatusAndPrio(String authHeader, String priorityType, String statusType);
 
+    Observable<List<Task>> getAssign(String authHeader);
+
+    Observable<List<Task>> getAssignByPrio(String authHeader, String priorityType);
+
+    Observable<List<Task>> getAssignByStatus(String authHeader, String statusType);
+
+    Observable<List<Task>> getAssignByPrioAndStatus(String authHeader, String priorityType, String statusType);
+
     Completable updateTask(String token, long id, Task task);
 
     Completable deleteTask(String token, long id);
