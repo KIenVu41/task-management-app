@@ -2,6 +2,7 @@ package com.kma.taskmanagement.ui.adpater;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.listener.HandleClickListener;
 import com.kma.taskmanagement.ui.main.fragments.CreateTaskBottomSheetFragment;
 import com.kma.taskmanagement.ui.main.fragments.GroupTaskBottomSheetFragment;
+import com.kma.taskmanagement.utils.GlobalInfor;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -61,6 +63,8 @@ public class AssignedAdapter extends RecyclerView.Adapter<AssignedAdapter.Assign
         holder.title.setText(task.getName());
         holder.description.setText(task.getDescription());
         holder.status.setText(task.getStatus());
+        holder.tvGroup.setText("Nhóm: " + task.getGroup_output_dto().getId());
+        holder.tvPerfomer.setText("Người thực hiện: " + task.getPerformer_name());
         holder.options.setOnClickListener(view -> showPopUpMenu(view, position));
         try {
             date = inputDateFormat.parse(task.getEnd_date());
@@ -93,8 +97,15 @@ public class AssignedAdapter extends RecyclerView.Adapter<AssignedAdapter.Assign
 //                            .setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel()).show();
 //                    break;
                 case R.id.menuUpdate:
-                    CreateTaskBottomSheetFragment createTaskBottomSheetFragment = new CreateTaskBottomSheetFragment();
-                    createTaskBottomSheetFragment.setTaskAction(true, cateId, task);
+                    GroupTaskBottomSheetFragment createTaskBottomSheetFragment = new GroupTaskBottomSheetFragment();
+                    for(Group group: GlobalInfor.groups) {
+                        if(group.getId() == task.getGroup_output_dto().getId()) {
+                            createTaskBottomSheetFragment.setAction(group);
+                            break;
+                        }
+                    }
+                    //createTaskBottomSheetFragment.setAction(task.getGroup_output_dto());
+                    createTaskBottomSheetFragment.setEdit(true, true, task);
                     createTaskBottomSheetFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), createTaskBottomSheetFragment.getTag());
                     break;
                 case R.id.menuComplete:
@@ -158,9 +169,13 @@ public class AssignedAdapter extends RecyclerView.Adapter<AssignedAdapter.Assign
         TextView description;
         @BindView(R.id.assignstatus)
         TextView status;
+        @BindView(R.id.assignGroup)
+        TextView tvGroup;
+        @BindView(R.id.assignPerfomer)
+        TextView tvPerfomer;
 //        @BindView(R.id.spinnerStatus)
 //        Spinner spinnerStatus;
-        @BindView(R.id.options)
+        @BindView(R.id.assignoptions)
         ImageView options;
         @BindView(R.id.assigntime)
         TextView time;

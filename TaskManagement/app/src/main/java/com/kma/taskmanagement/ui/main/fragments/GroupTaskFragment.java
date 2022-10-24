@@ -99,6 +99,7 @@ public class GroupTaskFragment extends Fragment {
             public void onChanged(List<Group> groups) {
                 Log.d("TAG", groups.toString());
                 if(groups.size() != 0) {
+                    GlobalInfor.groups = groups;
                     Log.d("TAG", groups.toString());
                     llAnimation.setVisibility(View.GONE);
                     groupTaskRecycler.setVisibility(View.VISIBLE);

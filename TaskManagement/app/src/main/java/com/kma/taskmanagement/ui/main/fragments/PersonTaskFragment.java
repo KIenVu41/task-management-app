@@ -129,7 +129,7 @@ public class PersonTaskFragment extends Fragment {
         taskViewModel = new ViewModelProvider(requireActivity(), new TaskViewModelFactory(taskRepository)).get(TaskViewModel.class);
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
         categoryViewModel.getAllCategories(Constants.BEARER + token);
-        taskViewModel.getAllTasks(Constants.BEARER + token);
+        //taskViewModel.getAllTasks(Constants.BEARER + token);
         return inflater.inflate(R.layout.fragment_person_task, container, false);
     }
 

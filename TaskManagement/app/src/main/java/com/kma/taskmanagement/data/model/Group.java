@@ -60,7 +60,6 @@ public class Group {
     public String toString() {
         return "Group{" +
                 "id=" + id +
-                ", member_name=" + member.toString() +
                 ", name='" + name + '\'' +
                 ", code='" + code + '\'' +
                 ", leader_name='" + leader_name + '\'' +

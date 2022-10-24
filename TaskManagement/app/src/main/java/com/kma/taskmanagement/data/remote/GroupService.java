@@ -28,6 +28,8 @@ public interface GroupService {
     @GET("api/v1/groups")
     Observable<List<Group>> getGroups(@Header("Authorization") String authHeader);
 
+    @GET("api/v1/groups/{id}")
+    Observable<Group> getGroupDetail(@Header("Authorization") String authHeader, @Path("id") long groupId);
 
     @PUT("api/v1/groups/join")
     Completable join(@Header("Authorization") String authHeader, @Body InviteRequest inviteRequest);

@@ -5,7 +5,7 @@ import java.util.List;
 public class Task {
     private long id;
     private String assigner_name;
-    private long category_id;
+    private Long category_id;
     private String code;
     private String description;
     private String end_date;
@@ -16,12 +16,12 @@ public class Task {
     private String start_date;
     private String status;
     private List<SubTask> sub_tasks = null;
-    private List<Group> group_output_dto;
+    private Group group_output_dto;
 
     public Task() {
     }
 
-    public Task(String assigner_name, long category_id, String code, String description, String end_date, Long group_id, String name, String performer_name, String priority, String start_date, String status, List<SubTask> sub_tasks) {
+    public Task(String assigner_name, Long category_id, String code, String description, String end_date, Long group_id, String name, String performer_name, String priority, String start_date, String status, List<SubTask> sub_tasks) {
         this.assigner_name = assigner_name;
         this.category_id = category_id;
         this.code = code;
@@ -140,11 +140,31 @@ public class Task {
         this.sub_tasks = sub_tasks;
     }
 
-    public List<Group> getGroup_output_dto() {
+    public Group getGroup_output_dto() {
         return group_output_dto;
     }
 
-    public void setGroup_output_dto(List<Group> group_output_dto) {
+    public void setGroup_output_dto(Group group_output_dto) {
         this.group_output_dto = group_output_dto;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", assigner_name='" + assigner_name + '\'' +
+                ", category_id=" + category_id +
+                ", code='" + code + '\'' +
+                ", description='" + description + '\'' +
+                ", end_date='" + end_date + '\'' +
+                ", group_id=" + group_id +
+                ", name='" + name + '\'' +
+                ", performer_name='" + performer_name + '\'' +
+                ", priority='" + priority + '\'' +
+                ", start_date='" + start_date + '\'' +
+                ", status='" + status + '\'' +
+                ", sub_tasks=" + sub_tasks +
+                ", group_output_dto=" + group_output_dto +
+                '}';
     }
 }

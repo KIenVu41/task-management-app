@@ -90,7 +90,6 @@ public class AssignedTaskFragment extends Fragment {
         // Inflate the layout for this fragment
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
         taskViewModel = new ViewModelProvider(requireActivity(), new TaskViewModelFactory(taskRepository)).get(TaskViewModel.class);
-        taskViewModel.getAssign(Constants.BEARER + token);
         return inflater.inflate(R.layout.fragment_assigned_task, container, false);
     }
 
@@ -98,6 +97,7 @@ public class AssignedTaskFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        taskViewModel.getAssign(Constants.BEARER + token);
         initView(view);
         setOnClick();
         setAdapter();
@@ -111,10 +111,10 @@ public class AssignedTaskFragment extends Fragment {
                 }
             }
         });
-        taskViewModel.getResult().observe(getActivity(), new Observer<List<Task>>() {
+        taskViewModel.getAssignResult().observe(getActivity(), new Observer<List<Task>>() {
             @Override
             public void onChanged(List<Task> tasks) {
-                if(tasks.size() != 0 && tasks != null) {
+                if(tasks.size() != 0) {
                     llAnimation.setVisibility(View.GONE);
                     assignTaskRecycler.setVisibility(View.VISIBLE);
                     taskList = tasks;

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -26,9 +27,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.model.Task;
+import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.TaskRepository;
+import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
 import com.kma.taskmanagement.data.repository.impl.TaskRepositoryImpl;
 import com.kma.taskmanagement.ui.common.CustomSpinner;
+import com.kma.taskmanagement.ui.main.GroupViewModel;
+import com.kma.taskmanagement.ui.main.GroupViewModelFactory;
 import com.kma.taskmanagement.ui.main.TaskViewModel;
 import com.kma.taskmanagement.ui.main.TaskViewModelFactory;
 import com.kma.taskmanagement.utils.Constants;
@@ -63,13 +68,11 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
     EditText taskTime;
     @BindView(R.id.spinnerPrio)
     CustomSpinner dropdownPrio;
-    @BindView(R.id.spinnerStatus)
-    CustomSpinner dropdownStatus;
     @BindView(R.id.spinnerAssign)
     CustomSpinner dropdownAssign;
     @BindView(R.id.addTask)
     Button addTask;
-    boolean isEdit;
+    boolean isEdit = false, isAssign = false;
     Task task;
     int mYear, mMonth, mDay;
     int mHour, mMinute;
@@ -79,6 +82,7 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
     private Group group = new Group();
     private String token = "";
     private TaskRepository taskRepository = new TaskRepositoryImpl();
+
 
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
@@ -98,6 +102,12 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
         this.group = group;
     }
 
+    public void setEdit(boolean isEdit, boolean isAssign, Task task) {
+        this.isEdit = isEdit;
+        this.isAssign = isAssign;
+        this.task = task;
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint({"RestrictedApi", "ClickableViewAccessibility"})
     @Override
@@ -107,10 +117,11 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
         unbinder = ButterKnife.bind(this, contentView);
 
         dialog.setContentView(contentView);
-        setupSpinner();
 
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
         taskViewModel = new ViewModelProvider(requireActivity(), new TaskViewModelFactory(taskRepository)).get(TaskViewModel.class);
+
+        setupSpinner();
 
         addTask.setOnClickListener(view -> {
             if(validateFields())
@@ -163,32 +174,6 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
         adapterAssign.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         dropdownAssign.setAdapter(adapterAssign);
 
-        ArrayAdapter adapterStatus = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, getActivity().getResources().getStringArray(R.array.taskstatusarr));
-        adapterStatus.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
-        if(!isEdit) {
-            dropdownStatus.setEnabled(false);
-            dropdownStatus.setClickable(false);
-        } else {
-            dropdownStatus.setEnabled(true);
-            dropdownStatus.setClickable(true);
-            if(task.getPriority().equals("low")) {
-                dropdownPrio.setSelection(0);
-            } else if(task.getPriority().equals("medium")) {
-                dropdownPrio.setSelection(1);
-            } else if(task.getPriority().equals("high")) {
-                dropdownPrio.setSelection(2);
-            }
-
-            if(task.getStatus().equals("todo")) {
-                dropdownPrio.setSelection(0);
-            } else if(task.getPriority().equals("doing")) {
-                dropdownPrio.setSelection(1);
-            } else if(task.getPriority().equals("completed")) {
-                dropdownPrio.setSelection(2);
-            }
-
-        }
-        dropdownStatus.setAdapter(adapterStatus);
     }
 
     public boolean validateFields() {
@@ -220,7 +205,7 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
         String endDate = taskDate.getText().toString();
         String endTime = taskTime.getText().toString();
         String prio = dropdownPrio.getSelectedItem().toString();
-        String status = dropdownStatus.getSelectedItem().toString();
+        String status = "TODO";
         String performer = dropdownAssign.getSelectedItem().toString();
         //yyyy-MM-dd-HH-mm-ss.zzz
         String[] items1 = endDate.split("-");
@@ -244,9 +229,15 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
         String endDateFormat =  DateUtils.convert(ddEnd, monthEnd, yearEnd) + "T" + DateUtils.convertTime(hourEnd, minEnd) + ":00.000Z";
 
         if(isEdit) {
-            taskViewModel.update(Constants.BEARER + token, task.getId(), new Task("", 1, "", desc, endDateFormat, group.getId(), title, GlobalInfor.username, prio,  startDateFormat, status, null));
+            taskViewModel.update(Constants.BEARER + token, task.getId(), new Task(GlobalInfor.username, null, "", desc, endDateFormat, group.getId(), title, GlobalInfor.username, prio,  startDateFormat, status, null));
+            new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                taskViewModel.getAssign(Constants.BEARER + token);
+            }
+        },500);
         } else {
-            taskViewModel.addTask(Constants.BEARER + token, new Task(GlobalInfor.username, 1, "", desc, endDateFormat, group.getId(), title, performer, prio,  startDateFormat, status, null));
+            taskViewModel.addTask(Constants.BEARER + token, new Task(GlobalInfor.username, 1L, "", desc, endDateFormat, group.getId(), title, performer, prio,  startDateFormat, status, null));
         }
 
 //        new Handler().postDelayed(new Runnable() {

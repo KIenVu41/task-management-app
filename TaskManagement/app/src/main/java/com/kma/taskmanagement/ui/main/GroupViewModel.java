@@ -27,6 +27,7 @@ public class GroupViewModel extends ViewModel {
 
     private MutableLiveData<String> mResponseMutableData = new MutableLiveData<>();
     private MutableLiveData<List<Group>> mResultMutableData = new MutableLiveData<>();
+    private MutableLiveData<Group> mSingleResultMutableData = new MutableLiveData<>();
     private MutableLiveData<List<InviteRequest>> mInviteMutableData = new MutableLiveData<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -80,6 +81,14 @@ public class GroupViewModel extends ViewModel {
                         .subscribe(list -> mResultMutableData.setValue(list), t ->  mResponseMutableData.postValue("Lỗi " + t.getMessage())));
     }
 
+    public void getGroupDetail(String token, long id) {
+        mResponseMutableData.postValue("Đang xử lý...");
+        compositeDisposable.add(groupRepository.getGroupDetail(token, id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(gr -> mSingleResultMutableData.setValue(gr), t ->  mResponseMutableData.postValue("Lỗi " + t.getMessage())));
+    }
+
     public void join(String token, InviteRequest ir) {
         mResponseMutableData.postValue("Đang xử lý...");
         compositeDisposable.add(
@@ -108,6 +117,10 @@ public class GroupViewModel extends ViewModel {
 
     public LiveData<List<Group>> getGroupResponse(){
         return mResultMutableData;
+    }
+
+    public LiveData<Group> getGroupSingleResponse(){
+        return mSingleResultMutableData;
     }
 
     @Override

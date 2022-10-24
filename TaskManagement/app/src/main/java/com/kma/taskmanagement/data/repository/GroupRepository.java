@@ -21,5 +21,7 @@ public interface GroupRepository {
 
     Observable<List<Group>> getGroups(String authHeader);
 
+    Observable<Group> getGroupDetail(String authHeader, long id);
+
     Completable delete(String authHeader, long groupId);
 }

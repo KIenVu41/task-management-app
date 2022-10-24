@@ -84,6 +84,7 @@ public class GroupAdapter extends ListAdapter<Group, GroupAdapter.GroupHolder> {
                switch (item.getItemId()) {
                    case R.id.menuAssign:
                        GroupTaskBottomSheetFragment createTaskBottomSheetFragment = new GroupTaskBottomSheetFragment();
+                       createTaskBottomSheetFragment.setEdit(false, true, null);
                        createTaskBottomSheetFragment.setAction(group);
                        createTaskBottomSheetFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), createTaskBottomSheetFragment.getTag());
                        break;

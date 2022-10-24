@@ -42,6 +42,11 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
+    public Observable<Group> getGroupDetail(String authHeader, long id) {
+        return groupService.getGroupDetail(authHeader, id);
+    }
+
+    @Override
     public Completable delete(String authHeader, long groupId) {
         return groupService.delete(authHeader, groupId);
     }

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Task;
+import com.kma.taskmanagement.listener.HandleClickListener;
 import com.kma.taskmanagement.ui.main.fragments.CreateTaskBottomSheetFragment;
 
 import java.text.SimpleDateFormat;
@@ -35,16 +36,18 @@ public class MyTaskAdapter extends RecyclerView.Adapter< MyTaskAdapter.MyTaskVie
     public SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     Date date = null;
     String outputDateString = null;
+    private HandleClickListener handleClickListener;
 
-    public MyTaskAdapter(Context context, List<Task> taskList) {
+    public MyTaskAdapter(Context context, List<Task> taskList, HandleClickListener handleClickListener) {
         this.context = context;
         this.taskList = taskList;
-        }
+        this.handleClickListener = handleClickListener;
+    }
 
     @NonNull
     @Override
     public MyTaskViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_task, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_my_task, viewGroup, false);
         return new MyTaskViewHolder(view);
     }
 
@@ -53,19 +56,20 @@ public class MyTaskAdapter extends RecyclerView.Adapter< MyTaskAdapter.MyTaskVie
         Task task = taskList.get(position);
         holder.title.setText(task.getName());
         holder.description.setText(task.getDescription());
+        //holder.tvGroup.setText("Nhóm: " + task.getGroup_output_dto().getName());
+        holder.tvAssign.setText("Người giao: " + task.getAssigner_name());
         //holder.status.setText(task.getStatus());
-        holder.options.setOnClickListener(view -> showPopUpMenu(view, position));
         if(task.getStatus().equals("TODO")) {
-        holder.spinnerStatus.setSelection(0, true);
+            holder.spinnerStatus.setSelection(0, true);
         } else if(task.getStatus().equals("DOING")) {
-        holder.spinnerStatus.setSelection(1, true);
+            holder.spinnerStatus.setSelection(1, true);
         } else if(task.getStatus().equals("COMPLETED")) {
-        holder.spinnerStatus.setSelection(2, true);
+            holder.spinnerStatus.setSelection(2, true);
         }
         holder.spinnerStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
+            handleClickListener.onTaskClick(task, adapterView.getSelectedItem().toString());
         }
 
         @Override
@@ -90,32 +94,6 @@ public class MyTaskAdapter extends RecyclerView.Adapter< MyTaskAdapter.MyTaskVie
         }
     }
 
-    public void showPopUpMenu(View view, int position) {
-        final Task task = taskList.get(position);
-        PopupMenu popupMenu = new PopupMenu(context, view);
-        popupMenu.getMenuInflater().inflate(R.menu.menu, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(item -> {
-        switch (item.getItemId()) {
-//                case R.id.menuDelete:
-//                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-//                    alertDialogBuilder.setTitle(R.string.delete_confirmation).setMessage(R.string.sureToDelete).
-//                            setPositiveButton(R.string.yes, (dialog, which) -> {
-//                            })
-//                            .setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel()).show();
-//                    break;
-            case R.id.menuUpdate:
-            break;
-            case R.id.menuComplete:
-                AlertDialog.Builder completeAlertDialog = new AlertDialog.Builder(context);
-                completeAlertDialog.setTitle(R.string.confirmation).setMessage(R.string.sureToMarkAsComplete).
-                setPositiveButton(R.string.yes, (dialog, which) -> {})
-                .setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel()).show();
-            break;
-        }
-        return false;
-        });
-        popupMenu.show();
-    }
 
     public void setList(List<Task> taskList) {
         this.taskList.clear();
@@ -150,23 +128,23 @@ public class MyTaskAdapter extends RecyclerView.Adapter< MyTaskAdapter.MyTaskVie
         }
 
     public class MyTaskViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.day)
+        @BindView(R.id.mtday)
         TextView day;
-        @BindView(R.id.date)
+        @BindView(R.id.mtdate)
         TextView date;
-        @BindView(R.id.month)
+        @BindView(R.id.mtmonth)
         TextView month;
-        @BindView(R.id.title)
+        @BindView(R.id.mttitle)
         TextView title;
-        @BindView(R.id.description)
+        @BindView(R.id.mtdescription)
         TextView description;
-    //        @BindView(R.id.status)
-//        TextView status;
-        @BindView(R.id.spinnerStatus)
+        @BindView(R.id.mtassignGroup)
+        TextView tvGroup;
+        @BindView(R.id.mtassign)
+        TextView tvAssign;
+        @BindView(R.id.spinnermtStatus)
         Spinner spinnerStatus;
-        @BindView(R.id.options)
-        ImageView options;
-        @BindView(R.id.time)
+        @BindView(R.id.mttime)
         TextView time;
 
     MyTaskViewHolder(@NonNull View view) {

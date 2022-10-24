@@ -26,7 +26,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/assignday"
+                android:id="@+id/mtday"
                 android:text="Tue"
                 android:layout_gravity="center"
                 android:textSize="18sp"
@@ -36,7 +36,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/assigndate"
+                android:id="@+id/mtdate"
                 android:text="18"
                 android:layout_gravity="center"
                 android:textSize="24sp"
@@ -45,7 +45,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/assignmonth"
+                android:id="@+id/mtmonth"
                 android:layout_gravity="center"
                 android:text="Nov"
                 android:textSize="18sp"
@@ -62,7 +62,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="0.2"
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
@@ -80,14 +80,8 @@
                     android:singleLine="true"
                     android:textSize="20sp"
                     android:layout_weight="1"
-                    android:id="@+id/assigntitle"
+                    android:id="@+id/mttitle"
                     android:textColor="@android:color/black"/>
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:id="@+id/assignoptions"
-                    android:background="@drawable/more"/>
 
             </LinearLayout>
 
@@ -97,7 +91,7 @@
                 tools:text="Full House is the Grand prize in any Tambola game played. It means all 15 Numbers of a ticket are cut, striked out"
                 android:singleLine="true"
                 android:alpha="0.5"
-                android:id="@+id/assigndescription"
+                android:id="@+id/mtdescription"
                 android:textSize="14sp"
                 android:textColor="@android:color/black"/>
 
@@ -107,7 +101,7 @@
                 tools:text=""
                 android:singleLine="true"
                 android:alpha="0.5"
-                android:id="@+id/assigntime"
+                android:id="@+id/mttime"
                 android:textSize="12sp"
                 android:textColor="@android:color/black"/>
 
@@ -117,7 +111,7 @@
                 tools:text=""
                 android:singleLine="true"
                 android:alpha="0.5"
-                android:id="@+id/assignGroup"
+                android:id="@+id/mtassignGroup"
                 android:textSize="12sp"
                 android:textColor="@android:color/black"/>
 
@@ -127,23 +121,22 @@
                 tools:text=""
                 android:singleLine="true"
                 android:alpha="0.5"
-                android:id="@+id/assignPerfomer"
+                android:id="@+id/mtassign"
                 android:textSize="12sp"
                 android:textColor="@android:color/black"/>
 
-            <TextView
+            <com.kma.taskmanagement.ui.common.CustomSpinner
+                android:id="@+id/spinnermtStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:text="COMPLETED"
-                android:textSize="12sp"
-                android:id="@+id/assignstatus"
+                android:background="@android:color/transparent"
                 android:layout_gravity="right"
-                android:layout_marginTop="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp" />
+                android:gravity="right"
+                android:layout_marginTop="@dimen/dp10"
+                android:textSize="@dimen/sp8"
+                android:popupBackground="@drawable/blue_outline_white_background"
+                android:overlapAnchor="false"
+                android:spinnerMode="dropdown" />
 
         </LinearLayout>
 
