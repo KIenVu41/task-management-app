@@ -237,7 +237,7 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
             }
         },500);
         } else {
-            taskViewModel.addTask(Constants.BEARER + token, new Task(GlobalInfor.username, 1L, "", desc, endDateFormat, group.getId(), title, performer, prio,  startDateFormat, status, null));
+            taskViewModel.addTask(Constants.BEARER + token, new Task(GlobalInfor.username, null, "", desc, endDateFormat, group.getId(), title, performer, prio,  startDateFormat, status, null));
         }
 
 //        new Handler().postDelayed(new Runnable() {

@@ -78,6 +78,28 @@ public class CategoryViewModel extends ViewModel {
                 });
     }
 
+    public void deleteCategory(String token, long id) {
+        mResponseMutableData.postValue("Đang xử lý...");
+        categoryRepository.deleteCategory(token, id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+                    @Override
+                    public void onComplete() {
+                        mResponseMutableData.postValue("Hoàn thành");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mResponseMutableData.postValue("Lỗi " + e.getMessage());
+                    }
+                });
+    }
+
     public void getAllCategories(String token) {
         mResponseMutableData.postValue("Đang xử lý...");
         Observable<List<Category>> observable = categoryRepository.getAllCategories(token)

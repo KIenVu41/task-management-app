@@ -267,11 +267,49 @@ public class PersonTaskFragment extends Fragment {
             }
 
         });
+        dropdown.setLongClickable(true);
+        dropdown.setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View v) {
+                // TODO Auto-generated method stub
+                showConfirm();
+                return true;
+            }}
+        );
         calendar.setOnClickListener(view -> {
 //            showCalendarViewBottomSheet = new ShowCalendarViewBottomSheet();
 //            showCalendarViewBottomSheet.setList(taskList);
             showCalendarViewBottomSheet.show(getChildFragmentManager(), showCalendarViewBottomSheet.getTag());
         });
+    }
+
+    public void showConfirm() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setMessage("Xóa danh mục?")
+                .setTitle("Xác nhận");
+
+        builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+               categoryViewModel.deleteCategory(Constants.BEARER + token, cateId);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        categoryViewModel.getAllCategories(Constants.BEARER + token);
+                    }
+                },1000);
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void showAlertDialogButtonClicked(String action, long id, String name, boolean isEdit)
@@ -400,6 +438,12 @@ public class PersonTaskFragment extends Fragment {
         });
 
         filterDialog.show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        cateId = customAdapter.getItem(dropdown.getSelectedItemPosition()).getId();
     }
 
     @Override

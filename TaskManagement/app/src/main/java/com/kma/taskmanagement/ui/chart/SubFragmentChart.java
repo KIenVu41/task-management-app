@@ -71,21 +71,21 @@ public class SubFragmentChart extends Fragment {
                 .title("Thống kê công việc cá nhân")
                 .subtitle("Năm 2022")
                 .dataLabelsEnabled(true)//是否直接显示扇形图数据
-                .series(configurePieSeries());
-//                .yAxisTitle("℃")
-//                .series(new AASeriesElement[]{
-//                        new AASeriesElement()
-//                                .name("Số công việc")
-//                                .size("40%")//尺寸大小
-//                                .innerSize("30%")//内部圆环半径大小占比
-//                                .borderWidth(0f)//描边的宽度
-//                                .allowPointSelect(false)//是否允许在点击数据点标记(扇形图点击选中的块发生位移)
-//                                .data(new Object[][]{
-//                                {"Todo", 33},
-//                                {"Doing", 20},
-//                                {"Complete", 50},
-//                        })
-//                });
+              //  .series(configurePieSeries());
+                .yAxisTitle("℃")
+                .series(new AASeriesElement[]{
+                        new AASeriesElement()
+                                .name("Số công việc")
+                                .size("40%")//尺寸大小
+                                .innerSize("30%")//内部圆环半径大小占比
+                                .borderWidth(0f)//描边的宽度
+                                .allowPointSelect(false)//是否允许在点击数据点标记(扇形图点击选中的块发生位移)
+                                .data(new Object[][]{
+                                {"Todo", 33},
+                                {"Doing", 20},
+                                {"Complete", 50},
+                        })
+                });
             aaChartView.aa_drawChartWithChartModel(aaChartModel);
     }
 

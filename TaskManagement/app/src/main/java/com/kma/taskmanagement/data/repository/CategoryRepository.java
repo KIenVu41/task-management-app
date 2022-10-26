@@ -9,6 +9,7 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.http.Header;
+import retrofit2.http.Path;
 
 public interface CategoryRepository {
     Completable addCategory(String token, Category category);
@@ -16,4 +17,6 @@ public interface CategoryRepository {
     Completable updateCategory(String token, long id, Category category);
 
     Observable<List<Category>> getAllCategories(String token);
+
+    Completable deleteCategory(String authHeader, long cateId);
 }

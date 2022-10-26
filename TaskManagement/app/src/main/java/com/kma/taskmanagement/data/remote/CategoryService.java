@@ -9,6 +9,7 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -27,5 +28,8 @@ public interface CategoryService {
 
     @GET("api/v1/categories")
     Observable<List<Category>> getAllCategories(@Header("Authorization") String authHeader);
+
+    @DELETE("api/v1/categories/{id}")
+    Completable deleteCategory(@Header("Authorization") String authHeader, @Path("id") long cateId);
 }
 

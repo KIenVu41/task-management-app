@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="48dp"
-        android:text="Already Have an Account?"
+        android:text="Đăng nhập"
         android:textColor="@android:color/white"
         android:textSize="30sp"
         android:textStyle="bold"

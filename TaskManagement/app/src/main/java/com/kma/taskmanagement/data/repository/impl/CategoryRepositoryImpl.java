@@ -31,4 +31,9 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     public Observable<List<Category>> getAllCategories(String token) {
         return categoryService.getAllCategories(token);
     }
+
+    @Override
+    public Completable deleteCategory(String authHeader, long cateId) {
+        return categoryService.deleteCategory(authHeader, cateId);
+    }
 }
