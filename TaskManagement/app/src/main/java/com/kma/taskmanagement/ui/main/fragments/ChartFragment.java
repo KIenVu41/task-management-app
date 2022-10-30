@@ -5,9 +5,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +18,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.data.model.Chart;
+import com.kma.taskmanagement.data.repository.TaskRepository;
+import com.kma.taskmanagement.data.repository.impl.TaskRepositoryImpl;
 import com.kma.taskmanagement.ui.adpater.FragmentChartAdapter;
+import com.kma.taskmanagement.ui.main.TaskViewModel;
+import com.kma.taskmanagement.ui.main.TaskViewModelFactory;
+import com.kma.taskmanagement.utils.Constants;
+import com.kma.taskmanagement.utils.GlobalInfor;
+import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ChartFragment extends Fragment {
 
@@ -26,6 +41,10 @@ public class ChartFragment extends Fragment {
     ImageView ivBack, ivNext;
     TextView tvIndex;
     int index = -1;
+    private TaskViewModel taskViewModel;
+    private TaskRepository taskRepository = new TaskRepositoryImpl();
+    private String token = "";
+    List<Chart> chartList = new ArrayList<>();
 
     public ChartFragment() {
         // Required empty public constructor
@@ -41,12 +60,24 @@ public class ChartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+//        token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
+//        taskViewModel = new ViewModelProvider(requireActivity(), new TaskViewModelFactory(taskRepository)).get(TaskViewModel.class);
+//        taskViewModel.getPersonalChart(Constants.BEARER + token);
         return inflater.inflate(R.layout.fragment_chart, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+//        taskViewModel.getChartResult().observe(requireActivity(), new Observer<Chart>() {
+//            @Override
+//            public void onChanged(Chart chart) {
+//                if(chart != null) {
+//                    chartList.add(chart);
+//                }
+//            }
+//        });
 
         initView(view);
         setOnClick();
@@ -59,7 +90,8 @@ public class ChartFragment extends Fragment {
         tvIndex = view.findViewById(R.id.chart_index);
         ivBack = view.findViewById(R.id.ivBack);
         ivNext = view.findViewById(R.id.ivNext);
-        fragmentChartAdapter = new FragmentChartAdapter(getChildFragmentManager(), 2);
+        fragmentChartAdapter = new FragmentChartAdapter(getChildFragmentManager(), 2, Arrays.asList(getActivity().getResources().getString(R.string.chart_personal_title),
+                getActivity().getResources().getString(R.string.chart_group_title)), chartList);
         viewpager.setAdapter(fragmentChartAdapter);
         springDotsIndicator.attachTo(viewpager);
         viewpager.setCurrentItem(0);

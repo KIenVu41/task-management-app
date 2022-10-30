@@ -58,6 +58,30 @@ public class GroupViewModel extends ViewModel {
                 });
     }
 
+    public void updateGroup(String token, long id, GroupRequest groupRequest) {
+        mResponseMutableData.postValue("Đang xử lý...");
+        groupRepository.updateGroup(token, id, groupRequest)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        mResponseMutableData.postValue("Hoàn thành");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mResponseMutableData.postValue("Lỗi " + e.getMessage());
+                    }
+                });
+    }
+
+
     public void getInvites(String token) {
         mResponseMutableData.postValue("Đang xử lý...");
         compositeDisposable.add(

@@ -230,16 +230,16 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
 
         if(isEdit) {
             taskViewModel.update(Constants.BEARER + token, task.getId(), new Task(GlobalInfor.username, null, "", desc, endDateFormat, group.getId(), title, GlobalInfor.username, prio,  startDateFormat, status, null));
-            new Handler().postDelayed(new Runnable() {
+        } else {
+            taskViewModel.addTask(Constants.BEARER + token, new Task(GlobalInfor.username, null, "", desc, endDateFormat, group.getId(), title, performer, prio,  startDateFormat, status, null));
+        }
+
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 taskViewModel.getAssign(Constants.BEARER + token);
             }
         },500);
-        } else {
-            taskViewModel.addTask(Constants.BEARER + token, new Task(GlobalInfor.username, null, "", desc, endDateFormat, group.getId(), title, performer, prio,  startDateFormat, status, null));
-        }
-
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {

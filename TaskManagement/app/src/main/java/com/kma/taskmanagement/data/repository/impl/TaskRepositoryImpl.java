@@ -1,5 +1,6 @@
 package com.kma.taskmanagement.data.repository.impl;
 
+import com.kma.taskmanagement.data.model.Chart;
 import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.data.remote.RetrofitInstance;
 import com.kma.taskmanagement.data.remote.TaskService;
@@ -82,6 +83,16 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public Observable<List<Task>> getAssignByPrioAndStatus(String authHeader, String priorityType, String statusType) {
         return taskService.getAssignByPrioAndStatus(authHeader, priorityType, statusType);
+    }
+
+    @Override
+    public Observable<Chart> getGroupCount(String authHeader) {
+        return taskService.getGroupCount(authHeader);
+    }
+
+    @Override
+    public Observable<Chart> getPersonalCount(String authHeader) {
+        return taskService.getPersonalCount(authHeader);
     }
 
     @Override

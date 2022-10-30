@@ -440,11 +440,11 @@ public class PersonTaskFragment extends Fragment {
         filterDialog.show();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        cateId = customAdapter.getItem(dropdown.getSelectedItemPosition()).getId();
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        cateId = customAdapter.getItem(dropdown.getSelectedItemPosition()).getId();
+//    }
 
     @Override
     public void onPause() {

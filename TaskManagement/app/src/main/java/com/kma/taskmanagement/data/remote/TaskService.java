@@ -1,5 +1,6 @@
 package com.kma.taskmanagement.data.remote;
 
+import com.kma.taskmanagement.data.model.Chart;
 import com.kma.taskmanagement.data.model.Task;
 
 import java.util.List;
@@ -57,9 +58,16 @@ public interface TaskService {
     @GET("api/v1/tasks/assigntask")
     Observable<List<Task>> getAssignByPrioAndStatus(@Header("Authorization") String authHeader,  @Query("priorityType") String priorityType, @Query("statusType") String statusType);
 
+    @GET("api/v1/tasks/group/count")
+    Observable<Chart> getGroupCount(@Header("Authorization") String authHeader);
+
+    @GET("api/v1/tasks/personal/count")
+    Observable<Chart> getPersonalCount(@Header("Authorization") String authHeader);
+
     @PUT("api/v1/tasks/{id}")
     Completable updateTask(@Header("Authorization") String authHeader, @Path("id") long taskId,  @Body Task task);
 
     @DELETE("api/v1/tasks/{id}")
     Completable deleteTask(@Header("Authorization") String authHeader, @Path("id") long taskId);
+
 }

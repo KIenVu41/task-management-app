@@ -8,12 +8,15 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import retrofit2.http.Body;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 
 public interface GroupRepository {
 
     Completable addGroup(String token, GroupRequest groupRequest);
+
+    Completable updateGroup(String authHeader, long groupId, GroupRequest groupRequest);
 
     Completable join(String token, InviteRequest ir);
 

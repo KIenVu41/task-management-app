@@ -27,6 +27,11 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
     @Override
+    public Completable updateGroup(String authHeader, long groupId, GroupRequest groupRequest) {
+        return groupService.updateGroup(authHeader, groupId, groupRequest);
+    }
+
+    @Override
     public Completable join(String token, InviteRequest ir) {
         return groupService.join(token, ir);
     }

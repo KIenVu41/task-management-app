@@ -22,6 +22,9 @@ public interface GroupService {
     @POST("api/v1/groups")
     Completable addGroup(@Header("Authorization") String authHeader, @Body GroupRequest groupRequest);
 
+    @PUT("api/v1/groups/{id}")
+    Completable updateGroup(@Header("Authorization") String authHeader, @Path("id") long groupId, @Body GroupRequest groupRequest);
+
     @GET("api/v1/groups/invite")
     Observable<List<InviteRequest>> getInvites(@Header("Authorization") String authHeader);
 

@@ -4,15 +4,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.kma.taskmanagement.data.model.Category;
+import com.kma.taskmanagement.data.model.Chart;
 import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.data.repository.TaskRepository;
 
 import java.util.List;
 
 import io.reactivex.CompletableObserver;
+import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -24,6 +24,8 @@ public class TaskViewModel extends ViewModel {
     MutableLiveData<String> mResponseMutableData = new MutableLiveData<>();
     MutableLiveData<List<Task>> mResultMutableData = new MutableLiveData<>();
     MutableLiveData<List<Task>> mAssignResultMutableData = new MutableLiveData<>();
+    MutableLiveData<Chart> mChartResultMutableData = new MutableLiveData<>();
+    MutableLiveData<Chart> mChart2ResultMutableData = new MutableLiveData<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public TaskViewModel(TaskRepository taskRepository) {
@@ -388,6 +390,28 @@ public class TaskViewModel extends ViewModel {
                 });
     }
 
+    public void getGroupChart(String token) {
+        mResponseMutableData.postValue("Đang xử lý...");
+        compositeDisposable.add(
+                taskRepository.getGroupCount(token)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(chart -> mChart2ResultMutableData.setValue(chart), t -> mResponseMutableData.postValue("Lỗi " + t.getMessage())));
+    }
+
+    public void getPersonalChart(String token) {
+//        compositeDisposable.add(Observable.merge(
+//                taskRepository.getPersonalCount(token).subscribeOn(Schedulers.io()),
+//                taskRepository.getGroupCount(token).subscribeOn(Schedulers.io()))
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(chart -> mChartResultMutableData.setValue(chart), t -> mResponseMutableData.postValue("Lỗi " + t.getMessage())));
+        compositeDisposable.add(
+                taskRepository.getPersonalCount(token)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(chart -> mChartResultMutableData.setValue(chart), t -> mResponseMutableData.postValue("Lỗi " + t.getMessage())));
+    }
+
     public void update(String token, long id, Task task) {
         mResponseMutableData.postValue("Đang xử lý...");
         compositeDisposable.add(
@@ -430,5 +454,19 @@ public class TaskViewModel extends ViewModel {
 
     public LiveData<List<Task>> getAssignResult() {
         return mAssignResultMutableData;
+    }
+
+    public LiveData<Chart> getChartResult() {
+        return mChartResultMutableData;
+    }
+
+    public LiveData<Chart> getChart2Result() {
+        return mChart2ResultMutableData;
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        compositeDisposable.clear();
     }
 }

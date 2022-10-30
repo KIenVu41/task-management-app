@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.model.Task;
+import com.kma.taskmanagement.ui.dialog.AddGroupDialog;
+import com.kma.taskmanagement.ui.dialog.UpdateGroupDialog;
 import com.kma.taskmanagement.ui.main.fragments.CreateTaskBottomSheetFragment;
 import com.kma.taskmanagement.ui.main.fragments.GroupTaskBottomSheetFragment;
 import com.kma.taskmanagement.utils.GlobalInfor;
@@ -88,12 +90,10 @@ public class GroupAdapter extends ListAdapter<Group, GroupAdapter.GroupHolder> {
                        createTaskBottomSheetFragment.setAction(group);
                        createTaskBottomSheetFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), createTaskBottomSheetFragment.getTag());
                        break;
-                   case R.id.menuComplete:
-                       AlertDialog.Builder completeAlertDialog = new AlertDialog.Builder(context);
-                       completeAlertDialog.setTitle(R.string.confirmation).setMessage(R.string.sureToMarkAsComplete).
-                               setPositiveButton(R.string.yes, (dialog, which) -> {})
-                               .setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel()).show();
-                       break;
+                   case R.id.menuInvite:
+                       UpdateGroupDialog updateGroupDialog = new UpdateGroupDialog();
+                       updateGroupDialog.setId(group.getId());
+                       updateGroupDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "update group dialog");
                }
                return false;
            });

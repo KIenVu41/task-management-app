@@ -7,12 +7,8 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menuUpdate"
-        android:title="Update"
+        android:id="@+id/menuInvite"
+        android:title="Invite"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/menuComplete"
-        android:title="Complete"
-        app:showAsAction="ifRoom" />
 </menu>

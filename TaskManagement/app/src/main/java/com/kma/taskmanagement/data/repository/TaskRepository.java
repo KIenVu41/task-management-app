@@ -1,5 +1,6 @@
 package com.kma.taskmanagement.data.repository;
 
+import com.kma.taskmanagement.data.model.Chart;
 import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.listener.HandleResponse;
 
@@ -7,6 +8,7 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -37,6 +39,10 @@ public interface TaskRepository {
     Observable<List<Task>> getAssignByStatus(String authHeader, String statusType);
 
     Observable<List<Task>> getAssignByPrioAndStatus(String authHeader, String priorityType, String statusType);
+
+    Observable<Chart> getGroupCount(String authHeader);
+
+    Observable<Chart> getPersonalCount(String authHeader);
 
     Completable updateTask(String token, long id, Task task);
 
