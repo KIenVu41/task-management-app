@@ -90,4 +90,8 @@
     <!--    Dialog-->
     <string name="select">Chọn</string>
     <string name="cancel">Hủy</string>
+    <string name="otp_title">Xác thực OTP</string>
+    <string name="otp_sub_title">Chúng tôi đã gửi mã đến email:</string>
+    <string name="otp_resend">Gửi lại mã</string>
+    <string name="otp_verify">Xác thực</string>
 </resources>

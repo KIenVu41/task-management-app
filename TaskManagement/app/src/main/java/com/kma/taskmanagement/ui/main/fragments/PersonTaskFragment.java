@@ -331,8 +331,13 @@ public class PersonTaskFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which)
                 {
+                    String cate = editText.getText().toString().trim();
+                    if(cate.length() == 0) {
+                        Toast.makeText(getActivity(), "Chưa nhập danh mục", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     Category category = new Category();
-                    category.setName(editText.getText().toString());
+                    category.setName(cate);
                     if(!isEdit) {
                         categoryViewModel.addCategory(Constants.BEARER + token, category);
                     } else {

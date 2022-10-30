@@ -28,6 +28,7 @@ import com.kma.taskmanagement.ui.user.UserViewModelFactory;
 import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
+import com.kma.taskmanagement.utils.TextUtils;
 
 public class UpdateInfoDialog extends AppCompatDialogFragment {
     private EditText editTextEmail, editTextPhone;
@@ -78,6 +79,20 @@ public class UpdateInfoDialog extends AppCompatDialogFragment {
                         int selectedId = radioGroup.getCheckedRadioButtonId();
                         radioSexButton = (RadioButton) view.findViewById(selectedId);
                         String sex = radioSexButton.getText().toString();
+
+                        if(email.trim().length() == 0) {
+                            Toast.makeText(getActivity(), "Chưa nhập email", Toast.LENGTH_SHORT).show();
+                            return;
+                        } else if(phone.trim().length() == 0) {
+                            Toast.makeText(getActivity(), "Chưa nhập phone", Toast.LENGTH_SHORT).show();
+                            return;
+                        } else if(TextUtils.isValidEmail(email)) {
+                            Toast.makeText(getActivity(), "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+                            return;
+                        } else if(!phone.startsWith("0")) {
+                            Toast.makeText(getActivity(), "Số điện thoại không hợp lệ", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
 

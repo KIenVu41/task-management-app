@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.LoginRequest;
@@ -20,6 +21,7 @@ import com.kma.taskmanagement.data.model.Token;
 import com.kma.taskmanagement.data.model.User;
 import com.kma.taskmanagement.data.repository.UserRepository;
 import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
+import com.kma.taskmanagement.ui.dialog.OTPVerificationDialog;
 import com.kma.taskmanagement.ui.intro.IntroActivity;
 import com.kma.taskmanagement.ui.main.MainActivity;
 import com.kma.taskmanagement.ui.user.RegisterActivity;
@@ -45,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
     TextView gotoRegister;
     @BindView(R.id.btnLogin)
     Button btnLogin;
+    @BindView(R.id.forgotPassword)
+    TextView tvForgotPassword;
 //    @BindView(R.id.progressBar)
 //    ProgressBar progressBar;
     ProgressDialog progressDialog;
@@ -94,7 +98,15 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(view -> {
             String username = edtEmail.getText().toString();
             String pass = edtPass.getText().toString();
-            userViewModel.login(username, pass);
+            if(validateField(username, pass)) {
+                userViewModel.login(username, pass);
+            }
+        });
+
+        tvForgotPassword.setOnClickListener(view -> {
+            OTPVerificationDialog otpVerificationDialog = new OTPVerificationDialog(this);
+            otpVerificationDialog.setCancelable(true);
+            otpVerificationDialog.show();
         });
 
         gotoRegister.setOnClickListener(view -> {
@@ -111,5 +123,23 @@ public class LoginActivity extends AppCompatActivity {
         GlobalInfor.email = token.getEmail();
         GlobalInfor.phone = token.getPhone();
         GlobalInfor.url_image = token.getUrlImage();
+    }
+
+    private boolean validateField(String username, String password) {
+        if(username.trim().length() == 0) {
+            Toast.makeText(this, "Chưa nhập username", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(username.trim().length() < 6) {
+            Toast.makeText(this, "Username độ dài tối thiểu 6 ký tự", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(password.trim().length() == 0) {
+            Toast.makeText(this, "Chưa nhập mật khẩu", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(password.trim().length() < 8) {
+            Toast.makeText(this, "Độ dài mật khẩu tối thiểu 8 ký tự", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
     }
 }

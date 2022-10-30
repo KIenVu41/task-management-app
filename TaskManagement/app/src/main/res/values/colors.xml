@@ -18,7 +18,7 @@
 
     <!--colors for card-->
     <color name="whiteCardColor">#FFF</color>
-
+    <color name="otp_box">#0D132F7A</color>
     <!-- colors for button style -->
 
     <color name="gradient_start_color">#4c84ff</color>
@@ -38,7 +38,7 @@
     <color name="COLOR_BUTTON">#2680F6</color>
     <color name="WHITE_COLOR">#fff</color>
 
-<!--    infor-->
+    <!--    infor-->
     <color name="grey">#E9EAEE</color>
     <color name="yellow">#F8BA0F</color>
     <color name="goodgrey">#535353</color>

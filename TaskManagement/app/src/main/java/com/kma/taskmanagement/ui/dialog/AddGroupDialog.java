@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
@@ -68,6 +69,14 @@ public class AddGroupDialog extends AppCompatDialogFragment {
                         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
                         String name = editTextGName.getText().toString();
                         String member = editTextGCode.getText().toString();
+
+                        if(name.trim().length() == 0) {
+                            Toast.makeText(getActivity(), "Chưa nhập tên nhóm", Toast.LENGTH_SHORT).show();
+                            return;
+                        } else if(member.trim().length() == 0) {
+                            Toast.makeText(getActivity(), "Chưa nhập thành viên", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                         GroupRequest groupRequest = new GroupRequest();
                         groupRequest.setName(name);

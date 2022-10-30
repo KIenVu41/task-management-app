@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.LoginRequest;
@@ -30,6 +31,7 @@ import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
 import com.kma.taskmanagement.ui.main.MainActivity;
 import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
+import com.kma.taskmanagement.utils.TextUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -103,13 +105,43 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void register() {
         btnRegister.setOnClickListener(view -> {
-            progressDialog.show();
             String email = inputEmail.getText().toString();
             String phone = inputPhone.getText().toString();
             String username = inputUsername.getText().toString();
             String password = inputPassword.getText().toString();
-            userViewModel.singup(new RegisterRequest(email, 0, password, phone, "", username));
+            if(validateFields(email, phone, username, password)) {
+                progressDialog.show();
+                userViewModel.singup(new RegisterRequest(email, 0, password, phone, "", username));
+            }
         });
     }
 
+    private boolean validateFields(String email, String phone, String username, String password) {
+        if(username.trim().length() == 0) {
+            Toast.makeText(this, "Chưa nhập username", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(username.trim().length() < 6) {
+            Toast.makeText(this, "Username độ dài tối thiểu 6 ký tự", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(password.trim().length() == 0) {
+            Toast.makeText(this, "Chưa nhập mật khẩu", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(password.trim().length() < 8) {
+            Toast.makeText(this, "Độ dài mật khẩu tối thiểu 8 ký tự", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(email.trim().length() == 0) {
+            Toast.makeText(this, "Chưa nhập email", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(phone.trim().length() == 0) {
+            Toast.makeText(this, "Chưa nhập phone", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(TextUtils.isValidEmail(email)) {
+            Toast.makeText(this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(!phone.startsWith("0")) {
+            Toast.makeText(this, "Số điện thoại không hợp lệ", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
 }

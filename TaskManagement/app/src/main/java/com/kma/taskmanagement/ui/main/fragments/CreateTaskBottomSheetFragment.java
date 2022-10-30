@@ -206,19 +206,19 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
 
     public boolean validateFields() {
         if(addTaskTitle.getText().toString().equalsIgnoreCase("")) {
-            Toast.makeText(requireActivity(), "Please enter a valid title", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity(), "Hãy nhập tiêu đề", Toast.LENGTH_SHORT).show();
             return false;
         }
         else if(addTaskDescription.getText().toString().equalsIgnoreCase("")) {
-            Toast.makeText(requireActivity(), "Please enter a valid description", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity(), "Hãy nhập mô tả", Toast.LENGTH_SHORT).show();
             return false;
         }
         else if(taskDate.getText().toString().equalsIgnoreCase("")) {
-            Toast.makeText(requireActivity(), "Please enter date", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity(), "Hãy nhập ngày", Toast.LENGTH_SHORT).show();
             return false;
         }
         else if(taskTime.getText().toString().equalsIgnoreCase("")) {
-            Toast.makeText(requireActivity(), "Please enter time", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity(), "Hãy nhập thời gian", Toast.LENGTH_SHORT).show();
             return false;
         }
         else {
