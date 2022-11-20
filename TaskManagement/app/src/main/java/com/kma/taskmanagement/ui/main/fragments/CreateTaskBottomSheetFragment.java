@@ -2,6 +2,7 @@ package com.kma.taskmanagement.ui.main.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.Application;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.NotificationChannel;
@@ -50,6 +51,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.broadcastReceiver.AlarmBroadcastReceiver;
+import com.kma.taskmanagement.data.local.DatabaseHelper;
 import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.data.repository.TaskRepository;
 import com.kma.taskmanagement.data.repository.impl.TaskRepositoryImpl;
@@ -60,6 +62,7 @@ import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.DateUtils;
 import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
+import com.kma.taskmanagement.utils.Utils;
 
 public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
     Unbinder unbinder;
@@ -91,6 +94,7 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
     private String token = "";
     private TaskRepository taskRepository = new TaskRepositoryImpl();
     public static int count = 0;
+    private DatabaseHelper db;
 
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
@@ -169,7 +173,13 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
             }
             return true;
         });
+        db = new DatabaseHelper(requireActivity());
     }
+
+    private void saveTaskToLocalStorage(Task task, int status) {
+        db.addTask(task, status);
+    }
+
 
     public void setupSpinner() {
         ArrayAdapter adapterPrio = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, getActivity().getResources().getStringArray(R.array.taskprioarr));
@@ -255,21 +265,25 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
         String startDateFormat = now.format(format).replace(" ", "T") + "Z";
         String endDateFormat =  DateUtils.convert(ddEnd, monthEnd, yearEnd) + "T" + DateUtils.convertTime(hourEnd, minEnd) + ":00.000Z";
 
-        if(isEdit) {
-            cancleAlarm();
-            taskViewModel.update(Constants.BEARER + token, task.getId(), new Task("", cateId, "", desc, endDateFormat,null,  title, GlobalInfor.username, prio,  startDateFormat, status, null));
-        } else {
-            taskViewModel.addTask(Constants.BEARER + token, new Task("", cateId, "", desc, endDateFormat, null,  title, GlobalInfor.username, prio,  startDateFormat, status, null));
-        }
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                taskViewModel.getTasksByCategory(Constants.BEARER + token, cateId);
+        if(Utils.isNetworkConnected(requireActivity())) {
+            if(isEdit) {
+                cancleAlarm();
+                taskViewModel.update(Constants.BEARER + token, task.getId(), new Task("", cateId, "", desc, endDateFormat,null,  title, GlobalInfor.username, prio,  startDateFormat, status, null));
+            } else {
+                taskViewModel.addTask(Constants.BEARER + token, new Task("", cateId, "", desc, endDateFormat, null,  title, GlobalInfor.username, prio,  startDateFormat, status, null));
             }
-        },500);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            createAnAlarm(title, desc, endDate, endTime);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    taskViewModel.getTasksByCategory(Constants.BEARER + token, cateId);
+                }
+            },500);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                createAnAlarm(title, desc, endDate, endTime);
+            }
+        } else {
+            saveTaskToLocalStorage(new Task("", cateId, "", desc, endDateFormat, null,  title, GlobalInfor.username, prio,  startDateFormat, status, null), 0);
         }
     }
 

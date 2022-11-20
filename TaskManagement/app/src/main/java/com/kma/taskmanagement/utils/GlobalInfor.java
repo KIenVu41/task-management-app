@@ -13,4 +13,5 @@ public class GlobalInfor {
     public static String url_image = "";
     public static String username = "";
     public static List<Group> groups;
+    public static boolean IS_SEND = false;
 }

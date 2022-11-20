@@ -1,9 +1,11 @@
 package com.kma.taskmanagement.ui.dialog;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +39,7 @@ public class UpdateInfoDialog extends AppCompatDialogFragment {
     private UserViewModel userViewModel;
     private UserRepository userRepository = new UserRepositoryImpl();
     private String token = "";
+    private ProgressDialog progressDialog;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -52,11 +55,25 @@ public class UpdateInfoDialog extends AppCompatDialogFragment {
                 Log.d("TAG", s);
             }
         });
+        userViewModel.getProgress().observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                if(s.equals("Hoàn thành")) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
+                }
+                progressDialog.setMessage(s);
+                progressDialog.show();
+            }
+        });
         userViewModel.getUpdateResult().observe(getActivity(), new Observer<User>() {
             @Override
             public void onChanged(User user) {
                 if(user != null) {
-                    Log.d("TAG", "update " + user.toString());
                     GlobalInfor.sex = user.getSex();
                     GlobalInfor.email = user.getEmail();
                     GlobalInfor.phone = user.getPhone();
@@ -86,7 +103,7 @@ public class UpdateInfoDialog extends AppCompatDialogFragment {
                         } else if(phone.trim().length() == 0) {
                             Toast.makeText(getActivity(), "Chưa nhập phone", Toast.LENGTH_SHORT).show();
                             return;
-                        } else if(TextUtils.isValidEmail(email)) {
+                        } else if(!TextUtils.isValidEmail(email)) {
                             Toast.makeText(getActivity(), "Email không hợp lệ", Toast.LENGTH_SHORT).show();
                             return;
                         } else if(!phone.startsWith("0")) {
@@ -103,7 +120,9 @@ public class UpdateInfoDialog extends AppCompatDialogFragment {
         editTextPhone = view.findViewById(R.id.edit_phone);
         editTextEmail = view.findViewById(R.id.edit_email);
         radioGroup = view.findViewById(R.id.radioGroup);
-
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(true);
 
         return builder.create();
     }

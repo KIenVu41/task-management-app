@@ -5,11 +5,15 @@ import static android.content.Context.ALARM_SERVICE;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,7 +48,9 @@ import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.TaskApplication;
 import com.kma.taskmanagement.broadcastReceiver.AlarmBroadcastReceiver;
+import com.kma.taskmanagement.data.local.DatabaseHelper;
 import com.kma.taskmanagement.data.model.Category;
 import com.kma.taskmanagement.data.model.SubTask;
 import com.kma.taskmanagement.data.model.Task;
@@ -103,6 +109,10 @@ public class PersonTaskFragment extends Fragment {
     private TaskViewModel taskViewModel;
     private CategoryRepository categoryRepository = new CategoryRepositoryImpl();
     private TaskRepository taskRepository = new TaskRepositoryImpl();
+    private ProgressDialog progressDialog;
+    //Broadcast receiver to know the sync status
+    private BroadcastReceiver broadcastReceiver;
+    private DatabaseHelper db;
     List<Category> categories = new ArrayList<>();
     String[] prios = new String[]{"", "LOWEST", "MEDIUM", "HIGH"};
     String[] statuss = new String[]{"", "TODO", "DOING", "COMPLETED"};
@@ -129,6 +139,7 @@ public class PersonTaskFragment extends Fragment {
         taskViewModel = new ViewModelProvider(requireActivity(), new TaskViewModelFactory(taskRepository)).get(TaskViewModel.class);
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
         categoryViewModel.getAllCategories(Constants.BEARER + token);
+        db = new DatabaseHelper(requireActivity());
         //taskViewModel.getAllTasks(Constants.BEARER + token);
         return inflater.inflate(R.layout.fragment_person_task, container, false);
     }
@@ -143,9 +154,16 @@ public class PersonTaskFragment extends Fragment {
         categoryViewModel.getResponse().observe(getActivity(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
-                if (s != null) {
-                    Log.d("TAG", s);
+                if(s.equals("Hoàn thành")) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
                 }
+                progressDialog.setMessage(s);
+                progressDialog.show();
             }
         });
         categoryViewModel.getResult().observe(getActivity(), new Observer<List<Category>>() {
@@ -153,7 +171,6 @@ public class PersonTaskFragment extends Fragment {
             public void onChanged(List<Category> categories) {
                 if (categories.size() == 0) {
                 } else {
-                    Log.d("TAG", categories.toString());
                     //int index = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getIntFromSharedPreferences(Constants.CATE_INDEX + GlobalInfor.username);
                     customAdapter.setList(categories);
                     //dropdown.setSelection(index);
@@ -163,15 +180,22 @@ public class PersonTaskFragment extends Fragment {
         taskViewModel.getResponse().observe(getActivity(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
-                if (s != null) {
-                    Log.d("TAG", s);
+                if(s.equals("Hoàn thành")) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
                 }
+                progressDialog.setMessage(s);
+                progressDialog.show();
             }
         });
         taskViewModel.getResult().observe(getActivity(), new Observer<List<Task>>() {
             @Override
             public void onChanged(List<Task> tasks) {
-                if(tasks.size() != 0 && tasks != null) {
+                if(tasks.size() != 0) {
                     llAnimation.setVisibility(View.GONE);
                     taskRecycler.setVisibility(View.VISIBLE);
                     taskList = tasks;
@@ -183,6 +207,15 @@ public class PersonTaskFragment extends Fragment {
                 }
             }
         });
+        taskViewModel.getSyncResult().observe(getActivity(), new Observer<Task>() {
+            @Override
+            public void onChanged(Task task) {
+                if(task != null) {
+                    db.updateTaskStatus(task.getName(), 1);
+                }
+            }
+        });
+
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         ComponentName receiver = new ComponentName(getActivity(), AlarmBroadcastReceiver.class);
         PackageManager pm = getActivity().getPackageManager();
@@ -190,6 +223,7 @@ public class PersonTaskFragment extends Fragment {
 
         addTask.setOnClickListener(view1 -> {
             if(customAdapter.getCount() == 0) {
+                Toast.makeText(TaskApplication.getAppContext(), "Chưa tạo danh mục", Toast.LENGTH_SHORT).show();
                 return;
             }
             CreateTaskBottomSheetFragment createTaskBottomSheetFragment = new CreateTaskBottomSheetFragment();
@@ -198,6 +232,28 @@ public class PersonTaskFragment extends Fragment {
         });
 
         enableSwipeToDelete();
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Cursor cursor = db.getUnsyncedTasks();
+                if (cursor.moveToFirst()) {
+                    do {
+                        long cateId =  cursor.getInt(10);
+                        String desc = cursor.getString(3);
+                        String endDateFormat = cursor.getString(4);
+                        String title = cursor.getString(5);
+                        String prio = cursor.getString(7);
+                        String startDateFormat = cursor.getString(8);
+                        String status = cursor.getString(9);
+                        taskViewModel.addTask(Constants.BEARER + token, new Task("", cateId, "", desc, endDateFormat, null,  title, GlobalInfor.username, prio,  startDateFormat, status, null));
+                    } while (cursor.moveToNext());
+                }
+                GlobalInfor.IS_SEND = true;
+            }
+        };
+
+        //registering the broadcast receiver to update sync status
+        getActivity().registerReceiver(broadcastReceiver, new IntentFilter(Constants.DATA_SAVED_BROADCAST));
     }
 
     public void initView(View view) {
@@ -213,6 +269,9 @@ public class PersonTaskFragment extends Fragment {
         dropdown = view.findViewById(R.id.spinner1);
         llAnimation = view.findViewById(R.id.llAnimation);
         showCalendarViewBottomSheet = new ShowCalendarViewBottomSheet();
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(true);
         dropdown.setSpinnerEventsListener(new CustomSpinner.OnSpinnerEventsListener() {
             @Override
             public void onPopupWindowOpened(Spinner spinner) {
@@ -380,21 +439,62 @@ public class PersonTaskFragment extends Fragment {
                     final int position = viewHolder.getAdapterPosition();
                     final Task task = taskAdapter.taskList.get(position);
 
-                    taskViewModel.deleteTask(Constants.BEARER + token, task.getId());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                    Intent intent  = new Intent(getActivity(), AlarmBroadcastReceiver.class);
-                    intent.setAction(task.getName());
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
-                    if(pendingIntent != null) {
-                        alarmManager.cancel(pendingIntent);
-                    }
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            taskViewModel.getAllTasks(Constants.BEARER + token);
+                    builder.setMessage("Xóa công việc?")
+                            .setTitle("Xác nhận");
+
+                    builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            taskViewModel.deleteTask(Constants.BEARER + token, task.getId());
+
+                            Intent intent  = new Intent(getActivity(), AlarmBroadcastReceiver.class);
+                            intent.setAction(task.getName());
+                            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
+                            if(pendingIntent != null) {
+                                alarmManager.cancel(pendingIntent);
+                            }
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    long id = customAdapter.getItem(dropdown.getSelectedItemPosition()).getId();
+                                    taskViewModel.getTasksByCategory(Constants.BEARER + token, id);
+                                }
+                            },500);
                         }
-                    },500);
+                    });
+                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    long id = customAdapter.getItem(dropdown.getSelectedItemPosition()).getId();
+                                    taskViewModel.getTasksByCategory(Constants.BEARER + token, id);                                }
+                            },500);
+                        }
+                    });
+
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+//                    taskViewModel.deleteTask(Constants.BEARER + token, task.getId());
+//
+//                    Intent intent  = new Intent(getActivity(), AlarmBroadcastReceiver.class);
+//                    intent.setAction(task.getName());
+//                    PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//                    AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
+//                    if(pendingIntent != null) {
+//                        alarmManager.cancel(pendingIntent);
+//                    }
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            taskViewModel.getAllTasks(Constants.BEARER + token);
+//                        }
+//                    },500);
                 }
             };
 
@@ -455,5 +555,11 @@ public class PersonTaskFragment extends Fragment {
     public void onPause() {
         super.onPause();
         //dropdown.onDetachedFromWindow();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        requireActivity().unregisterReceiver(broadcastReceiver);
     }
 }

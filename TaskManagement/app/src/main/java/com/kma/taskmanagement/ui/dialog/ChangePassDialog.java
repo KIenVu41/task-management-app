@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.TaskApplication;
 import com.kma.taskmanagement.data.model.User;
 import com.kma.taskmanagement.data.remote.request.ChangePassRequest;
 import com.kma.taskmanagement.data.repository.UserRepository;
@@ -47,10 +48,10 @@ public class ChangePassDialog extends AppCompatDialogFragment {
             public void onChanged(Integer integer) {
                 switch (integer) {
                     case 1:
-                        Toast.makeText(getActivity(), "Thành công", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TaskApplication.getAppContext(), "Thành công", Toast.LENGTH_SHORT).show();
                         break;
                     case  -1:
-                        Toast.makeText(getActivity(), "Lỗi xảy ra!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TaskApplication.getAppContext(), "Lỗi xảy ra!", Toast.LENGTH_SHORT).show();
                         break;
                 }
             }

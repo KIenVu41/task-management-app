@@ -65,20 +65,20 @@ public class RetrofitInstance {
      */
     private static final String HTTP_CACHE_DIR = "kma_tasks_cache";
 
-    public static Retrofit getRetrofitInstance() {
+    public static synchronized Retrofit getRetrofitInstance() {
         if(retrofit == null) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             Cache myCache = getHttpCache();
             OkHttpClient client = new OkHttpClient.Builder()
-                    //.addInterceptor(interceptor)
-                    .addInterceptor(rewriteRequestInterceptor)
+                    .addInterceptor(interceptor)
+                    //.addInterceptor(rewriteRequestInterceptor)
                     .connectTimeout(1, TimeUnit.MINUTES)
                     .readTimeout(30, TimeUnit.SECONDS)
                     .writeTimeout(15, TimeUnit.SECONDS)
-                    .cache(myCache)
-                    .addNetworkInterceptor(REWRITE_RESPONSE_CACHE_CONTROL_INTERCEPTOR)
+                    //.cache(myCache)
+                    //.addNetworkInterceptor(REWRITE_RESPONSE_CACHE_CONTROL_INTERCEPTOR)
                     .build();
 
             retrofit = new Retrofit.Builder()

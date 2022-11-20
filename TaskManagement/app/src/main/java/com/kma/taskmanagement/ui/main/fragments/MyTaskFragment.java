@@ -1,10 +1,13 @@
 package com.kma.taskmanagement.ui.main.fragments;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -51,6 +54,7 @@ public class MyTaskFragment extends Fragment {
     private RecyclerView myTaskRecycler;
     private MyTaskAdapter myTaskAdapter;
     private TaskViewModel taskViewModel;
+    private ProgressDialog progressDialog;
     private TaskRepository taskRepository = new TaskRepositoryImpl();
     private String token = "";
     Dialog filterDialog;
@@ -98,9 +102,16 @@ public class MyTaskFragment extends Fragment {
         taskViewModel.getResponse().observe(getActivity(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
-                if (s != null) {
-                    Log.d("TAG", s);
+                if(s.equals("Hoàn thành")) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
                 }
+                progressDialog.setMessage(s);
+                progressDialog.show();
             }
         });
         taskViewModel.getResult().observe(getActivity(), new Observer<List<Task>>() {
@@ -124,6 +135,9 @@ public class MyTaskFragment extends Fragment {
         myTaskRecycler = view.findViewById(R.id.myTaskTaskRecycler);
         ivFilter = view.findViewById(R.id.ivMyTaskFilter);
         filterDialog = new Dialog(getActivity());
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(true);
     }
 
     private void setOnClick() {
@@ -198,14 +212,31 @@ public class MyTaskFragment extends Fragment {
                 final int position = viewHolder.getAdapterPosition();
                 final Task task = myTaskAdapter.taskList.get(position);
 
-                taskViewModel.deleteTask(Constants.BEARER + token, task.getId());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                builder.setMessage("Xóa việc?")
+                        .setTitle("Xác nhận");
+
+                builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        taskViewModel.deleteTask(Constants.BEARER + token, task.getId());
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                taskViewModel.getAllTasks(Constants.BEARER + token);
+                            }
+                        },1000);
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         taskViewModel.getAllTasks(Constants.BEARER + token);
                     }
-                },500);
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         };
 

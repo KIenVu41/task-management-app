@@ -42,7 +42,7 @@
         android:textColor="@android:color/black"
         android:id="@+id/timeAndData"/>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/closeButton"
@@ -51,7 +51,7 @@
         android:layout_marginRight="30dp"
         android:layout_marginTop="50dp"
         android:background="@drawable/btn_background"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/white"
         android:text="Close"
         android:textAllCaps="false"/>
 

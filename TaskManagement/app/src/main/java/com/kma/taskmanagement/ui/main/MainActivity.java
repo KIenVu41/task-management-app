@@ -9,9 +9,14 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,9 +25,14 @@ import android.widget.Button;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.broadcastReceiver.NetworkChangeReceiver;
+import com.kma.taskmanagement.data.local.DatabaseHelper;
+import com.kma.taskmanagement.data.model.Task;
+import com.kma.taskmanagement.data.remote.StringeeInstance;
 import com.kma.taskmanagement.data.remote.request.InviteRequest;
 import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
+import com.kma.taskmanagement.listener.NetworkReceiverCallback;
 import com.kma.taskmanagement.ui.intro.IntroActivity;
 import com.kma.taskmanagement.ui.main.fragments.ChartFragment;
 import com.kma.taskmanagement.ui.main.fragments.GroupTaskFragment;
@@ -33,9 +43,24 @@ import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.DateUtils;
 import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
+import com.kma.taskmanagement.utils.Utils;
 import com.shrikanthravi.customnavigationdrawer2.data.MenuItem;
 import com.shrikanthravi.customnavigationdrawer2.widget.SNavigationDrawer;
+import com.stringee.StringeeClient;
+import com.stringee.call.StringeeCall;
+import com.stringee.call.StringeeCall2;
+import com.stringee.exception.StringeeError;
+import com.stringee.listener.StringeeConnectionListener;
+import com.stringee.messaging.Conversation;
+import com.stringee.messaging.ConversationOptions;
+import com.stringee.messaging.Message;
+import com.stringee.messaging.User;
+import com.stringee.messaging.listeners.CallbackListener;
 
+import org.json.JSONObject;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -48,6 +73,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import tech.gusavila92.websocketclient.WebSocketClient;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,11 +85,22 @@ public class MainActivity extends AppCompatActivity {
     private GroupViewModel groupViewModel;
     private GroupRepository groupRepository = new GroupRepositoryImpl();
     private String token = "";
-
-    SNavigationDrawer sNavigationDrawer;
+    private BroadcastReceiver mNetworkReceiver;
+    private SNavigationDrawer sNavigationDrawer;
+    private DatabaseHelper db;
+    private BroadcastReceiver broadcastReceiver;
+    private BroadcastReceiver noNWBroadcastReceiver;
+    private WebSocketClient webSocketClient;
     int color1=0;
     Class fragmentClass;
     public static Fragment fragment;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //mNetworkReceiver = new NetworkChangeReceiver();
+        //registerNetworkBroadcastForNougat();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,19 +142,24 @@ public class MainActivity extends AppCompatActivity {
             fragmentManager.beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).replace(R.id.frameLayout, fragment).commit();
         }
 
-//        groupViewModel =  new ViewModelProvider(this, new GroupViewModelFactory(groupRepository)).get(GroupViewModel.class);
-//        token = SharedPreferencesUtil.getInstance(getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
-//        groupViewModel.getInvites(Constants.BEARER + token);
-//        groupViewModel.getInviteResponse().observeForever(new Observer<List<InviteRequest>>() {
-//            @Override
-//            public void onChanged(List<InviteRequest> inviteRequests) {
-//                if (inviteRequests != null && inviteRequests.size() != 0) {
-//                    for(InviteRequest ir: inviteRequests) {
-//                        openDialog(ir);
-//                    }
-//                }
-//            }
-//        });
+        groupViewModel =  new ViewModelProvider(this, new GroupViewModelFactory(groupRepository)).get(GroupViewModel.class);
+        token = SharedPreferencesUtil.getInstance(getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
+
+        try {
+            groupViewModel.getInvites(Constants.BEARER + token);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        groupViewModel.getInviteResponse().observeForever(new Observer<List<InviteRequest>>() {
+            @Override
+            public void onChanged(List<InviteRequest> inviteRequests) {
+                if (inviteRequests.size() != 0) {
+                    for(InviteRequest ir: inviteRequests) {
+                        openDialog(ir);
+                    }
+                }
+            }
+        });
         sNavigationDrawer.setOnMenuItemClickListener(new SNavigationDrawer.OnMenuItemClickListener() {
             @Override
             public void onMenuItemClicked(int position) {
@@ -158,8 +200,6 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onDrawerClosing(){
-                        System.out.println("Drawer closed");
-
                         try {
                             fragment = (Fragment) fragmentClass.newInstance();
                         } catch (Exception e) {
@@ -185,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-
     }
 
     private void openDialog(InviteRequest ir) {
@@ -217,5 +256,98 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         alertDialog2.show();
+
+        createWebSocketClient();
+    }
+
+    private void createWebSocketClient() {
+        URI uri;
+        try {
+            // Connect to local host
+            uri = new URI("ws://10.0.2.2:8080/websocket");
+        }
+        catch (URISyntaxException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        webSocketClient = new WebSocketClient(uri) {
+            @Override
+            public void onOpen() {
+                Log.i("WebSocket", "Session is starting");
+                webSocketClient.send("Hello World!");
+            }
+
+            @Override
+            public void onTextReceived(String s) {
+                Log.i("WebSocket", "Message received");
+                final String message = s;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onBinaryReceived(byte[] data) {
+            }
+
+            @Override
+            public void onPingReceived(byte[] data) {
+            }
+
+            @Override
+            public void onPongReceived(byte[] data) {
+            }
+
+            @Override
+            public void onException(Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public void onCloseReceived() {
+                Log.i("WebSocket", "Closed ");
+                System.out.println("onCloseReceived");
+            }
+        };
+
+        webSocketClient.setConnectTimeout(10000);
+        webSocketClient.setReadTimeout(60000);
+        webSocketClient.enableAutomaticReconnection(5000);
+        webSocketClient.connect();
+    }
+
+    private void registerNetworkBroadcastForNougat() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+//        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+//        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //unregisterReceiver(mNetworkReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+       // unregisterReceiver(mNetworkReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //registerNetworkBroadcastForNougat();
     }
 }

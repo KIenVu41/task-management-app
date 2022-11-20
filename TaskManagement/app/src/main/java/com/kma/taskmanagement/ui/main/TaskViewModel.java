@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.kma.taskmanagement.data.model.Chart;
 import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.data.repository.TaskRepository;
+import com.kma.taskmanagement.listener.SyncTaskListener;
 
 import java.util.List;
 
@@ -23,10 +24,12 @@ public class TaskViewModel extends ViewModel {
     private TaskRepository taskRepository;
     MutableLiveData<String> mResponseMutableData = new MutableLiveData<>();
     MutableLiveData<List<Task>> mResultMutableData = new MutableLiveData<>();
+    MutableLiveData<Task> mSyncMutableData = new MutableLiveData<>();
     MutableLiveData<List<Task>> mAssignResultMutableData = new MutableLiveData<>();
     MutableLiveData<Chart> mChartResultMutableData = new MutableLiveData<>();
     MutableLiveData<Chart> mChart2ResultMutableData = new MutableLiveData<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
 
     public TaskViewModel(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
@@ -44,6 +47,7 @@ public class TaskViewModel extends ViewModel {
 
                     @Override
                     public void onComplete() {
+                        mSyncMutableData.setValue(task);
                         mResponseMutableData.postValue("Hoàn thành");
                     }
 
@@ -454,6 +458,10 @@ public class TaskViewModel extends ViewModel {
 
     public LiveData<List<Task>> getAssignResult() {
         return mAssignResultMutableData;
+    }
+
+    public LiveData<Task> getSyncResult() {
+        return mSyncMutableData;
     }
 
     public LiveData<Chart> getChartResult() {

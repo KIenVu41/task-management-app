@@ -135,7 +135,7 @@ public class RegisterActivity extends AppCompatActivity {
         } else if(phone.trim().length() == 0) {
             Toast.makeText(this, "Chưa nhập phone", Toast.LENGTH_SHORT).show();
             return false;
-        } else if(TextUtils.isValidEmail(email)) {
+        } else if(!TextUtils.isValidEmail(email)) {
             Toast.makeText(this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
             return false;
         } else if(!phone.startsWith("0")) {

@@ -101,7 +101,6 @@ public class CategoryViewModel extends ViewModel {
     }
 
     public void getAllCategories(String token) {
-        mResponseMutableData.postValue("Đang xử lý...");
         Observable<List<Category>> observable = categoryRepository.getAllCategories(token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

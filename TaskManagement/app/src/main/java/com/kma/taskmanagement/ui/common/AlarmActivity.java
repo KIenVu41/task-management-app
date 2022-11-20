@@ -2,11 +2,13 @@ package com.kma.taskmanagement.ui.common;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.kma.taskmanagement.R;
 
 import butterknife.BindView;
@@ -42,6 +44,7 @@ public class AlarmActivity extends AppCompatActivity {
             timeAndData.setText(getIntent().getStringExtra("DATE") + ", " + getIntent().getStringExtra("TIME"));
         }
 
+        Glide.with(getApplicationContext()).load(R.drawable.alert).into(imageView);
         closeButton.setOnClickListener(view -> finish());
 
     }

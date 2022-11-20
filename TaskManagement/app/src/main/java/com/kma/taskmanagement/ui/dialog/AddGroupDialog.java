@@ -1,9 +1,11 @@
 package com.kma.taskmanagement.ui.dialog;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +39,7 @@ public class AddGroupDialog extends AppCompatDialogFragment {
     private String token = "";
     private GroupViewModel groupViewModel;
     private GroupRepository groupRepository = new GroupRepositoryImpl();
+    private ProgressDialog progressDialog;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -45,9 +48,16 @@ public class AddGroupDialog extends AppCompatDialogFragment {
         groupViewModel.getResponse().observe(getActivity(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
-                if(s != null) {
-                    Log.d("TAG", s);
+                if(s.equals("Hoàn thành")) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
                 }
+                progressDialog.setMessage(s);
+                progressDialog.show();
             }
         });
 
@@ -87,7 +97,9 @@ public class AddGroupDialog extends AppCompatDialogFragment {
 
         editTextGName = view.findViewById(R.id.edit_gname);
         editTextGCode = view.findViewById(R.id.edit_gcode);
-
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(true);
 
         return builder.create();
     }

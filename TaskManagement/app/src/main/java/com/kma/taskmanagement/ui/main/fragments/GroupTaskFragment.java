@@ -4,11 +4,13 @@ import static android.content.Context.ALARM_SERVICE;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -97,10 +99,8 @@ public class GroupTaskFragment extends Fragment {
         groupViewModel.getGroupResponse().observe(getActivity(), new Observer<List<Group>>() {
             @Override
             public void onChanged(List<Group> groups) {
-                Log.d("TAG", groups.toString());
                 if(groups.size() != 0) {
                     GlobalInfor.groups = groups;
-                    Log.d("TAG", groups.toString());
                     llAnimation.setVisibility(View.GONE);
                     groupTaskRecycler.setVisibility(View.VISIBLE);
                     groupAdapter.submitList(groups);
@@ -142,7 +142,32 @@ public class GroupTaskFragment extends Fragment {
                     Toast.makeText(getActivity(), "Bạn không phải leader", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                groupViewModel.delete(Constants.BEARER + token, group.getId());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                builder.setMessage("Xóa nhóm?")
+                        .setTitle("Xác nhận");
+
+                builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        groupViewModel.delete(Constants.BEARER + token, group.getId());
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                groupViewModel.getGroups(Constants.BEARER + token);
+                            }
+                        },1000);
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        groupViewModel.getGroups(Constants.BEARER + token);
+                    }
+                });
+
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         };
 

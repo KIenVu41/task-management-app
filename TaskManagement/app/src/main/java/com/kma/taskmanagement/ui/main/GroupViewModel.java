@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.kma.taskmanagement.TaskApplication;
 import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.remote.request.GroupRequest;
 import com.kma.taskmanagement.data.remote.request.InviteRequest;
 import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
+import com.kma.taskmanagement.utils.Utils;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +21,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 public class GroupViewModel extends ViewModel {
@@ -82,19 +85,23 @@ public class GroupViewModel extends ViewModel {
     }
 
 
-    public void getInvites(String token) {
-        mResponseMutableData.postValue("Đang xử lý...");
-        compositeDisposable.add(
-                Observable.interval(20, TimeUnit.SECONDS)
-                        .flatMap(aLong -> groupRepository.getInvites(token))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<InviteRequest>>() {
-                    @Override
-                    public void accept(List<InviteRequest> inviteRequests) throws Exception {
-                        mInviteMutableData.setValue(inviteRequests);
-                    }
-                }));
+    public void getInvites(String token){
+        try{
+            compositeDisposable.add(
+                    Observable.interval(20, TimeUnit.SECONDS)
+                            .flatMap(aLong -> groupRepository.getInvites(token))
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Consumer<List<InviteRequest>>() {
+                                @Override
+                                public void accept(List<InviteRequest> inviteRequests) throws Exception {
+                                    mInviteMutableData.setValue(inviteRequests);
+                                }
+                            }));
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void getGroups(String token) {
