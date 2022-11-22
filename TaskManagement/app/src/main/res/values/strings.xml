@@ -94,4 +94,6 @@
     <string name="otp_sub_title">Chúng tôi đã gửi mã đến email:</string>
     <string name="otp_resend">Gửi lại mã</string>
     <string name="otp_verify">Xác thực</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

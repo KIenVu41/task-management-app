@@ -200,7 +200,7 @@ public class LoginActivity extends AppCompatActivity {
         promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Biometric login for my app")
                 .setSubtitle("Log in using your biometric credential")
-                .setNegativeButtonText("Use account password")
+                .setNegativeButtonText("Cancel")
                 .build();
 
         ivFinger.setOnClickListener(view -> {
