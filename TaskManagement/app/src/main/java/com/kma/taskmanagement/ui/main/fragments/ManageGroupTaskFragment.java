@@ -14,8 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kma.taskmanagement.R;
-import com.kma.taskmanagement.ui.adpater.FragmentChartAdapter;
-import com.kma.taskmanagement.ui.adpater.FragmentGroupTaskAdapter;
+import com.kma.taskmanagement.ui.adapter.FragmentGroupTaskAdapter;
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
 public class ManageGroupTaskFragment extends Fragment {

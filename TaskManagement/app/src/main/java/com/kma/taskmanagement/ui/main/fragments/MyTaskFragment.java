@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +29,7 @@ import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.data.repository.TaskRepository;
 import com.kma.taskmanagement.data.repository.impl.TaskRepositoryImpl;
 import com.kma.taskmanagement.listener.HandleClickListener;
-import com.kma.taskmanagement.ui.adpater.AssignedAdapter;
-import com.kma.taskmanagement.ui.adpater.MyTaskAdapter;
+import com.kma.taskmanagement.ui.adapter.MyTaskAdapter;
 import com.kma.taskmanagement.ui.common.CustomSpinner;
 import com.kma.taskmanagement.ui.main.TaskViewModel;
 import com.kma.taskmanagement.ui.main.TaskViewModelFactory;

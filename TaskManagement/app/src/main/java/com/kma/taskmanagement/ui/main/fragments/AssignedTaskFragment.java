@@ -1,13 +1,8 @@
 package com.kma.taskmanagement.ui.main.fragments;
 
-import static android.content.Context.ALARM_SERVICE;
-
-import android.app.AlarmManager;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,21 +25,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kma.taskmanagement.R;
-import com.kma.taskmanagement.broadcastReceiver.AlarmBroadcastReceiver;
-import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.model.Task;
-import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.TaskRepository;
-import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
 import com.kma.taskmanagement.data.repository.impl.TaskRepositoryImpl;
-import com.kma.taskmanagement.listener.HandleClickListener;
-import com.kma.taskmanagement.ui.adpater.AssignedAdapter;
-import com.kma.taskmanagement.ui.adpater.GroupAdapter;
-import com.kma.taskmanagement.ui.adpater.TaskAdapter;
+import com.kma.taskmanagement.ui.adapter.AssignedAdapter;
 import com.kma.taskmanagement.ui.common.CustomSpinner;
-import com.kma.taskmanagement.ui.dialog.AddGroupDialog;
-import com.kma.taskmanagement.ui.main.GroupViewModel;
-import com.kma.taskmanagement.ui.main.GroupViewModelFactory;
 import com.kma.taskmanagement.ui.main.TaskViewModel;
 import com.kma.taskmanagement.ui.main.TaskViewModelFactory;
 import com.kma.taskmanagement.utils.Constants;

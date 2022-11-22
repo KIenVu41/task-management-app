@@ -1,11 +1,6 @@
 package com.kma.taskmanagement.ui.main.fragments;
 
-import static android.content.Context.ALARM_SERVICE;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,8 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,28 +22,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kma.taskmanagement.R;
-import com.kma.taskmanagement.broadcastReceiver.AlarmBroadcastReceiver;
 import com.kma.taskmanagement.data.model.Group;
-import com.kma.taskmanagement.data.model.Task;
-import com.kma.taskmanagement.data.remote.request.InviteRequest;
 import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
-import com.kma.taskmanagement.ui.adpater.GroupAdapter;
+import com.kma.taskmanagement.ui.adapter.GroupAdapter;
 import com.kma.taskmanagement.ui.dialog.AddGroupDialog;
-import com.kma.taskmanagement.ui.dialog.UpdateInfoDialog;
 import com.kma.taskmanagement.ui.main.GroupViewModel;
 import com.kma.taskmanagement.ui.main.GroupViewModelFactory;
 import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.kma.taskmanagement.utils.SwipeToDeleteCallback;
-import com.learnoset.materialdialogs.AppUpdateDialog;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import io.reactivex.Observable;
 
 public class GroupTaskFragment extends Fragment {
 

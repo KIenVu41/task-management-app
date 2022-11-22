@@ -1,21 +1,15 @@
-package com.kma.taskmanagement.ui.adpater;
+package com.kma.taskmanagement.ui.adapter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.kma.taskmanagement.data.model.Chart;
 import com.kma.taskmanagement.ui.chart.SubFragmentChart;
-import com.kma.taskmanagement.ui.main.fragments.AssignedTaskFragment;
-import com.kma.taskmanagement.ui.main.fragments.GroupTaskFragment;
-import com.kma.taskmanagement.ui.main.fragments.MyTaskFragment;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FragmentChartAdapter extends FragmentPagerAdapter {
 

@@ -1,4 +1,4 @@
-package com.kma.taskmanagement.ui.adpater;
+package com.kma.taskmanagement.ui.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,20 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.listener.HandleClickListener;
-import com.kma.taskmanagement.ui.main.fragments.CreateTaskBottomSheetFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

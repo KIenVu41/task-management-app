@@ -5,12 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.widget.ViewPager2;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +17,8 @@ import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Chart;
 import com.kma.taskmanagement.data.repository.TaskRepository;
 import com.kma.taskmanagement.data.repository.impl.TaskRepositoryImpl;
-import com.kma.taskmanagement.ui.adpater.FragmentChartAdapter;
+import com.kma.taskmanagement.ui.adapter.FragmentChartAdapter;
 import com.kma.taskmanagement.ui.main.TaskViewModel;
-import com.kma.taskmanagement.ui.main.TaskViewModelFactory;
-import com.kma.taskmanagement.utils.Constants;
-import com.kma.taskmanagement.utils.GlobalInfor;
-import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
 import java.util.ArrayList;

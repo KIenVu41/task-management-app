@@ -12,23 +12,12 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
-
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.broadcastReceiver.NetworkChangeReceiver;
 import com.kma.taskmanagement.data.local.DatabaseHelper;
 import com.kma.taskmanagement.data.model.Task;
-import com.kma.taskmanagement.data.remote.StringeeInstance;
 import com.kma.taskmanagement.data.remote.request.InviteRequest;
 import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
@@ -46,33 +35,10 @@ import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.kma.taskmanagement.utils.Utils;
 import com.shrikanthravi.customnavigationdrawer2.data.MenuItem;
 import com.shrikanthravi.customnavigationdrawer2.widget.SNavigationDrawer;
-import com.stringee.StringeeClient;
-import com.stringee.call.StringeeCall;
-import com.stringee.call.StringeeCall2;
-import com.stringee.exception.StringeeError;
-import com.stringee.listener.StringeeConnectionListener;
-import com.stringee.messaging.Conversation;
-import com.stringee.messaging.ConversationOptions;
-import com.stringee.messaging.Message;
-import com.stringee.messaging.User;
-import com.stringee.messaging.listeners.CallbackListener;
-
-import org.json.JSONObject;
-
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import tech.gusavila92.websocketclient.WebSocketClient;
 
 public class MainActivity extends AppCompatActivity {

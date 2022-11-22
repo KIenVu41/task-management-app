@@ -14,13 +14,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -30,8 +28,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,52 +37,35 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.TaskApplication;
 import com.kma.taskmanagement.broadcastReceiver.AlarmBroadcastReceiver;
 import com.kma.taskmanagement.data.local.DatabaseHelper;
 import com.kma.taskmanagement.data.model.Category;
-import com.kma.taskmanagement.data.model.SubTask;
 import com.kma.taskmanagement.data.model.Task;
-import com.kma.taskmanagement.data.model.Token;
 import com.kma.taskmanagement.data.repository.CategoryRepository;
 import com.kma.taskmanagement.data.repository.TaskRepository;
-import com.kma.taskmanagement.data.repository.UserRepository;
 import com.kma.taskmanagement.data.repository.impl.CategoryRepositoryImpl;
 import com.kma.taskmanagement.data.repository.impl.TaskRepositoryImpl;
-import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
 import com.kma.taskmanagement.listener.HandleClickListener;
-import com.kma.taskmanagement.ui.adpater.CustomAdapter;
-import com.kma.taskmanagement.ui.adpater.TaskAdapter;
+import com.kma.taskmanagement.ui.adapter.CustomAdapter;
+import com.kma.taskmanagement.ui.adapter.TaskAdapter;
 import com.kma.taskmanagement.ui.common.CustomSpinner;
-import com.kma.taskmanagement.ui.intro.IntroActivity;
 import com.kma.taskmanagement.ui.main.CategoryViewModel;
 import com.kma.taskmanagement.ui.main.CategoryViewModelFactory;
 import com.kma.taskmanagement.ui.main.TaskViewModel;
 import com.kma.taskmanagement.ui.main.TaskViewModelFactory;
-import com.kma.taskmanagement.ui.user.LoginActivity;
-import com.kma.taskmanagement.ui.user.UserViewModel;
-import com.kma.taskmanagement.ui.user.UserViewModelFactory;
 import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.kma.taskmanagement.utils.SwipeToDeleteCallback;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import okhttp3.internal.concurrent.TaskLoggerKt;
 
 public class PersonTaskFragment extends Fragment {
 

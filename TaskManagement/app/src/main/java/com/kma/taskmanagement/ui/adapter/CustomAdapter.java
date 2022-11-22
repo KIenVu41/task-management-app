@@ -1,23 +1,15 @@
-package com.kma.taskmanagement.ui.adpater;
+package com.kma.taskmanagement.ui.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
 
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Category;
-import com.kma.taskmanagement.listener.HandleClickListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CustomAdapter extends BaseAdapter {
