@@ -3,15 +3,21 @@ package com.kma.taskmanagement.ui.main;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import com.kma.taskmanagement.R;
@@ -86,6 +92,11 @@ public class MainActivity extends AppCompatActivity {
 
         if(getSupportActionBar()!=null) {
             getSupportActionBar().hide();
+        }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 10);
         }
 
         sNavigationDrawer = findViewById(R.id.navigationDrawer);
@@ -223,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
 
         alertDialog2.show();
 
-        createWebSocketClient();
+        //createWebSocketClient();
     }
 
     private void createWebSocketClient() {
@@ -291,12 +302,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void registerNetworkBroadcastForNougat() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-//        }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        }
     }
 
     @Override

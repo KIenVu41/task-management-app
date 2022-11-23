@@ -11,4 +11,9 @@
         android:title="Invite"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/menuChat"
+        android:title="Chat"
+        app:showAsAction="ifRoom" />
+
 </menu>

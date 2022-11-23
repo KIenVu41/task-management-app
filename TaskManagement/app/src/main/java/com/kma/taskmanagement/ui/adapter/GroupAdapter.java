@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.ui.dialog.UpdateGroupDialog;
+import com.kma.taskmanagement.ui.main.fragments.GroupChatFragment;
 import com.kma.taskmanagement.ui.main.fragments.GroupTaskBottomSheetFragment;
 import com.kma.taskmanagement.utils.GlobalInfor;
 
@@ -90,6 +91,9 @@ public class GroupAdapter extends ListAdapter<Group, GroupAdapter.GroupHolder> {
                        UpdateGroupDialog updateGroupDialog = new UpdateGroupDialog();
                        updateGroupDialog.setId(group.getId());
                        updateGroupDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "update group dialog");
+                   case R.id.menuChat:
+                       GroupChatFragment groupChatFragment = new GroupChatFragment();
+                       groupChatFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), groupChatFragment.getTag());
                }
                return false;
            });
