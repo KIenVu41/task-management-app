@@ -11,7 +11,7 @@ public class Constants {
     public static final String BASE_URL = "http://10.0.2.2:3000/";
 
     //ws
-    public static final String SERVER_PATH = "ws://SERVER-IP-HERE:PORT-NUMBER-HERE";
+    public static final String SERVER_PATH = "ws://10.0.2.2:5000";
 
     // Auth
     public static final String BEARER = "Bearer ";
