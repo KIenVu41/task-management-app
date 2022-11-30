@@ -4,6 +4,7 @@ import static androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRON
 import static androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.app.KeyguardManager;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.fingerprint.FingerprintManager;
@@ -201,13 +203,33 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
     @Override
     public void onBiometricAuthenticationNotAvailable() {
         Toast.makeText(getApplicationContext(), getString(R.string.biometric_error_fingerprint_not_available), Toast.LENGTH_LONG).show();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            Intent intent = new Intent(Settings.ACTION_FINGERPRINT_ENROLL);
-            startActivityForResult(intent, Constants.REQUESTCODE_FINGERPRINT_ENROLLMENT);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-            Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
-            startActivityForResult(intent, Constants.REQUESTCODE_SECURITY_SETTINGS);
-        }
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(LoginActivity.this);
+        dialog.setCancelable(false);
+        dialog.setTitle(getResources().getString(R.string.prompt_title));
+        dialog.setMessage(getResources().getString(R.string.prompt_message));
+        dialog.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    Intent intent = new Intent(Settings.ACTION_FINGERPRINT_ENROLL);
+                    startActivityForResult(intent, Constants.REQUESTCODE_FINGERPRINT_ENROLLMENT);
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+                    startActivityForResult(intent, Constants.REQUESTCODE_SECURITY_SETTINGS);
+                }
+            }
+        })
+                .setNegativeButton("Cancel ", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        final AlertDialog alert = dialog.create();
+        alert.show();
     }
 
     @Override

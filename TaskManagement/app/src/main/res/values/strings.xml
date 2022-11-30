@@ -121,4 +121,7 @@
     <string name="biometric_cancelled">Authentication cancelled by user</string>
     <string name="biometric_success">Login Successful</string>
     <string name="new_fingerprint_enrolled_description">A new fingerprint was added to this device, so your password is required.</string>
+    <string name="prompt_title">Kích hoạt xác thực vân tay</string>
+    <string name="prompt_message">Sử dụng xác thực vân tay để đăng nhập.\n Bạn có thể tự thiết lập ở Settings</string>
+
 </resources>
