@@ -34,4 +34,8 @@ public class Constants {
     //stringee
     public static final String SID = "SK.0.q4Z75UMNCtGhOBQkTNDqANU8EHX54PLC";
     public static final String API_KEY = "OWViTG9iQTRFNkNHQlZUYTl3aGNOY2NmazdOWFpXRA==";
+
+    // fingerprint
+    public static final int REQUESTCODE_FINGERPRINT_ENROLLMENT = 100;
+    public static final int REQUESTCODE_SECURITY_SETTINGS = 101;
 }

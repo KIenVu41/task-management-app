@@ -201,6 +201,13 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
     @Override
     public void onBiometricAuthenticationNotAvailable() {
         Toast.makeText(getApplicationContext(), getString(R.string.biometric_error_fingerprint_not_available), Toast.LENGTH_LONG).show();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            Intent intent = new Intent(Settings.ACTION_FINGERPRINT_ENROLL);
+            startActivityForResult(intent, Constants.REQUESTCODE_FINGERPRINT_ENROLLMENT);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+            startActivityForResult(intent, Constants.REQUESTCODE_SECURITY_SETTINGS);
+        }
     }
 
     @Override
@@ -215,7 +222,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
 
     @Override
     public void onAuthenticationFailed() {
-//        Toast.makeText(getApplicationContext(), getString(R.string.biometric_failure), Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), getString(R.string.biometric_failure), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -238,4 +245,5 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
     public void onAuthenticationError(int errorCode, CharSequence errString) {
 //        Toast.makeText(getApplicationContext(), errString, Toast.LENGTH_LONG).show();
     }
+
 }
