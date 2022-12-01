@@ -4,6 +4,7 @@ import static androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRON
 import static androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricPrompt;
@@ -208,7 +209,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
         dialog.setCancelable(false);
         dialog.setTitle(getResources().getString(R.string.prompt_title));
         dialog.setMessage(getResources().getString(R.string.prompt_message));
-        dialog.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(getResources().getString(R.string.enable), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
@@ -221,7 +222,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
                 }
             }
         })
-                .setNegativeButton("Cancel ", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -256,6 +257,9 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
     @Override
     public void onAuthenticationSuccessful() {
         Toast.makeText(getApplicationContext(), getString(R.string.biometric_success), Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -268,4 +272,13 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
 //        Toast.makeText(getApplicationContext(), errString, Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case Constants.REQUESTCODE_FINGERPRINT_ENROLLMENT:
+                Log.d("TAG", "ok " + resultCode);
+                break;
+        }
+    }
 }

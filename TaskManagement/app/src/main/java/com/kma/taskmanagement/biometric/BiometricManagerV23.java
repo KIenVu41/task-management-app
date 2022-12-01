@@ -7,6 +7,7 @@ import androidx.core.os.CancellationSignal;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
+import android.util.Log;
 
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 
@@ -133,7 +134,6 @@ public class BiometricManagerV23 {
                     .build());
 
             keyGenerator.generateKey();
-
         } catch (KeyStoreException
                 | NoSuchAlgorithmException
                 | NoSuchProviderException

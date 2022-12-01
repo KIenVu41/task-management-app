@@ -1,5 +1,7 @@
 package com.kma.taskmanagement.biometric;
 
+import android.hardware.biometrics.BiometricPrompt;
+
 public interface BiometricCallback {
 
     void onSdkVersionNotSupported();
