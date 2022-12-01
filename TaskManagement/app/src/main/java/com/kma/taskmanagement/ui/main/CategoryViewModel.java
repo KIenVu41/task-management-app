@@ -105,7 +105,7 @@ public class CategoryViewModel extends ViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        compositeDisposable.add(observable.subscribe(o -> mResultMutableData.setValue(o)));
+        compositeDisposable.add(observable.subscribe(o -> mResultMutableData.setValue(o), throwable -> mResponseMutableData.postValue("Lỗi " + throwable.getMessage()) ));
 //                    @Override
 //                    public void onSubscribe(Disposable d) {
 //

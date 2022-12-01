@@ -38,4 +38,9 @@ public class Constants {
     // fingerprint
     public static final int REQUESTCODE_FINGERPRINT_ENROLLMENT = 100;
     public static final int REQUESTCODE_SECURITY_SETTINGS = 101;
+
+    // firebase channel
+    public static final String CHANNEL_ID = "FIREBASE_CHANNEL";
+    public static final String CHANNEL_NAME = "FIREBASE_CHANNEL_FRIEND_REQUEST";
+    public static final String CHANNEL_DESC = "FIREBASE_CHANNEL_DESC";
 }
