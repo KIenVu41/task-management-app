@@ -37,21 +37,44 @@
                 android:textColor="@color/COLOR_BUTTON"
                 />
 
-            <TextView
-                android:id="@+id/tvOtpEmail"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/dp20"
-                android:layout_marginTop="@dimen/dp20"
-                android:textColor="@color/COLOR_BUTTON"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/edtOtpPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp20"
+                    android:layout_marginTop="@dimen/dp20"
+                    android:textColor="@color/COLOR_BUTTON"
+                    android:textStyle="bold"
+                    android:inputType="phone"
+                    android:autofillHints="phone" />
+
+                <View
+                    android:layout_width="@dimen/dp10"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="@dimen/dp20"
+                    android:layout_marginTop="@dimen/dp20"/>
+
+                <TextView
+                    android:id="@+id/tvSend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp20"
+                    android:layout_marginTop="@dimen/dp20"
+                    android:textColor="@color/COLOR_BUTTON"
+                    android:text="Nhận mã"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:weightSum="4"
+                android:weightSum="6"
                 android:layout_marginStart="@dimen/dp20"
                 android:layout_marginEnd="@dimen/dp20"
                 android:layout_marginTop="@dimen/dp20">
@@ -113,6 +136,34 @@
                     android:textStyle="bold"
                     android:textSize="@dimen/sp30"
                     android:layout_weight="1"/>
+
+                <EditText
+                    android:id="@+id/otp5"
+                    android:layout_width="@dimen/dp50"
+                    android:layout_height="@dimen/dp50"
+                    android:layout_marginStart="@dimen/dp10"
+                    android:background="@drawable/round_back_blue"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:maxLength="1"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/sp30"
+                    android:layout_weight="1"/>
+
+                <EditText
+                    android:id="@+id/otp6"
+                    android:layout_width="@dimen/dp50"
+                    android:layout_height="@dimen/dp50"
+                    android:layout_marginStart="@dimen/dp10"
+                    android:background="@drawable/round_back_blue"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:maxLength="1"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/sp30"
+                    android:layout_weight="1"/>
             </LinearLayout>
 
             <TextView
@@ -132,7 +183,7 @@
                 android:paddingEnd="@dimen/dp30"
                 android:layout_marginTop="@dimen/dp20"
                 android:layout_marginBottom="@dimen/dp20"
-                android:background="@drawable/round_back_brown"
+                android:background="@drawable/round_blue"
                 android:layout_gravity="center"
                 android:text="@string/otp_verify"
                 android:textColor="@color/white"/>
