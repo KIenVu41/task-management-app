@@ -92,13 +92,7 @@ public class GroupViewModel extends ViewModel {
                             .flatMap(aLong -> groupRepository.getInvites(token))
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Consumer<List<InviteRequest>>() {
-                                @Override
-                                public void accept(List<InviteRequest> inviteRequests) throws Exception {
-                                    mInviteMutableData.setValue(inviteRequests);
-                                }
-                            }));
-
+                            .subscribe(inviteRequests ->   mInviteMutableData.setValue(inviteRequests), e->    mResponseMutableData.postValue("Lỗi " + e.getMessage())));
         }catch (Exception e) {
             e.printStackTrace();
         }
