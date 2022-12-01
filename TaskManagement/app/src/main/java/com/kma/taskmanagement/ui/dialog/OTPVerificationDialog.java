@@ -96,6 +96,7 @@ public class OTPVerificationDialog extends Dialog {
 
                 } else {
                     Toast.makeText(getContext(), "Chưa nhập mã", Toast.LENGTH_SHORT).show();
+
                 }
             }
         });
