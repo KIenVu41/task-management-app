@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,9 +20,21 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.TaskApplication;
 import com.kma.taskmanagement.utils.GlobalInfor;
+
+import java.util.concurrent.TimeUnit;
 
 public class OTPVerificationDialog extends Dialog {
 
@@ -29,9 +42,11 @@ public class OTPVerificationDialog extends Dialog {
     private TextView tvResend, tvSend;
     private Button btnVerify;
     private boolean resendEnabled = false;
-    private int resendTime = 30;
+    private int resendTime = 60;
     private int selected = 0;
-
+    private FirebaseAuth mAuth;
+    private String verificationId = "";
+    private PhoneAuthProvider.ForceResendingToken mForceResendingToken;
     public OTPVerificationDialog(@NonNull Context context) {
         super(context);
     }
@@ -56,6 +71,8 @@ public class OTPVerificationDialog extends Dialog {
         tvSend = findViewById(R.id.tvSend);
         btnVerify = findViewById(R.id.btnVerify);
 
+        mAuth = FirebaseAuth.getInstance();
+
         otp1.addTextChangedListener(textWatcher);
         otp2.addTextChangedListener(textWatcher);
         otp3.addTextChangedListener(textWatcher);
@@ -67,10 +84,12 @@ public class OTPVerificationDialog extends Dialog {
         tvSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(edtOtpPhone.getText().toString().trim().isEmpty()) {
+                String phone = edtOtpPhone.getText().toString().trim();
+                if(phone.isEmpty()) {
                     Toast.makeText(getContext(), "Chưa nhập sđt", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                onClickVerifyPhoneNumber(phone);
                 startCountDownTime();
             }
         });
@@ -78,8 +97,10 @@ public class OTPVerificationDialog extends Dialog {
         tvResend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String phone = edtOtpPhone.getText().toString().trim();
                 if(resendEnabled) {
                     startCountDownTime();
+                    onClickVerifyPhoneNumber(phone);
                 }
             }
         });
@@ -95,13 +116,87 @@ public class OTPVerificationDialog extends Dialog {
                 }
 
                 if(getOtp.length() == 6) {
-
+                    PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, getOtp);
+                    signInWithPhoneAuthCredential(credential);
                 } else {
                     Toast.makeText(getContext(), "Chưa nhập mã", Toast.LENGTH_SHORT).show();
-
                 }
             }
         });
+    }
+
+    private void onClickVerifyPhoneNumber(String phone) {
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(mAuth)
+                        .setPhoneNumber(phone)       // Phone number to verify
+                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                        .setActivity(getOwnerActivity())
+                        .setForceResendingToken(mForceResendingToken)// Activity (for callback binding)
+                        .setCallbacks(new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                            @Override
+                            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+                                signInWithPhoneAuthCredential(phoneAuthCredential);
+                            }
+
+                            @Override
+                            public void onVerificationFailed(@NonNull FirebaseException e) {
+                                Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                                super.onCodeSent(s, forceResendingToken);
+                                verificationId = s;
+                                mForceResendingToken = forceResendingToken;
+                            }
+                        })
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+    }
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(getOwnerActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("TAG", "signInWithCredential:success");
+
+                            FirebaseUser user = task.getResult().getUser();
+                            // Update UI
+                        } else {
+                            // Sign in failed, display a message and update the UI
+                            Log.w("TAG", "signInWithCredential:failure", task.getException());
+                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                // The verification code entered was invalid
+                                Toast.makeText(getContext(), "Mã xác thực không hợp lệ", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void resendOtp(PhoneAuthCredential credential) {
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(getOwnerActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("TAG", "signInWithCredential:success");
+
+                            FirebaseUser user = task.getResult().getUser();
+                            // Update UI
+                        } else {
+                            // Sign in failed, display a message and update the UI
+                            Log.w("TAG", "signInWithCredential:failure", task.getException());
+                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                // The verification code entered was invalid
+                            }
+                        }
+                    }
+                });
     }
 
     private final TextWatcher textWatcher = new TextWatcher() {
