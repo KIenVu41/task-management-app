@@ -60,6 +60,8 @@ public class OTPVerificationDialog extends Dialog {
         otp2.addTextChangedListener(textWatcher);
         otp3.addTextChangedListener(textWatcher);
         otp4.addTextChangedListener(textWatcher);
+        otp5.addTextChangedListener(textWatcher);
+        otp6.addTextChangedListener(textWatcher);
         showKeyBoard(otp1);
 
         tvSend.setOnClickListener(new View.OnClickListener() {
@@ -131,8 +133,6 @@ public class OTPVerificationDialog extends Dialog {
                 } else if(selected == 4) {
                     selected = 5;
                     showKeyBoard(otp6);
-                } else {
-                    btnVerify.setBackgroundColor(R.drawable.round_back_red);
                 }
             }
         }
