@@ -6,15 +6,22 @@ public class Constants {
     // home ethernet
     //public static String BASE_URL = "http://192.168.0.102:8080/api/v1/";
     // home wifi
-//    public static String BASE_URL = "http://192.168.0.101:3000/api/v1/";
+    //public static String BASE_URL = "http://192.168.0.101:3000/api/v1/";
     // emulator
-    public static final String BASE_URL = "http://10.0.2.2:3000/";
+//    public static final String BASE_URL = "http://10.0.2.2:3000/";
+    // ngrok
+    public static final String BASE_URL = "http://9250-59-153-220-161.ngrok.io/";
+    // firebase
+    public static final String FIREBASE_URL = "https://fcm.googleapis.com/fcm/send";
 
     //ws
     public static final String SERVER_PATH = "ws://10.0.2.2:5000";
+    public static final String SERVER_KEY = "AAAAKkuuFeY:APA91bHLYLWUKlufwM247ExAeX6Lk9Q2Vt77GwYSJJLP9NgvmIGJcQuAzSoD0WJO5z0aGPXJreHxvMGvgjr-49tOl_E8VxVge5KvgnglZiOCD1bmOLuDYBD7AhuXfcWNAPzVvpHI80Wa";
 
     // Auth
     public static final String BEARER = "Bearer ";
+    public static final String EMAIL = "email";
+    public static final String PASSWORD = "password";
     // shared preferences
     public static final String SHARED_PREFERENCES_KEY = "com.kma.task";
     public static final String TOKEN = "token_";

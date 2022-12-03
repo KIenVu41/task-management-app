@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -13,15 +14,29 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.ui.main.fragments.GroupTaskBottomSheetFragment;
+import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.GlobalInfor;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,10 +51,13 @@ public class AssignedAdapter extends RecyclerView.Adapter<AssignedAdapter.Assign
 
     Date date = null;
     String outputDateString = null;
+    private RequestQueue requestQueue;
 
     public AssignedAdapter(Context context, List<Task> taskList) {
         this.context = context;
         this.taskList = taskList;
+        requestQueue = Volley.newRequestQueue(context);
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
     }
 
     @NonNull
@@ -81,13 +99,15 @@ public class AssignedAdapter extends RecyclerView.Adapter<AssignedAdapter.Assign
         popupMenu.getMenuInflater().inflate(R.menu.menu, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
-//                case R.id.menuDelete:
-//                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-//                    alertDialogBuilder.setTitle(R.string.delete_confirmation).setMessage(R.string.sureToDelete).
-//                            setPositiveButton(R.string.yes, (dialog, which) -> {
-//                            })
-//                            .setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel()).show();
-//                    break;
+                case R.id.menuNotice:
+                    final EditText edittext = new EditText(context);
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                    alertDialogBuilder.setTitle(R.string.notice_confirmation).setView(edittext).
+                            setPositiveButton(R.string.send, (dialog, which) -> {
+
+                            })
+                            .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel()).show();
+                    break;
                 case R.id.menuUpdate:
                     GroupTaskBottomSheetFragment createTaskBottomSheetFragment = new GroupTaskBottomSheetFragment();
                     for(Group group: GlobalInfor.groups) {
@@ -142,6 +162,42 @@ public class AssignedAdapter extends RecyclerView.Adapter<AssignedAdapter.Assign
             return taskList.size();
         }
         return 0;
+    }
+
+    private void sendNotification(String message) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("to", "/topics/" + "news");
+            JSONObject notificationObj = new JSONObject();
+            notificationObj.put("title", "Notice");
+            notificationObj.put("body", message);
+            jsonObject.put("notification", notificationObj);
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Constants.FIREBASE_URL, jsonObject, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            }
+            ){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> header = new HashMap<>();
+                    header.put("content-type", "application/json");
+                    header.put("authorization", "key=AAAAQLKl4r0:APA91bFQAcV8TDKNazoleMVtqd2e_K1jYQnTanzjO_6TuK4DMTntS2LmTmwXuS1yedmvDVUEetGha6bcQRNZVhH3q9G7pvxmBqDl2CXM5_IbDTMjFhY4DFFer2WMLFO05SSTQjsvtomE");
+
+                    return header;
+                }
+            };
+            requestQueue.add(request);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setCateId(long cateId) {

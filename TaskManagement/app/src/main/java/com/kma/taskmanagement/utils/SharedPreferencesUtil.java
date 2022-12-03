@@ -23,14 +23,14 @@ public class SharedPreferencesUtil {
         }
     }
 
-    private void storeStringInSharedPreferences(String key, String content) {
+    public void storeStringInSharedPreferences(String key, String content) {
 
         SharedPreferences.Editor editor = privateSharedPreferences.edit();
         editor.putString(key, content);
         editor.apply();
     }
 
-    private String getStringFromSharedPreferences(String key) {
+    public String getStringFromSharedPreferences(String key) {
 
         return privateSharedPreferences.getString(key, "");
     }

@@ -86,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
 
     private UserViewModel userViewModel;
     private UserRepository userRepository = new UserRepositoryImpl();
+    private String password = "";
     BiometricManager mBiometricManager;
 
     @Override
@@ -121,8 +122,11 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
                 if(token != null) {
                     saveGlobalInfor(token);
                     SharedPreferencesUtil.getInstance(getApplicationContext()).storeUserToken(Constants.TOKEN + GlobalInfor.username, token.getToken() );
+                    SharedPreferencesUtil.getInstance(getApplicationContext()).storeStringInSharedPreferences(Constants.EMAIL, GlobalInfor.username);
+
                     Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
                     startActivity(intent);
+                    finish();
                 }
             }
         });
@@ -143,8 +147,10 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
         btnLogin.setOnClickListener(view -> {
             String username = edtEmail.getText().toString();
             String pass = edtPass.getText().toString();
+            password = pass;
             if(validateField(username, pass)) {
                 userViewModel.login(username, pass);
+                SharedPreferencesUtil.getInstance(getApplicationContext()).storeStringInSharedPreferences(Constants.PASSWORD, pass);
             }
         });
 
@@ -257,9 +263,9 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
     @Override
     public void onAuthenticationSuccessful() {
         Toast.makeText(getApplicationContext(), getString(R.string.biometric_success), Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
-        startActivity(intent);
-        finish();
+        String email = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.EMAIL);
+        String pass = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.PASSWORD);
+        userViewModel.login(email, pass);
     }
 
     @Override

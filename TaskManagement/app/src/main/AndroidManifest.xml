@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:name=".TaskApplication"
@@ -22,16 +23,33 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:networkSecurityConfig="@xml/network_security_config"
-        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TaskManagement">
+        android:theme="@style/Theme.TaskManagement"
+        android:usesCleartextTraffic="true">
+
+        <service android:name=".service.MyFirebaseInstanceIDService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+<!--        <service android:name=".service.MyFirebaseMessagingService"-->
+<!--            android:permission="com.google.android.c2dm.permission.SEND">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.google.firebase.MESSAGING_EVENT">-->
+<!--                    <action android:name="com.google.android.c2dm.intent.RECEIVE">-->
+<!--                    </action>-->
+<!--                </action>-->
+<!--            </intent-filter>-->
+<!--        </service>-->
+
         <activity
             android:name=".ui.common.AlarmActivity"
             android:exported="false" />
         <activity
             android:name=".ui.intro.IntroActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".ui.user.RegisterActivity"
             android:exported="true" />
@@ -48,22 +66,26 @@
             android:name=".ui.main.MainActivity"
             android:exported="false" />
 
-        <receiver android:name=".broadcastReceiver.AlarmBroadcastReceiver"
+        <receiver
+            android:name=".broadcastReceiver.AlarmBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".broadcastReceiver.AlarmService"
+        <service
+            android:name=".broadcastReceiver.AlarmService"
             android:enabled="true"
             android:exported="false" />
-        <receiver android:name=".broadcastReceiver.NetworkChangeReceiver"
+
+        <receiver
+            android:name=".broadcastReceiver.NetworkChangeReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
     </application>

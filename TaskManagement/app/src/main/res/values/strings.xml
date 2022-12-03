@@ -18,8 +18,10 @@
 
     <!--    Task    -->
     <string name="delete_confirmation">Xác nhận</string>
+    <string name="notice_confirmation">Để lại lời nhắn</string>
     <string name="sureToDelete">Bạn chắc chắn muốn xóa ?</string>
     <string name="yes">Đồng ý</string>
+    <string name="send">Gửi</string>
     <string name="no">Không</string>
     <string name="confirmation">Công việc hoàn thành !</string>
     <string name="addtask">Đơn thêm công việc</string>

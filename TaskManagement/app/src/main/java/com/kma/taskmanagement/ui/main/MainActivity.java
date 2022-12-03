@@ -66,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
     int color1=0;
     Class fragmentClass;
     public static Fragment fragment;
+    final private String FCM_API = "https://fcm.googleapis.com/fcm/send";
+    final private String serverKey = "key=" + Constants.SERVER_KEY;
+    final private String contentType = "application/json";
+    final String TAG = "NOTIFICATION TAG";
 
     @Override
     protected void onStart() {
@@ -122,21 +126,21 @@ public class MainActivity extends AppCompatActivity {
         groupViewModel =  new ViewModelProvider(this, new GroupViewModelFactory(groupRepository)).get(GroupViewModel.class);
         token = SharedPreferencesUtil.getInstance(getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
 
-        try {
-            groupViewModel.getInvites(Constants.BEARER + token);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        groupViewModel.getInviteResponse().observeForever(new Observer<List<InviteRequest>>() {
-            @Override
-            public void onChanged(List<InviteRequest> inviteRequests) {
-                if (inviteRequests.size() != 0) {
-                    for(InviteRequest ir: inviteRequests) {
-                        openDialog(ir);
-                    }
-                }
-            }
-        });
+//        try {
+//            groupViewModel.getInvites(Constants.BEARER + token);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        groupViewModel.getInviteResponse().observeForever(new Observer<List<InviteRequest>>() {
+//            @Override
+//            public void onChanged(List<InviteRequest> inviteRequests) {
+//                if (inviteRequests.size() != 0) {
+//                    for(InviteRequest ir: inviteRequests) {
+//                        openDialog(ir);
+//                    }
+//                }
+//            }
+//        });
         sNavigationDrawer.setOnMenuItemClickListener(new SNavigationDrawer.OnMenuItemClickListener() {
             @Override
             public void onMenuItemClicked(int position) {

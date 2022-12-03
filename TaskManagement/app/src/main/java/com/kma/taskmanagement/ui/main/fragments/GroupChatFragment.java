@@ -27,6 +27,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -43,6 +44,7 @@ import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.broadcastReceiver.AlarmBroadcastReceiver;
 import com.kma.taskmanagement.data.local.DatabaseHelper;
 import com.kma.taskmanagement.data.model.Task;
+import com.kma.taskmanagement.data.remote.StringeeInstance;
 import com.kma.taskmanagement.data.repository.TaskRepository;
 import com.kma.taskmanagement.data.repository.impl.TaskRepositoryImpl;
 import com.kma.taskmanagement.ui.adapter.MessageAdapter;
@@ -54,6 +56,16 @@ import com.kma.taskmanagement.utils.DateUtils;
 import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.kma.taskmanagement.utils.Utils;
+import com.stringee.StringeeClient;
+import com.stringee.call.StringeeCall;
+import com.stringee.call.StringeeCall2;
+import com.stringee.exception.StringeeError;
+import com.stringee.listener.StringeeConnectionListener;
+import com.stringee.messaging.Conversation;
+import com.stringee.messaging.ConversationOptions;
+import com.stringee.messaging.Message;
+import com.stringee.messaging.User;
+import com.stringee.messaging.listeners.CallbackListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,7 +75,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,6 +96,7 @@ public class GroupChatFragment extends BottomSheetDialogFragment implements Text
     private View sendBtn, pickImgBtn;
     private RecyclerView recyclerView;
     private int IMAGE_REQUEST_ID = 1;
+    private StringeeClient stringeeClient;
     private MessageAdapter messageAdapter;
     View contentView;
 
@@ -108,6 +123,65 @@ public class GroupChatFragment extends BottomSheetDialogFragment implements Text
         unbinder = ButterKnife.bind(this, contentView);
 
         dialog.setContentView(contentView);
+        stringeeClient = StringeeInstance.getStringeeClient(getActivity());
+        stringeeClient.connect("eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTSy4wLnE0Wjc1VU1OQ3RHaE9CUWtUTkRxQU5VOEVIWDU0UExDLTE2NzAwMDU0NzQiLCJpc3MiOiJTSy4wLnE0Wjc1VU1OQ3RHaE9CUWtUTkRxQU5VOEVIWDU0UExDIiwiZXhwIjoxNjcwMDA5MDc0LCJ1c2VySWQiOiJ1c2VyMSJ9._nHUOERz5bxVQ-rC0RphtLZmfzx-3V_7f_HMdhJNc-M");
+        stringeeClient.setConnectionListener(new StringeeConnectionListener() {
+            @Override
+            public void onConnectionConnected(StringeeClient stringeeClient, boolean isReconnecting) {
+                Log.d("TAG", "success");
+            }
+
+            @Override
+            public void onConnectionDisconnected(StringeeClient stringeeClient, boolean isReconnecting) {
+
+            }
+
+            @Override
+            public void onIncomingCall(StringeeCall stringeeCall) {
+
+            }
+
+            @Override
+            public void onIncomingCall2(StringeeCall2 stringeeCall2) {
+
+            }
+
+            @Override
+            public void onConnectionError(StringeeClient stringeeClient, StringeeError stringeeError) {
+
+            }
+
+            @Override
+            public void onRequestNewToken(StringeeClient stringeeClient) {
+
+            }
+
+            @Override
+            public void onCustomMessage(String from, JSONObject msg) {
+
+            }
+
+            @Override
+            public void onTopicMessage(String s, JSONObject jsonObject) {
+
+            }
+        });
+
+        List<User> participants = new ArrayList<>();
+        participants.add(new User("user1"));
+        ConversationOptions options = new ConversationOptions();
+        options.setName("test");
+        options.setGroup(false);
+        options.setDistinct(true);
+        stringeeClient.createConversation(participants, options, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(final Conversation conv) {
+                Log.d("TAG", "sended");
+            }
+            @Override
+            public void onError(final StringeeError error) {
+            }
+        });
         initiateSocketConnection();
     }
 

@@ -1,5 +1,6 @@
 package com.kma.taskmanagement.ui.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -19,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -32,13 +35,21 @@ import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.TaskApplication;
+import com.kma.taskmanagement.data.remote.request.ChangePassRequest;
+import com.kma.taskmanagement.data.repository.UserRepository;
+import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
+import com.kma.taskmanagement.ui.user.LoginActivity;
+import com.kma.taskmanagement.ui.user.UserViewModel;
+import com.kma.taskmanagement.ui.user.UserViewModelFactory;
+import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.GlobalInfor;
+import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 
 import java.util.concurrent.TimeUnit;
 
 public class OTPVerificationDialog extends Dialog {
 
-    private EditText otp1, otp2, otp3, otp4, otp5, otp6, edtOtpPhone;
+    private EditText otp1, otp2, otp3, otp4, otp5, otp6, edtOtpPhone, edtPass, edtRePass;
     private TextView tvResend, tvSend;
     private Button btnVerify;
     private boolean resendEnabled = false;
@@ -47,8 +58,14 @@ public class OTPVerificationDialog extends Dialog {
     private FirebaseAuth mAuth;
     private String verificationId = "";
     private PhoneAuthProvider.ForceResendingToken mForceResendingToken;
-    public OTPVerificationDialog(@NonNull Context context) {
-        super(context);
+    Activity activity;
+    private UserViewModel userViewModel;
+    private UserRepository userRepository = new UserRepositoryImpl();
+    private String token = "";
+
+    public OTPVerificationDialog(@NonNull Activity activity) {
+        super(activity);
+        this.activity = activity;
     }
 
     @Override
@@ -59,6 +76,7 @@ public class OTPVerificationDialog extends Dialog {
         getWindow().setBackgroundDrawable(new ColorDrawable(getContext().getResources().getColor(android.R.color.transparent)));
         setContentView(R.layout.layout_otp);
 
+        userViewModel =  new ViewModelProvider((ViewModelStoreOwner) activity, new UserViewModelFactory(userRepository)).get(UserViewModel.class);
         otp1 = findViewById(R.id.otp1);
         otp2 = findViewById(R.id.otp2);
         otp3 = findViewById(R.id.otp3);
@@ -66,7 +84,8 @@ public class OTPVerificationDialog extends Dialog {
         otp5 = findViewById(R.id.otp5);
         otp6 = findViewById(R.id.otp6);
         edtOtpPhone = findViewById(R.id.edtOtpPhone);
-
+        edtPass = findViewById(R.id.edtPass);
+        edtRePass = findViewById(R.id.edtRePass);
         tvResend = findViewById(R.id.tvResend);
         tvSend = findViewById(R.id.tvSend);
         btnVerify = findViewById(R.id.btnVerify);
@@ -129,8 +148,8 @@ public class OTPVerificationDialog extends Dialog {
         PhoneAuthOptions options =
                 PhoneAuthOptions.newBuilder(mAuth)
                         .setPhoneNumber(phone)       // Phone number to verify
-                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-                        .setActivity(getOwnerActivity())
+                        .setTimeout(100L, TimeUnit.SECONDS) // Timeout and unit
+                        .setActivity(activity)
                         .setForceResendingToken(mForceResendingToken)// Activity (for callback binding)
                         .setCallbacks(new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                             @Override
@@ -156,7 +175,7 @@ public class OTPVerificationDialog extends Dialog {
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(getOwnerActivity(), new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
@@ -165,6 +184,12 @@ public class OTPVerificationDialog extends Dialog {
 
                             FirebaseUser user = task.getResult().getUser();
                             // Update UI
+                            token = SharedPreferencesUtil.getInstance(activity.getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
+                            if(edtPass.getText().toString().trim().equals(edtRePass.getText().toString().trim())) {
+                                userViewModel.changePass(Constants.BEARER + token, new ChangePassRequest("kocopass123", edtPass.getText().toString().trim()));
+                            } else {
+                                Toast.makeText(getContext(), "Mật khẩu không trùng khớp", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
                             // Sign in failed, display a message and update the UI
                             Log.w("TAG", "signInWithCredential:failure", task.getException());
@@ -179,7 +204,7 @@ public class OTPVerificationDialog extends Dialog {
 
     private void resendOtp(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(getOwnerActivity(), new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
