@@ -56,8 +56,8 @@ public class AssignedAdapter extends RecyclerView.Adapter<AssignedAdapter.Assign
     public AssignedAdapter(Context context, List<Task> taskList) {
         this.context = context;
         this.taskList = taskList;
-        requestQueue = Volley.newRequestQueue(context);
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
+       // requestQueue = Volley.newRequestQueue(context);
+       // FirebaseMessaging.getInstance().subscribeToTopic("news");
     }
 
     @NonNull

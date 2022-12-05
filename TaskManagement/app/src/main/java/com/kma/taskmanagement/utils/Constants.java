@@ -8,9 +8,9 @@ public class Constants {
     // home wifi
     //public static String BASE_URL = "http://192.168.0.101:3000/api/v1/";
     // emulator
-//    public static final String BASE_URL = "http://10.0.2.2:3000/";
+    public static final String BASE_URL = "http://10.0.2.2:3000/";
     // ngrok
-    public static final String BASE_URL = "http://9250-59-153-220-161.ngrok.io/";
+    //public static final String BASE_URL = "http://9250-59-153-220-161.ngrok.io/";
     // firebase
     public static final String FIREBASE_URL = "https://fcm.googleapis.com/fcm/send";
 
