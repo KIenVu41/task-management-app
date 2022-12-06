@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,6 +85,7 @@ public class GroupTaskFragment extends Fragment {
             @Override
             public void onChanged(List<Group> groups) {
                 if(groups.size() != 0) {
+                    Log.d("TAG", "size: " + groups.size());
                     GlobalInfor.groups = groups;
                     llAnimation.setVisibility(View.GONE);
                     groupTaskRecycler.setVisibility(View.VISIBLE);
