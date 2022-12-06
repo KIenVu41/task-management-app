@@ -6,3 +6,4 @@ https://github.com/khitk9738/FabChat
 https://medium.com/androiddevelopers/biometric-authentication-on-android-part-1-264523bce85d
 https://github.com/googlearchive
 https://github.com/dakshshah96/local-cert-generator/
+https://www.codejava.net/frameworks/spring-boot/configure-https-with-self-signed-certificate
