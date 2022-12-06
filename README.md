@@ -7,3 +7,4 @@ https://medium.com/androiddevelopers/biometric-authentication-on-android-part-1-
 https://github.com/googlearchive
 https://github.com/dakshshah96/local-cert-generator/
 https://www.codejava.net/frameworks/spring-boot/configure-https-with-self-signed-certificate
+https://stackoverflow.com/questions/59543742/biometric-authentication-implementation
