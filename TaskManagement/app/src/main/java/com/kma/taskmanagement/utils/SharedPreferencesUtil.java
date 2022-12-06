@@ -2,22 +2,46 @@ package com.kma.taskmanagement.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
+
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
+import androidx.security.crypto.MasterKeys;
+
+import com.kma.taskmanagement.TaskApplication;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Objects;
 
 public class SharedPreferencesUtil {
     private static SharedPreferencesUtil instance;
 
     private SharedPreferences privateSharedPreferences;
 
-    private SharedPreferencesUtil(Context context) {
-
-        this.privateSharedPreferences = context.getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+    private SharedPreferencesUtil() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                this.privateSharedPreferences =  EncryptedSharedPreferences.create(TaskApplication.getAppContext(),
+                        Constants.SHARED_PREFERENCES_KEY_ENCRYPT, Objects.requireNonNull(getMasterKey()), EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
+            } catch (GeneralSecurityException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            this.privateSharedPreferences = TaskApplication.getAppContext().getSharedPreferences(Constants.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        }
     }
 
     public static SharedPreferencesUtil getInstance(Context context) {
 
         synchronized (SharedPreferencesUtil.class) {
             if (instance == null) {
-                instance = new SharedPreferencesUtil(context);
+                instance = new SharedPreferencesUtil();
             }
             return instance;
         }
@@ -73,5 +97,21 @@ public class SharedPreferencesUtil {
     public String getUserToken(String key) {
 
         return getStringFromSharedPreferences(key);
+    }
+
+    private MasterKey getMasterKey() {
+        try {
+            MasterKey masterKey = new MasterKey.Builder(TaskApplication.getAppContext(), MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
+
+            return masterKey;
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

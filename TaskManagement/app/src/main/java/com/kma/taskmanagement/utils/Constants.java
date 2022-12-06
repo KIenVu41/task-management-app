@@ -24,6 +24,7 @@ public class Constants {
     public static final String PASSWORD = "password";
     // shared preferences
     public static final String SHARED_PREFERENCES_KEY = "com.kma.task";
+    public static final String SHARED_PREFERENCES_KEY_ENCRYPT = "com.kma.task.encrypt";
     public static final String TOKEN = "token_";
     public static final String INTRO = "isIntroOpnend";
     public static final String REMIND = "DATE_REMINDER_";
