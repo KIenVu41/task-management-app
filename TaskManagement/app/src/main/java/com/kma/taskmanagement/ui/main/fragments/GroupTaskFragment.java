@@ -26,6 +26,7 @@ import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
+import com.kma.taskmanagement.ui.adapter.FragmentGroupTaskAdapter;
 import com.kma.taskmanagement.ui.adapter.GroupAdapter;
 import com.kma.taskmanagement.ui.dialog.AddGroupDialog;
 import com.kma.taskmanagement.ui.main.GroupViewModel;
@@ -45,14 +46,16 @@ public class GroupTaskFragment extends Fragment {
     private GroupAdapter groupAdapter;
     private GroupViewModel groupViewModel;
     private GroupRepository groupRepository = new GroupRepositoryImpl();
+    private static FragmentGroupTaskAdapter.FirstPageFragmentListener mFirstPageFragmentListener;
     private String token = "";
 
     public GroupTaskFragment() {
         // Required empty public constructor
     }
 
-    public static GroupTaskFragment newInstance() {
+    public static GroupTaskFragment newInstance(FragmentGroupTaskAdapter.FirstPageFragmentListener firstPageFragmentListener) {
         GroupTaskFragment fragment = new GroupTaskFragment();
+        mFirstPageFragmentListener = firstPageFragmentListener;
         return fragment;
     }
 
@@ -109,6 +112,10 @@ public class GroupTaskFragment extends Fragment {
         tvAddGroup.setOnClickListener(view -> {
            AddGroupDialog addGroupDialog = new AddGroupDialog();
            addGroupDialog.show(getChildFragmentManager(), "add group dialog");
+        });
+
+        llAnimation.setOnClickListener(view -> {
+            mFirstPageFragmentListener.onSwitchToNextFragment();
         });
     }
 
