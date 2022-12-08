@@ -97,7 +97,7 @@ public class ManageGroupTaskFragment extends Fragment {
 
     private void setIndex() {
         index = viewpager.getCurrentItem() + 1;
-        tvIndex.setText(index + "/" + 3);
+        tvIndex.setText(index + "/" + 2);
     }
 
     @Override

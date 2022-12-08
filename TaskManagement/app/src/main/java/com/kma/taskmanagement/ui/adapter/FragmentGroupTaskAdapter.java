@@ -58,6 +58,14 @@ public class FragmentGroupTaskAdapter  extends FragmentPagerAdapter {
         return null;
     }
 
+    @Override
+    public int getItemPosition(Object object)
+    {
+        if (object instanceof GroupTaskFragment && mFragmentAtPos0 instanceof AssignedTaskFragment)
+            return POSITION_NONE;
+        return POSITION_UNCHANGED;
+    }
+
     public interface FirstPageFragmentListener
     {
         void onSwitchToNextFragment();

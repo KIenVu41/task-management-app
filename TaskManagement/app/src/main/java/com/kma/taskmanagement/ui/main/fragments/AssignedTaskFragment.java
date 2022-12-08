@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,7 @@ public class AssignedTaskFragment extends Fragment {
 
     public AssignedTaskFragment() {
         // Required empty public constructor
+        Log.d("TAG", "assign");
     }
 
     // TODO: Rename and change types and number of parameters
