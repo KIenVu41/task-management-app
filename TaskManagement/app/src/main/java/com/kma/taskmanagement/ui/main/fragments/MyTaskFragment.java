@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.data.repository.TaskRepository;
 import com.kma.taskmanagement.data.repository.impl.TaskRepositoryImpl;
@@ -155,6 +156,11 @@ public class MyTaskFragment extends Fragment {
             public void onTaskClick(Task task, String status) {
                 task.setStatus(status);
                 taskViewModel.update(Constants.BEARER + token, task.getId(), task);
+            }
+
+            @Override
+            public void onGroupClick(Group group) {
+
             }
         });
         myTaskRecycler.setLayoutManager(new LinearLayoutManager(getContext()));

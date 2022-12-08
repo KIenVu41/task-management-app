@@ -46,6 +46,7 @@ import com.kma.taskmanagement.TaskApplication;
 import com.kma.taskmanagement.broadcastReceiver.AlarmBroadcastReceiver;
 import com.kma.taskmanagement.data.local.DatabaseHelper;
 import com.kma.taskmanagement.data.model.Category;
+import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.data.repository.CategoryRepository;
 import com.kma.taskmanagement.data.repository.TaskRepository;
@@ -405,6 +406,11 @@ public class PersonTaskFragment extends Fragment {
                 task.setStatus(status);
                 task.setCategory_id(cateId);
                 taskViewModel.update(Constants.BEARER + token, task.getId(), task);
+            }
+
+            @Override
+            public void onGroupClick(Group group) {
+
             }
         });
         taskRecycler.setLayoutManager(new LinearLayoutManager(getContext()));

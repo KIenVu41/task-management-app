@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Group;
+import com.kma.taskmanagement.listener.HandleClickListener;
 import com.kma.taskmanagement.ui.dialog.UpdateGroupDialog;
 import com.kma.taskmanagement.ui.main.fragments.GroupChatFragment;
 import com.kma.taskmanagement.ui.main.fragments.GroupTaskBottomSheetFragment;
@@ -28,10 +29,12 @@ import butterknife.ButterKnife;
 public class GroupAdapter extends ListAdapter<Group, GroupAdapter.GroupHolder> {
 
     private Context context;
+    private HandleClickListener handleClickListener;
 
-    public GroupAdapter(@NonNull DiffUtil.ItemCallback<Group> diffCallback, Context context) {
+    public GroupAdapter(@NonNull DiffUtil.ItemCallback<Group> diffCallback, Context context, HandleClickListener handleClickListener) {
         super(diffCallback);
         this.context = context;
+        this.handleClickListener = handleClickListener;
     }
 
     @NonNull
@@ -57,6 +60,10 @@ public class GroupAdapter extends ListAdapter<Group, GroupAdapter.GroupHolder> {
         public GroupHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            itemView.setOnClickListener(view -> {
+                handleClickListener.onGroupClick(getItem(getAbsoluteAdapterPosition()));
+            });
         }
 
         public void bind(Group group) {

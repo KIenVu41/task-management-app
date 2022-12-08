@@ -24,8 +24,11 @@ import android.widget.Toast;
 
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Group;
+import com.kma.taskmanagement.data.model.Task;
+import com.kma.taskmanagement.data.model.User;
 import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
+import com.kma.taskmanagement.listener.HandleClickListener;
 import com.kma.taskmanagement.ui.adapter.FragmentGroupTaskAdapter;
 import com.kma.taskmanagement.ui.adapter.GroupAdapter;
 import com.kma.taskmanagement.ui.dialog.AddGroupDialog;
@@ -36,6 +39,8 @@ import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.kma.taskmanagement.utils.SwipeToDeleteCallback;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GroupTaskFragment extends Fragment {
@@ -46,16 +51,14 @@ public class GroupTaskFragment extends Fragment {
     private GroupAdapter groupAdapter;
     private GroupViewModel groupViewModel;
     private GroupRepository groupRepository = new GroupRepositoryImpl();
-    private static FragmentGroupTaskAdapter.FirstPageFragmentListener mFirstPageFragmentListener;
     private String token = "";
 
     public GroupTaskFragment() {
         // Required empty public constructor
     }
 
-    public static GroupTaskFragment newInstance(FragmentGroupTaskAdapter.FirstPageFragmentListener firstPageFragmentListener) {
+    public static GroupTaskFragment newInstance() {
         GroupTaskFragment fragment = new GroupTaskFragment();
-        mFirstPageFragmentListener = firstPageFragmentListener;
         return fragment;
     }
 
@@ -82,7 +85,7 @@ public class GroupTaskFragment extends Fragment {
         enableSwipeToDelete();
 
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
-        groupViewModel.getGroups(Constants.BEARER + token);
+        //groupViewModel.getGroups(Constants.BEARER + token);
 
         groupViewModel.getGroupResponse().observe(getActivity(), new Observer<List<Group>>() {
             @Override
@@ -114,13 +117,36 @@ public class GroupTaskFragment extends Fragment {
            addGroupDialog.show(getChildFragmentManager(), "add group dialog");
         });
 
-        llAnimation.setOnClickListener(view -> {
-            mFirstPageFragmentListener.onSwitchToNextFragment();
-        });
+//        llAnimation.setOnClickListener(view -> {
+//            mFirstPageFragmentListener.onSwitchToNextFragment();
+//        });
     }
 
     private void setAdapter() {
-        groupAdapter = new GroupAdapter( Group.itemCallback , getActivity());
+        groupAdapter = new GroupAdapter(Group.itemCallback, getActivity(), new HandleClickListener() {
+            @Override
+            public void onLongClick(View view) {
+
+            }
+
+            @Override
+            public void onTaskClick(Task task, String status) {
+
+            }
+
+            @Override
+            public void onGroupClick(Group group) {
+            }
+        });
+        List<Group> groupss = new ArrayList<>();
+        Group group = new Group();
+        group.setId(1);
+        group.setName("Group 1");
+        group.setCode("G1");
+        group.setLeader_name("Kien");
+        group.setMember(Arrays.asList(new User(1L, "kienvutrung20@gmail.com", "ssssss", "098894992","male","sss", "kienvu41")));
+        groupss.add(group);
+        groupAdapter.submitList(groupss);
         groupTaskRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         groupTaskRecycler.setAdapter(groupAdapter);
     }
