@@ -18,17 +18,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.TaskApplication;
+import com.kma.taskmanagement.data.local.ExpandableListDataPump;
 import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.data.model.User;
 import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
 import com.kma.taskmanagement.listener.HandleClickListener;
+import com.kma.taskmanagement.ui.adapter.CustomExpandableListAdapter;
 import com.kma.taskmanagement.ui.adapter.FragmentGroupTaskAdapter;
 import com.kma.taskmanagement.ui.adapter.GroupAdapter;
 import com.kma.taskmanagement.ui.dialog.AddGroupDialog;
@@ -41,17 +46,23 @@ import com.kma.taskmanagement.utils.SwipeToDeleteCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class GroupTaskFragment extends Fragment {
 
     private LinearLayout llAnimation;
-    private RecyclerView groupTaskRecycler;
+    //private RecyclerView groupTaskRecycler;
     private TextView tvAddGroup;
-    private GroupAdapter groupAdapter;
+    //private GroupAdapter groupAdapter;
     private GroupViewModel groupViewModel;
     private GroupRepository groupRepository = new GroupRepositoryImpl();
     private String token = "";
+
+    private ExpandableListView expandableListView;
+    private ExpandableListAdapter expandableListAdapter;
+    private List<String> expandableListTitle;
+    private HashMap<String, List<String>> expandableListDetail;
 
     public GroupTaskFragment() {
         // Required empty public constructor
@@ -94,21 +105,63 @@ public class GroupTaskFragment extends Fragment {
                     Log.d("TAG", "size: " + groups.size());
                     GlobalInfor.groups = groups;
                     llAnimation.setVisibility(View.GONE);
-                    groupTaskRecycler.setVisibility(View.VISIBLE);
-                    groupAdapter.submitList(groups);
+                    //groupTaskRecycler.setVisibility(View.VISIBLE);
+                    //groupAdapter.submitList(groups);
                 } else {
                     llAnimation.setVisibility(View.VISIBLE);
-                    groupTaskRecycler.setVisibility(View.GONE);
+                    //groupTaskRecycler.setVisibility(View.GONE);
                 }
-                groupAdapter.submitList(groups);
+                //groupAdapter.submitList(groups);
             }
         });
     }
 
     private void initView(View view) {
         llAnimation = view.findViewById(R.id.llAnimation);
-        groupTaskRecycler = view.findViewById(R.id.groupTaskRecycler);
+        //groupTaskRecycler = view.findViewById(R.id.groupTaskRecycler);
         tvAddGroup = view.findViewById(R.id.addGroupTask);
+
+        expandableListView = (ExpandableListView) view.findViewById(R.id.expandableListView);
+        expandableListDetail = ExpandableListDataPump.getData();
+        expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
+        expandableListAdapter = new CustomExpandableListAdapter(getActivity(), expandableListTitle, expandableListDetail);
+        expandableListView.setAdapter(expandableListAdapter);
+        expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                Toast.makeText( TaskApplication.getAppContext(),
+                        expandableListTitle.get(groupPosition) + " List Expanded.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        expandableListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+
+            @Override
+            public void onGroupCollapse(int groupPosition) {
+                Toast.makeText( TaskApplication.getAppContext(),
+                        expandableListTitle.get(groupPosition) + " List Collapsed.",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
+                Toast.makeText(
+                        TaskApplication.getAppContext(),
+                        expandableListTitle.get(groupPosition)
+                                + " -> "
+                                + expandableListDetail.get(
+                                expandableListTitle.get(groupPosition)).get(
+                                childPosition), Toast.LENGTH_SHORT
+                ).show();
+                return false;
+            }
+        });
     }
 
     private void setOnClick() {
@@ -123,75 +176,67 @@ public class GroupTaskFragment extends Fragment {
     }
 
     private void setAdapter() {
-        groupAdapter = new GroupAdapter(Group.itemCallback, getActivity(), new HandleClickListener() {
-            @Override
-            public void onLongClick(View view) {
-
-            }
-
-            @Override
-            public void onTaskClick(Task task, String status) {
-
-            }
-
-            @Override
-            public void onGroupClick(Group group) {
-            }
-        });
-        List<Group> groupss = new ArrayList<>();
-        Group group = new Group();
-        group.setId(1);
-        group.setName("Group 1");
-        group.setCode("G1");
-        group.setLeader_name("Kien");
-        group.setMember(Arrays.asList(new User(1L, "kienvutrung20@gmail.com", "ssssss", "098894992","male","sss", "kienvu41")));
-        groupss.add(group);
-        groupAdapter.submitList(groupss);
-        groupTaskRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        groupTaskRecycler.setAdapter(groupAdapter);
+//        groupAdapter = new GroupAdapter(Group.itemCallback, getActivity(), new HandleClickListener() {
+//            @Override
+//            public void onLongClick(View view) {
+//
+//            }
+//
+//            @Override
+//            public void onTaskClick(Task task, String status) {
+//
+//            }
+//
+//            @Override
+//            public void onGroupClick(Group group) {
+//            }
+//        });
+//        groupAdapter.submitList(groupss);
+//        groupTaskRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+//        groupTaskRecycler.setAdapter(groupAdapter);
     }
 
     private void enableSwipeToDelete() {
-        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getActivity().getApplicationContext()) {
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                final int position = viewHolder.getAbsoluteAdapterPosition();
-                final Group group = groupAdapter.getCurrentList().get(position);
-                if(!group.getLeader_name().equals(GlobalInfor.username)) {
-                    Toast.makeText(getActivity(), "Bạn không phải leader", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-                builder.setMessage("Xóa nhóm?")
-                        .setTitle("Xác nhận");
-
-                builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        groupViewModel.delete(Constants.BEARER + token, group.getId());
-
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                groupViewModel.getGroups(Constants.BEARER + token);
-                            }
-                        },1000);
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        groupViewModel.getGroups(Constants.BEARER + token);
-                    }
-                });
-
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        };
-
-        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
-        itemTouchhelper.attachToRecyclerView(groupTaskRecycler);
+//        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getActivity().getApplicationContext()) {
+//            @Override
+//            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+//                final int position = viewHolder.getAbsoluteAdapterPosition();
+//                final Group group = groupAdapter.getCurrentList().get(position);
+//                if(!group.getLeader_name().equals(GlobalInfor.username)) {
+//                    Toast.makeText(getActivity(), "Bạn không phải leader", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//
+//                builder.setMessage("Xóa nhóm?")
+//                        .setTitle("Xác nhận");
+//
+//                builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        groupViewModel.delete(Constants.BEARER + token, group.getId());
+//
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                groupViewModel.getGroups(Constants.BEARER + token);
+//                            }
+//                        },1000);
+//                    }
+//                });
+//                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        groupViewModel.getGroups(Constants.BEARER + token);
+//                    }
+//                });
+//
+//
+//                AlertDialog dialog = builder.create();
+//                dialog.show();
+//            }
+//        };
+//
+//        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+//        itemTouchhelper.attachToRecyclerView(groupTaskRecycler);
 
     }
 }
