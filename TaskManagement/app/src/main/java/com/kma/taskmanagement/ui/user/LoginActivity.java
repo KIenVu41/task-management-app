@@ -262,10 +262,14 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
 
     @Override
     public void onAuthenticationSuccessful() {
-        Toast.makeText(getApplicationContext(), getString(R.string.biometric_success), Toast.LENGTH_LONG).show();
-        String email = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.EMAIL);
-        String pass = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.PASSWORD);
-        userViewModel.login(email, pass);
+//        Toast.makeText(getApplicationContext(), getString(R.string.biometric_success), Toast.LENGTH_LONG).show();
+//        String email = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.EMAIL);
+//        String pass = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.PASSWORD);
+//        userViewModel.login(email, pass);
+
+        Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override

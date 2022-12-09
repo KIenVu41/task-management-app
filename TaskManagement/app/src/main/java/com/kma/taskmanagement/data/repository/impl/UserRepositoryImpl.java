@@ -80,4 +80,9 @@ public class UserRepositoryImpl implements UserRepository {
     public Completable changepass(String authHeader, ChangePassRequest changePassRequest) {
         return userService.changepass(authHeader, changePassRequest);
     }
+
+    @Override
+    public Completable forgotPass(String authHeader, ChangePassRequest changePassRequest) {
+        return userService.forgotPass(authHeader, changePassRequest);
+    }
 }

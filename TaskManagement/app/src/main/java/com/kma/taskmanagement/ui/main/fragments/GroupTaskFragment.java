@@ -61,11 +61,6 @@ public class GroupTaskFragment extends Fragment {
     private static FragmentGroupTaskAdapter.FirstPageFragmentListener mFirstPageFragmentListener;
     private String token = "";
 
-//    private ExpandableListView expandableListView;
-//    private ExpandableListAdapter expandableListAdapter;
-//    private List<String> expandableListTitle;
-//    private HashMap<String, List<String>> expandableListDetail;
-
     public GroupTaskFragment() {
         // Required empty public constructor
     }
@@ -99,7 +94,7 @@ public class GroupTaskFragment extends Fragment {
         enableSwipeToDelete();
 
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
-        groupViewModel.getGroups(Constants.BEARER + token);
+        //groupViewModel.getGroups(Constants.BEARER + token);
 
         groupViewModel.getGroupResponse().observe(getActivity(), new Observer<List<Group>>() {
             @Override
@@ -122,48 +117,6 @@ public class GroupTaskFragment extends Fragment {
         llAnimation = view.findViewById(R.id.llAnimation);
         groupTaskRecycler = view.findViewById(R.id.groupTaskRecycler);
         tvAddGroup = view.findViewById(R.id.addGroupTask);
-
-//        expandableListView = (ExpandableListView) view.findViewById(R.id.expandableListView);
-//        expandableListDetail = ExpandableListDataPump.getData();
-//        expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
-//        expandableListAdapter = new CustomExpandableListAdapter(getActivity(), expandableListTitle, expandableListDetail);
-//        expandableListView.setAdapter(expandableListAdapter);
-//        expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-//
-//            @Override
-//            public void onGroupExpand(int groupPosition) {
-//                Toast.makeText( TaskApplication.getAppContext(),
-//                        expandableListTitle.get(groupPosition) + " List Expanded.",
-//                        Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        expandableListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-//
-//            @Override
-//            public void onGroupCollapse(int groupPosition) {
-//                Toast.makeText( TaskApplication.getAppContext(),
-//                        expandableListTitle.get(groupPosition) + " List Collapsed.",
-//                        Toast.LENGTH_SHORT).show();
-//
-//            }
-//        });
-//
-//        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-//            @Override
-//            public boolean onChildClick(ExpandableListView parent, View v,
-//                                        int groupPosition, int childPosition, long id) {
-//                Toast.makeText(
-//                        TaskApplication.getAppContext(),
-//                        expandableListTitle.get(groupPosition)
-//                                + " -> "
-//                                + expandableListDetail.get(
-//                                expandableListTitle.get(groupPosition)).get(
-//                                childPosition), Toast.LENGTH_SHORT
-//                ).show();
-//                return false;
-//            }
-//        });
     }
 
     private void setOnClick() {
@@ -197,11 +150,22 @@ public class GroupTaskFragment extends Fragment {
                  * When this container fragment is created, we fill it with our first
                  * "real" fragment
                  */
-                transaction.replace(R.id.root_frame, new AssignedTaskFragment());
+                transaction.replace(R.id.root_frame, GroupAssignFragment.newInstance(group.getMember()));
 
                 transaction.commit();
+                groupTaskRecycler.setVisibility(View.GONE);
             }
         });
+        List<Group> groups = new ArrayList<>();
+        List<User> member = Arrays.asList(new User(1L, "kienvutr20@gmail.com", "aaaaaaa", "09889030", "male", "sss", "acctest"));
+        Group group = new Group();
+        group.setId(1);
+        group.setMember(member);
+        group.setLeader_name("ssss");
+        group.setCode("sss");
+        group.setName("test");
+        groups.add(group);
+        groupAdapter.submitList(groups);
         groupTaskRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         groupTaskRecycler.setAdapter(groupAdapter);
     }

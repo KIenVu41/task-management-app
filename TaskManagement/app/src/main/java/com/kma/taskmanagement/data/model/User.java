@@ -2,7 +2,9 @@ package com.kma.taskmanagement.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private Long id;
     @SerializedName("email")
     private String email;

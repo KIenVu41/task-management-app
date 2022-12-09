@@ -9,6 +9,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.data.model.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,10 +17,10 @@ import java.util.List;
 public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context context;
-    private List<String> expandableListTitle;
+    private List<User> expandableListTitle;
     private HashMap<String, List<String>> expandableListDetail;
 
-    public CustomExpandableListAdapter(Context context, List<String> expandableListTitle,
+    public CustomExpandableListAdapter(Context context, List<User> expandableListTitle,
                                        HashMap<String, List<String>> expandableListDetail) {
         this.context = context;
         this.expandableListTitle = expandableListTitle;

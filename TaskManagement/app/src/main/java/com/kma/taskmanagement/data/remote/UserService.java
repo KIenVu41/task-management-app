@@ -38,5 +38,6 @@ public interface UserService {
     @PUT("api/v1/users")
     Completable changepass(@Header("Authorization") String authHeader, @Body ChangePassRequest changePassRequest);
 
-    // users/reset
+    @PUT("api/v1/users/reset")
+    Completable forgotPass(@Header("Authorization") String authHeader, @Body ChangePassRequest changePassRequest);
 }
