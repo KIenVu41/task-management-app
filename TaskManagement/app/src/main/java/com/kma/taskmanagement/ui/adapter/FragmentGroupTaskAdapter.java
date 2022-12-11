@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.kma.taskmanagement.ui.main.fragments.AssignedTaskFragment;
+import com.kma.taskmanagement.ui.main.fragments.GroupAssignFragment;
 import com.kma.taskmanagement.ui.main.fragments.GroupTaskFragment;
 import com.kma.taskmanagement.ui.main.fragments.MyTaskFragment;
 
@@ -61,7 +62,7 @@ public class FragmentGroupTaskAdapter  extends FragmentPagerAdapter {
     @Override
     public int getItemPosition(Object object)
     {
-        if (object instanceof GroupTaskFragment && mFragmentAtPos0 instanceof AssignedTaskFragment)
+        if (object instanceof GroupTaskFragment && mFragmentAtPos0 instanceof GroupAssignFragment)
             return POSITION_NONE;
         return POSITION_UNCHANGED;
     }

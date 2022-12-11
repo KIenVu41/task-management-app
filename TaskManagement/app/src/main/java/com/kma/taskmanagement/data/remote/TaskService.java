@@ -50,6 +50,9 @@ public interface TaskService {
     Observable<List<Task>> getAssign(@Header("Authorization") String authHeader);
 
     @GET("api/v1/tasks/assigntask")
+    Observable<List<Task>> getAssignByGroupId(@Header("Authorization") String authHeader, @Query("groupId") int groupId);
+
+    @GET("api/v1/tasks/assigntask")
     Observable<List<Task>> getAssignByPrio(@Header("Authorization") String authHeader, @Query("priorityType") String priorityType);
 
     @GET("api/v1/tasks/assigntask")

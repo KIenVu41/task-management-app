@@ -2,6 +2,7 @@ package com.kma.taskmanagement.ui.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
@@ -62,6 +65,7 @@ public class OTPVerificationDialog extends Dialog {
     private UserViewModel userViewModel;
     private UserRepository userRepository = new UserRepositoryImpl();
     private String token = "";
+    ProgressDialog progressDialog;
 
     public OTPVerificationDialog(@NonNull Activity activity) {
         super(activity);
@@ -75,6 +79,10 @@ public class OTPVerificationDialog extends Dialog {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         getWindow().setBackgroundDrawable(new ColorDrawable(getContext().getResources().getColor(android.R.color.transparent)));
         setContentView(R.layout.layout_otp);
+
+        progressDialog = new ProgressDialog(activity);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(true);
 
         userViewModel =  new ViewModelProvider((ViewModelStoreOwner) activity, new UserViewModelFactory(userRepository)).get(UserViewModel.class);
         otp1 = findViewById(R.id.otp1);
@@ -99,6 +107,20 @@ public class OTPVerificationDialog extends Dialog {
         otp5.addTextChangedListener(textWatcher);
         otp6.addTextChangedListener(textWatcher);
         showKeyBoard(otp1);
+
+        userViewModel.getChangePass().observe((LifecycleOwner) activity, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                switch (integer) {
+                    case 1:
+                        Toast.makeText(TaskApplication.getAppContext(), "Thành công", Toast.LENGTH_SHORT).show();
+                        break;
+                    case  -1:
+                        Toast.makeText(TaskApplication.getAppContext(), "Lỗi xảy ra!", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
 
         tvSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,7 +208,7 @@ public class OTPVerificationDialog extends Dialog {
                             // Update UI
                             token = SharedPreferencesUtil.getInstance(activity.getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
                             if(edtPass.getText().toString().trim().equals(edtRePass.getText().toString().trim())) {
-                                userViewModel.changePass(Constants.BEARER + token, new ChangePassRequest("kocopass123", edtPass.getText().toString().trim()));
+                                userViewModel.forgotPass(Constants.BEARER + token, new ChangePassRequest(null, edtPass.getText().toString().trim()));
                             } else {
                                 Toast.makeText(getContext(), "Mật khẩu không trùng khớp", Toast.LENGTH_SHORT).show();
                             }

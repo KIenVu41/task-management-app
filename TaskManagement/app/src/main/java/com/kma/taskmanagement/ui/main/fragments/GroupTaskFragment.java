@@ -19,35 +19,30 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kma.taskmanagement.R;
-import com.kma.taskmanagement.TaskApplication;
-import com.kma.taskmanagement.data.local.ExpandableListDataPump;
 import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.model.Task;
-import com.kma.taskmanagement.data.model.User;
 import com.kma.taskmanagement.data.repository.GroupRepository;
+import com.kma.taskmanagement.data.repository.TaskRepository;
 import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
+import com.kma.taskmanagement.data.repository.impl.TaskRepositoryImpl;
 import com.kma.taskmanagement.listener.HandleClickListener;
-import com.kma.taskmanagement.ui.adapter.CustomExpandableListAdapter;
 import com.kma.taskmanagement.ui.adapter.FragmentGroupTaskAdapter;
 import com.kma.taskmanagement.ui.adapter.GroupAdapter;
 import com.kma.taskmanagement.ui.dialog.AddGroupDialog;
 import com.kma.taskmanagement.ui.main.GroupViewModel;
 import com.kma.taskmanagement.ui.main.GroupViewModelFactory;
+import com.kma.taskmanagement.ui.main.TaskViewModel;
+import com.kma.taskmanagement.ui.main.TaskViewModelFactory;
 import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.kma.taskmanagement.utils.SwipeToDeleteCallback;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 public class GroupTaskFragment extends Fragment {
@@ -58,6 +53,8 @@ public class GroupTaskFragment extends Fragment {
     private GroupAdapter groupAdapter;
     private GroupViewModel groupViewModel;
     private GroupRepository groupRepository = new GroupRepositoryImpl();
+    private TaskViewModel taskViewModel;
+    private TaskRepository taskRepository = new TaskRepositoryImpl();
     private static FragmentGroupTaskAdapter.FirstPageFragmentListener mFirstPageFragmentListener;
     private String token = "";
 
@@ -88,13 +85,14 @@ public class GroupTaskFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         groupViewModel =  new ViewModelProvider(this, new GroupViewModelFactory(groupRepository)).get(GroupViewModel.class);
+        taskViewModel = new ViewModelProvider(this, new TaskViewModelFactory(taskRepository)).get(TaskViewModel.class);
         initView(view);
         setOnClick();
         setAdapter();
         enableSwipeToDelete();
 
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
-        //groupViewModel.getGroups(Constants.BEARER + token);
+        groupViewModel.getGroups(Constants.BEARER + token);
 
         groupViewModel.getGroupResponse().observe(getActivity(), new Observer<List<Group>>() {
             @Override
@@ -109,6 +107,23 @@ public class GroupTaskFragment extends Fragment {
                     groupTaskRecycler.setVisibility(View.GONE);
                 }
                 groupAdapter.submitList(groups);
+            }
+        });
+
+        taskViewModel.getAssignResult().observe(getActivity(), new Observer<List<Task>>() {
+            @Override
+            public void onChanged(List<Task> tasks) {
+                if(tasks.size() != 0) {
+                    FragmentTransaction transaction = getChildFragmentManager()
+                            .beginTransaction();
+
+                    transaction.replace(R.id.root_frame, GroupAssignFragment.newInstance(tasks));
+                    transaction.addToBackStack("assign");
+
+                    transaction.commit();
+                } else {
+                    Toast.makeText(getContext(), "Nhóm chưa có thành viên", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -143,29 +158,9 @@ public class GroupTaskFragment extends Fragment {
 
             @Override
             public void onGroupClick(Group group) {
-                //mFirstPageFragmentListener.onSwitchToNextFragment();
-                FragmentTransaction transaction = getFragmentManager()
-                        .beginTransaction();
-                /*
-                 * When this container fragment is created, we fill it with our first
-                 * "real" fragment
-                 */
-                transaction.replace(R.id.root_frame, GroupAssignFragment.newInstance(group.getMember()));
-
-                transaction.commit();
-                groupTaskRecycler.setVisibility(View.GONE);
+                taskViewModel.getAllTasksByGroupId(Constants.BEARER + token, (int) group.getId());
             }
         });
-        List<Group> groups = new ArrayList<>();
-        List<User> member = Arrays.asList(new User(1L, "kienvutr20@gmail.com", "aaaaaaa", "09889030", "male", "sss", "acctest"));
-        Group group = new Group();
-        group.setId(1);
-        group.setMember(member);
-        group.setLeader_name("ssss");
-        group.setCode("sss");
-        group.setName("test");
-        groups.add(group);
-        groupAdapter.submitList(groups);
         groupTaskRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         groupTaskRecycler.setAdapter(groupAdapter);
     }

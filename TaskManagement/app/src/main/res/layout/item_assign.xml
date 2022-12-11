@@ -29,7 +29,7 @@
                 android:id="@+id/assignday"
                 android:text="Tue"
                 android:layout_gravity="center"
-                android:textSize="18sp"
+                android:textSize="@dimen/sp12"
                 android:textColor="@android:color/black"
                 android:alpha="0.5"/>
 
@@ -39,7 +39,7 @@
                 android:id="@+id/assigndate"
                 android:text="18"
                 android:layout_gravity="center"
-                android:textSize="24sp"
+                android:textSize="@dimen/sp18"
                 android:textColor="@color/colorAccent" />
 
             <TextView
@@ -48,7 +48,7 @@
                 android:id="@+id/assignmonth"
                 android:layout_gravity="center"
                 android:text="Nov"
-                android:textSize="18sp"
+                android:textSize="@dimen/sp15"
                 android:textColor="@android:color/black"
                 android:alpha="0.5"/>
 

@@ -127,7 +127,7 @@ public class AssignedTaskFragment extends Fragment {
     private void initView(View view) {
         llAnimation = view.findViewById(R.id.llAnimationAssigned);
         assignTaskRecycler = view.findViewById(R.id.assignTaskRecycler);
-        ivFilter = view.findViewById(R.id.ivAssignFilter);
+        //ivFilter = view.findViewById(R.id.ivAssignFilter);
         filterDialog = new Dialog(getActivity());
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -135,9 +135,9 @@ public class AssignedTaskFragment extends Fragment {
     }
 
     private void setOnClick() {
-        ivFilter.setOnClickListener(view -> {
-            openFilterDialog();
-        });
+//        ivFilter.setOnClickListener(view -> {
+//            openFilterDialog();
+//        });
     }
 
     private void setAdapter() {

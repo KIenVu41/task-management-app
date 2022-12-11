@@ -175,6 +175,29 @@ public class UserViewModel extends ViewModel {
                 });
     }
 
+    public void forgotPass(String token, ChangePassRequest changePassRequest) {
+        mCPResultMutableData.postValue(0);
+        userRepository.forgotPass(token, changePassRequest)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        mCPResultMutableData.postValue(1);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mCPResultMutableData.postValue(-1);
+                    }
+                });
+    }
+
     public LiveData<Token> getResult(){
         return mLoginResultMutableData;
     }

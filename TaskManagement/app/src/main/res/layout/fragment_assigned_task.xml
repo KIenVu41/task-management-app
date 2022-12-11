@@ -11,49 +11,49 @@
     android:id="@+id/llAssign"
     tools:context=".ui.main.MainActivity">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+<!--    <FrameLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center"-->
+<!--            android:orientation="vertical">-->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/assigntitle"
-                android:textColor="@color/COLOR_BUTTON"
-                android:textSize="@dimen/sp21"
-                android:layout_marginBottom="@dimen/dp15"
-                android:textStyle="bold"/>
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:text="@string/assigntitle"-->
+<!--                android:textColor="@color/COLOR_BUTTON"-->
+<!--                android:textSize="@dimen/sp21"-->
+<!--                android:layout_marginBottom="@dimen/dp15"-->
+<!--                android:textStyle="bold"/>-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_margin="@dimen/dp16">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:gravity="center"-->
+<!--                android:layout_margin="@dimen/dp16">-->
 
-                <ImageView
-                    android:id="@+id/ivAssignFilter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/ic_baseline_filter_list_24" />
+<!--                <ImageView-->
+<!--                    android:id="@+id/ivAssignFilter"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:background="@drawable/ic_baseline_filter_list_24" />-->
 
-                <ImageView
-                    android:id="@+id/ivAssignRefresh"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/ic_baseline_refresh_24"
-                    android:visibility="gone" />
-            </LinearLayout>
+<!--                <ImageView-->
+<!--                    android:id="@+id/ivAssignRefresh"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:background="@drawable/ic_baseline_refresh_24"-->
+<!--                    android:visibility="gone" />-->
+<!--            </LinearLayout>-->
 
-        </LinearLayout>
-    </FrameLayout>
+<!--        </LinearLayout>-->
+<!--    </FrameLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -34,6 +34,8 @@ public interface TaskRepository {
 
     Observable<List<Task>> getAssign(String authHeader);
 
+    Observable<List<Task>> getAssignByGroupId(String authHeader, int groupId);
+
     Observable<List<Task>> getAssignByPrio(String authHeader, String priorityType);
 
     Observable<List<Task>> getAssignByStatus(String authHeader, String statusType);

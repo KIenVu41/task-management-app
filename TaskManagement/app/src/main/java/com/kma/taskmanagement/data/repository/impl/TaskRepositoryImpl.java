@@ -71,6 +71,11 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
+    public Observable<List<Task>> getAssignByGroupId(String authHeader, int groupId) {
+        return taskService.getAssignByGroupId(authHeader, groupId);
+    }
+
+    @Override
     public Observable<List<Task>> getAssignByPrio(String authHeader, String priorityType) {
         return taskService.getAssignByPrio(authHeader, priorityType);
     }

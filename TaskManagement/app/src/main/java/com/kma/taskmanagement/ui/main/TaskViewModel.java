@@ -366,6 +366,34 @@ public class TaskViewModel extends ViewModel {
                 });
     }
 
+    public void getAllTasksByGroupId(String token, int groupId) {
+        mResponseMutableData.postValue("Đang xử lý...");
+        taskRepository.getAssignByGroupId(token, groupId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Task>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Task> tasks) {
+                        mAssignResultMutableData.setValue(tasks);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mResponseMutableData.postValue("Lỗi " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        mResponseMutableData.postValue("Hoàn thành");
+                    }
+                });
+    }
+
     public void getAssignByPrioAndStatus(String token, String priorityType, String statusType) {
         mResponseMutableData.postValue("Đang xử lý...");
         taskRepository.getAssignByPrioAndStatus(token, priorityType, statusType)
