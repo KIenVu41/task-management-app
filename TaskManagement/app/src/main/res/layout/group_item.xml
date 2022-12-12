@@ -8,5 +8,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/mobile"
         android:paddingLeft="50dp"
+        android:textColor="@color/COLOR_BUTTON"
+        android:textSize="@dimen/sp18"
         android:text="" />
 </LinearLayout>

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.listener.OnItemClick;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,12 +24,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private Map<String, List<String>> mobileCollection;
     private List<String> groupList;
+    private OnItemClick onItemClick;
 
     public MyExpandableListAdapter(Context context, List<String> groupList,
-                                   Map<String, List<String>> mobileCollection){
+                                   Map<String, List<String>> mobileCollection, OnItemClick onItemClick){
         this.context = context;
         this.mobileCollection = mobileCollection;
         this.groupList = groupList;
+        this.onItemClick = onItemClick;
     }
 
     @Override
@@ -68,14 +71,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
-        String mobileName = getGroup(i).toString();
+        String groupName = getGroup(i).toString();
         if(view == null){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.group_item, null);
         }
         TextView item = view.findViewById(R.id.mobile);
         item.setTypeface(null, Typeface.BOLD);
-        item.setText(mobileName);
+        item.setText(groupName);
         return view;
     }
 
@@ -93,17 +96,18 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Do you want to remove?");
+                builder.setMessage("Bạn muốn xóa task?");
                 builder.setCancelable(true);
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
                         List<String> child = mobileCollection.get(groupList.get(i));
+                        onItemClick.onClick(child.get(i1));
                         child.remove(i1);
                         notifyDataSetChanged();
                     }
                 });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.cancel();

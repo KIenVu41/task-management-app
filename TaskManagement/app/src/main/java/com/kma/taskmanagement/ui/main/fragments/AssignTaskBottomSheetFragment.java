@@ -1,39 +1,36 @@
 package com.kma.taskmanagement.ui.main.fragments;
 
-import static android.content.Context.ALARM_SERVICE;
-
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Build;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.model.Task;
-import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.TaskRepository;
-import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
 import com.kma.taskmanagement.data.repository.impl.TaskRepositoryImpl;
 import com.kma.taskmanagement.ui.common.CustomSpinner;
-import com.kma.taskmanagement.ui.main.GroupViewModel;
-import com.kma.taskmanagement.ui.main.GroupViewModelFactory;
 import com.kma.taskmanagement.ui.main.TaskViewModel;
 import com.kma.taskmanagement.ui.main.TaskViewModelFactory;
 import com.kma.taskmanagement.utils.Constants;
@@ -41,20 +38,16 @@ import com.kma.taskmanagement.utils.DateUtils;
 import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
+public class AssignTaskBottomSheetFragment extends BottomSheetDialogFragment {
     Unbinder unbinder;
     @BindView(R.id.dialogTitle)
     TextView dialogTitle;
@@ -72,17 +65,16 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
     CustomSpinner dropdownAssign;
     @BindView(R.id.addTask)
     Button addTask;
-    boolean isEdit = false, isAssign = false;
     Task task;
     int mYear, mMonth, mDay;
     int mHour, mMinute;
     DatePickerDialog datePickerDialog;
     TimePickerDialog timePickerDialog;
     TaskViewModel taskViewModel;
-    private Group group = new Group();
+    private List<String> assinger;
+    private int groupId = 0;
     private String token = "";
     private TaskRepository taskRepository = new TaskRepositoryImpl();
-
 
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
 
@@ -98,13 +90,15 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
         }
     };
 
-    public void setAction(Group group) {
-        this.group = group;
+    public void setAssigner(List<String> assigner) {
+        this.assinger = assigner;
     }
 
-    public void setEdit(boolean isEdit, boolean isAssign, Task task) {
-        this.isEdit = isEdit;
-        this.isAssign = isAssign;
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+
+    public void setTask(Task task) {
         this.task = task;
     }
 
@@ -113,7 +107,7 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
     @Override
     public void setupDialog(Dialog dialog, int style) {
         super.setupDialog(dialog, style);
-        View contentView = View.inflate(getContext(), R.layout.fragment_create_group_task, null);
+        View contentView = View.inflate(getContext(), R.layout.fragment_assign_task_bottom_sheet, null);
         unbinder = ButterKnife.bind(this, contentView);
 
         dialog.setContentView(contentView);
@@ -121,6 +115,8 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
         taskViewModel = new ViewModelProvider(requireActivity(), new TaskViewModelFactory(taskRepository)).get(TaskViewModel.class);
 
+        addTaskTitle.setText(task.getName());
+        addTaskDescription.setText(task.getDescription());
         setupSpinner();
 
         addTask.setOnClickListener(view -> {
@@ -168,8 +164,8 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
         adapterPrio.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         dropdownPrio.setAdapter(adapterPrio);
 
-        String[] arrayName = new String[group.getMember().size()];
-        for(int i = 0; i < group.getMember().size(); i++) arrayName[i] = group.getMember().get(i).getUsername();
+        String[] arrayName = new String[assinger.size()];
+        for(int i = 0; i < assinger.size(); i++) arrayName[i] = assinger.get(i);
         ArrayAdapter adapterAssign = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, arrayName);
         adapterAssign.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         dropdownAssign.setAdapter(adapterAssign);
@@ -217,34 +213,11 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
         String hourEnd = itemTime1[0];
         String minEnd = itemTime1[1];
 
-//       String startDate = DateUtils.getLocalDate();
-//       String[] items2 = startDate.split(" ");
-//       String dateStart = items2[0];
-//       String timeStart = items2[1];
-
-        //String startDateFormat = dateStart + "-" + timeStart.replace(":", "-");
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         String startDateFormat = now.format(format).replace(" ", "T") + "Z";
         String endDateFormat =  DateUtils.convert(ddEnd, monthEnd, yearEnd) + "T" + DateUtils.convertTime(hourEnd, minEnd) + ":00.000Z";
 
-        if(isEdit) {
-            taskViewModel.update(Constants.BEARER + token, task.getId(), new Task(GlobalInfor.username, null, "", desc, endDateFormat, group.getId(), title, performer, prio,  startDateFormat, status, null));
-        } else {
-            taskViewModel.addTask(Constants.BEARER + token, new Task(GlobalInfor.username, null, "", desc, endDateFormat, group.getId(), title, performer, prio,  startDateFormat, status, null));
-        }
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                taskViewModel.getAssign(Constants.BEARER + token);
-            }
-        },500);
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                taskViewModel.getAllTasks(Constants.BEARER + token);
-//            }
-//        },500);
+        taskViewModel.update(Constants.BEARER + token, task.getId(), new Task(GlobalInfor.username, null, "", desc, endDateFormat, (long) groupId, title, performer, prio,  startDateFormat, status, null));
     }
 }

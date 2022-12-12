@@ -49,7 +49,7 @@ public class GroupTaskFragment extends Fragment {
 
     private LinearLayout llAnimation;
     private RecyclerView groupTaskRecycler;
-    private TextView tvAddGroup;
+    private TextView tvAddGroup, tvGroupTitle;
     private GroupAdapter groupAdapter;
     private GroupViewModel groupViewModel;
     private GroupRepository groupRepository = new GroupRepositoryImpl();
@@ -122,7 +122,7 @@ public class GroupTaskFragment extends Fragment {
 
                     transaction.commit();
                 } else {
-                    Toast.makeText(getContext(), "Nhóm chưa có thành viên", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Nhóm không có công việc được giao", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -132,6 +132,7 @@ public class GroupTaskFragment extends Fragment {
         llAnimation = view.findViewById(R.id.llAnimation);
         groupTaskRecycler = view.findViewById(R.id.groupTaskRecycler);
         tvAddGroup = view.findViewById(R.id.addGroupTask);
+        tvGroupTitle = view.findViewById(R.id.tvGroupTitle);
     }
 
     private void setOnClick() {

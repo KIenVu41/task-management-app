@@ -8,11 +8,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/model"
         android:layout_weight="1"
+        android:textColor="@color/COLOR_BUTTON"
         android:text="Hello" />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/delete"
         android:background="@drawable/delete"
+        android:backgroundTint="@color/COLOR_BUTTON"
         android:contentDescription="@string/app_name" />
 </LinearLayout>
