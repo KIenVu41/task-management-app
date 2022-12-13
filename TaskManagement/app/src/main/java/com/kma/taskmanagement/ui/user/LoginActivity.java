@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,9 +16,11 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.biometrics.BiometricPrompt;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -32,11 +33,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kma.security.KeyPair;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.biometric.BiometricCallback;
 import com.kma.taskmanagement.biometric.BiometricManager;
 import com.kma.taskmanagement.data.model.LoginRequest;
 import com.kma.taskmanagement.data.model.Token;
+import com.kma.taskmanagement.data.model.Transaction;
 import com.kma.taskmanagement.data.model.User;
 import com.kma.taskmanagement.data.repository.UserRepository;
 import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
@@ -47,11 +50,14 @@ import com.kma.taskmanagement.ui.user.RegisterActivity;
 import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
+import com.kma.taskmanagement.utils.Utils;
 
-import java.security.KeyStore;
-import java.security.KeyStoreException;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.util.concurrent.Executor;
 
 import javax.crypto.Cipher;
@@ -174,7 +180,6 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
                     .setNegativeButtonText(getString(R.string.biometric_negative_button_text))
                     .build();
 
-            //start authentication
             mBiometricManager.authenticate(LoginActivity.this);
         });
     }
@@ -261,8 +266,11 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
     }
 
     @Override
-    public void onAuthenticationSuccessful() {
-        Toast.makeText(getApplicationContext(), getString(R.string.biometric_success), Toast.LENGTH_LONG).show();
+    public void onAuthenticationSuccessful(BiometricPrompt.AuthenticationResult result) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            Toast.makeText(getApplicationContext(), getString(R.string.biometric_success) + result.getCryptoObject().getSignature(), Toast.LENGTH_LONG).show();
+        }
+
         String email = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.EMAIL);
         String pass = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.PASSWORD);
         userViewModel.login(email, pass);

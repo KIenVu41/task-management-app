@@ -78,7 +78,7 @@ public class BiometricManagerV23 {
                         public void onAuthenticationSucceeded(FingerprintManagerCompat.AuthenticationResult result) {
                             super.onAuthenticationSucceeded(result);
                             dismissDialog();
-                            biometricCallback.onAuthenticationSuccessful();
+                            //biometricCallback.onAuthenticationSuccessful();
                         }
 
 

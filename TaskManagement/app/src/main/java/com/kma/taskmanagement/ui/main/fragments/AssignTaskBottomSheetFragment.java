@@ -63,6 +63,8 @@ public class AssignTaskBottomSheetFragment extends BottomSheetDialogFragment {
     CustomSpinner dropdownPrio;
     @BindView(R.id.spinnerAssign)
     CustomSpinner dropdownAssign;
+    @BindView(R.id.spinnerStatus)
+    CustomSpinner dropdownStatus;
     @BindView(R.id.addTask)
     Button addTask;
     Task task;
@@ -170,6 +172,17 @@ public class AssignTaskBottomSheetFragment extends BottomSheetDialogFragment {
         adapterAssign.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         dropdownAssign.setAdapter(adapterAssign);
 
+        ArrayAdapter adapterStatus = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, getActivity().getResources().getStringArray(R.array.taskstatusarr));
+        adapterStatus.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+        if(task.getPriority().equals("low")) {
+            dropdownPrio.setSelection(0);
+        } else if(task.getPriority().equals("medium")) {
+            dropdownPrio.setSelection(1);
+        } else if(task.getPriority().equals("high")) {
+            dropdownPrio.setSelection(2);
+        }
+        dropdownStatus.setAdapter(adapterStatus);
+        dropdownStatus.setEnabled(false);
     }
 
     public boolean validateFields() {
@@ -201,8 +214,9 @@ public class AssignTaskBottomSheetFragment extends BottomSheetDialogFragment {
         String endDate = taskDate.getText().toString();
         String endTime = taskTime.getText().toString();
         String prio = dropdownPrio.getSelectedItem().toString();
-        String status = "TODO";
+//        String status = "TODO";
         String performer = dropdownAssign.getSelectedItem().toString();
+        String status = dropdownStatus.getSelectedItem().toString();
         //yyyy-MM-dd-HH-mm-ss.zzz
         String[] items1 = endDate.split("-");
         String ddEnd = items1[0];

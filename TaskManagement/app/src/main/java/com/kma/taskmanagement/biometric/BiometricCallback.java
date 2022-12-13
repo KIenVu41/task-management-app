@@ -19,7 +19,7 @@ public interface BiometricCallback {
 
     void onAuthenticationCancelled();
 
-    void onAuthenticationSuccessful();
+    void onAuthenticationSuccessful(BiometricPrompt.AuthenticationResult result);
 
     void onAuthenticationHelp(int helpCode, CharSequence helpString);
 

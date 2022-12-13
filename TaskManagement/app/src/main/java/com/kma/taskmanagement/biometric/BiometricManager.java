@@ -9,7 +9,18 @@ import android.os.CancellationSignal;
 
 import androidx.annotation.NonNull;
 
+import com.kma.security.utils.Constants;
 import com.kma.taskmanagement.utils.BiometricUtils;
+
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.Signature;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
 public class BiometricManager extends BiometricManagerV23 {
 
@@ -87,7 +98,21 @@ public class BiometricManager extends BiometricManagerV23 {
 
     private void displayBiometricDialog(BiometricCallback biometricCallback) {
         if(BiometricUtils.isBiometricPromptEnabled()) {
-            displayBiometricPrompt(biometricCallback);
+            try {
+                displayBiometricPrompt(biometricCallback);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            } catch (CertificateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (UnrecoverableKeyException e) {
+                e.printStackTrace();
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+            }
         } else {
             displayBiometricPromptV23(biometricCallback);
         }
@@ -96,7 +121,13 @@ public class BiometricManager extends BiometricManagerV23 {
 
 
     @TargetApi(Build.VERSION_CODES.P)
-    private void displayBiometricPrompt(final BiometricCallback biometricCallback) {
+    private void displayBiometricPrompt(final BiometricCallback biometricCallback) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, UnrecoverableKeyException, InvalidKeyException {
+        Signature signature = Signature.getInstance("SHA256withECDSA");
+        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+        keyStore.load(null);
+        PrivateKey key = (PrivateKey) keyStore.getKey(Constants.KEY_NAME, null);
+        signature.initSign(key);
+        BiometricPrompt.CryptoObject cryptObject = new  BiometricPrompt.CryptoObject(signature);
         new BiometricPrompt.Builder(context)
                 .setTitle(title)
                 .setSubtitle(subtitle)
@@ -108,7 +139,7 @@ public class BiometricManager extends BiometricManagerV23 {
                     }
                 })
                 .build()
-                .authenticate(mCancellationSignal, context.getMainExecutor(),
+                .authenticate(cryptObject, mCancellationSignal, context.getMainExecutor(),
                         new BiometricCallbackV28(biometricCallback));
     }
 
