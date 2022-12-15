@@ -12,8 +12,8 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menuChat"
-        android:title="Chat"
+        android:id="@+id/menuLock"
+        android:title="Secure"
         app:showAsAction="ifRoom" />
 
 </menu>

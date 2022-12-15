@@ -299,27 +299,15 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
 
     @Override
     public void onAuthenticationSuccessful(BiometricPrompt.AuthenticationResult result) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//            Toast.makeText(getApplicationContext(), getString(R.string.biometric_success) + result.getCryptoObject().getSignature(), Toast.LENGTH_LONG).show();
-//        }
-
-//        String email = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.EMAIL);
-//        String pass = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.PASSWORD);
-//        userViewModel.login(email, pass);
-//        Signature signature = null;
-//
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-//            signature = result.getCryptoObject().getSignature();
-//        }
         signature = KeyPair.providesSignature();
         Transaction transaction = new Transaction(1, 1, new SecureRandom().nextLong());
         try {
             signature.update(transaction.toByteArray());
             byte[] sigBytes = signature.sign();
-            Log.d("TAG", "client sign b " + Arrays.toString(sigBytes));
-            // Send the transaction and signedTransaction to the dummy backend
             if (StoreBackend.verify(transaction, sigBytes)) {
-                Toast.makeText(getApplicationContext(), "success", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
+                startActivity(intent);
+                finish();
             } else {
                 Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_LONG).show();
             }
@@ -349,7 +337,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
                                 .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
                                 // Require the user to authenticate with a fingerprint to authorize
                                 // every use of the private key
-                                .setUserAuthenticationRequired(false)
+                                .setUserAuthenticationRequired(true)
                                 .build());
                 keyPairGenerator.generateKeyPair();
 

@@ -33,7 +33,7 @@ import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 
 public class SettingFragment extends Fragment {
 
-    TextView tvInDate, tv3Day, tv7Day, tvUsername, tvSex, tvPhone, tvEmail, tvEdit;
+    TextView tvInDate, tv3Day, tv7Day, tvOn, tvOff, tvUsername, tvSex, tvPhone, tvEmail, tvEdit;
     Button btnLogout, btnChangepass;
     private UserViewModel userViewModel;
     private UserRepository userRepository = new UserRepositoryImpl();
@@ -62,6 +62,7 @@ public class SettingFragment extends Fragment {
         initView(view);
         initData();
         data();
+        secureData();
         setOnClick();
     }
 
@@ -69,6 +70,8 @@ public class SettingFragment extends Fragment {
          tvInDate = v.findViewById(R.id.tvInDate);
          tv3Day = v.findViewById(R.id.tv3Day);
          tv7Day = v.findViewById(R.id.tv7Day);
+         tvOn = v.findViewById(R.id.tvSecureOn);
+         tvOff = v.findViewById(R.id.tvSecureOff);
          tvUsername = v.findViewById(R.id.tvUsername);
          tvSex = v.findViewById(R.id.tvSex);
          tvPhone = v.findViewById(R.id.tvPhone);
@@ -106,6 +109,18 @@ public class SettingFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 onChangeType(2);
+            }
+        });
+        tvOn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onChangeSecureType(1);
+            }
+        });
+        tvOff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onChangeSecureType(0);
             }
         });
         tvEdit.setOnClickListener(view -> {
@@ -181,16 +196,43 @@ public class SettingFragment extends Fragment {
         }
     }
 
+    private void secureData() {
+        int typeRemind = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getIntFromSharedPreferences(Constants.SECURE + GlobalInfor.username);
+        if(typeRemind == 0) {
+            tvOff.setBackgroundResource(R.drawable.chart_bg_left_focus);
+            tvOn.setBackgroundResource(R.drawable.chart_bg_right_default);
+            tvOn.setTextColor(this.getResources().getColor(R.color.COLOR_BUTTON));
+        } else if(typeRemind == 1) {
+            tvOn.setBackgroundResource(R.drawable.chart_bg_right_focus);
+            tvOn.setTextColor(this.getResources().getColor(R.color.WHITE_COLOR));
+            tvOff.setBackgroundResource(R.drawable.chart_bg_left_default);
+            tvOff.setTextColor(this.getResources().getColor(R.color.COLOR_BUTTON));
+        }
+    }
+
+    private void onChangeSecureType(int typeSecure) {
+        SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).storeIntInSharedPreferences(Constants.SECURE + GlobalInfor.username, typeSecure);
+        if(typeSecure == 0) {
+            tvOff.setBackgroundResource(R.drawable.chart_bg_left_focus);
+            tvOff.setTextColor(this.getResources().getColor(R.color.WHITE_COLOR));
+            tvOn.setBackgroundResource(R.drawable.chart_bg_right_default);
+            tvOn.setTextColor(this.getResources().getColor(R.color.COLOR_BUTTON));
+        } else if(typeSecure == 1) {
+            tvOn.setBackgroundResource(R.drawable.chart_bg_right_focus);
+            tvOn.setTextColor(this.getResources().getColor(R.color.WHITE_COLOR));
+            tvOff.setBackgroundResource(R.drawable.chart_bg_left_default);
+            tvOff.setTextColor(this.getResources().getColor(R.color.COLOR_BUTTON));
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("TAG", "resume");
         initData();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d("TAG", "stop");
     }
 }

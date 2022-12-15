@@ -28,6 +28,7 @@ public class Constants {
     public static final String TOKEN = "token_";
     public static final String INTRO = "isIntroOpnend";
     public static final String REMIND = "DATE_REMINDER_";
+    public static final String SECURE = "SECURE_";
     public static final String CATE_INDEX = "CATE_INDEX_";
 
     // sync
