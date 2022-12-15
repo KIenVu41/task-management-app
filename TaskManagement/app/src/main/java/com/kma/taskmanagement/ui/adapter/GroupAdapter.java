@@ -1,5 +1,6 @@
 package com.kma.taskmanagement.ui.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,7 +81,6 @@ public class GroupAdapter extends ListAdapter<Group, GroupAdapter.GroupHolder> {
 
        public void showPopUpMenu(View view, Group group) {
             if(!group.getLeader_name().equals(GlobalInfor.username)) {
-
                 Toast.makeText(context, "Bạn không phải leader", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -98,9 +98,15 @@ public class GroupAdapter extends ListAdapter<Group, GroupAdapter.GroupHolder> {
                        UpdateGroupDialog updateGroupDialog = new UpdateGroupDialog();
                        updateGroupDialog.setId(group.getId());
                        updateGroupDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "update group dialog");
-                   case R.id.menuChat:
-                       GroupChatFragment groupChatFragment = new GroupChatFragment();
-                       groupChatFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), groupChatFragment.getTag());
+                       break;
+                   case R.id.menuLock:
+                       AlertDialog.Builder completeAlertDialog = new AlertDialog.Builder(context);
+                       completeAlertDialog.setTitle(R.string.secureconfirmation).setMessage(R.string.sureToMarkAsComplete).
+                               setPositiveButton(R.string.yes, (dialog, which) -> {
+
+                               })
+                               .setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel()).show();
+                       break;
                }
                return false;
            });
