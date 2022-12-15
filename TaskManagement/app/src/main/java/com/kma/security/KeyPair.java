@@ -23,92 +23,41 @@ import java.security.spec.ECGenParameterSpec;
 public class KeyPair {
 
     public static KeyPairGenerator keyPairGenerator = null;
-    public static PublicKey publicKey = null;
-    public static PrivateKey key = null;
     public static KeyStore keyStore = null;
     public static Signature signature = null;
 
-    public static void generateKeyPair() {
-        try {
-            keyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                keyPairGenerator.initialize(
-                        new KeyGenParameterSpec.Builder(KEY_NAME,
-                                KeyProperties.PURPOSE_SIGN)
-                                .setDigests(KeyProperties.DIGEST_SHA256)
-                                .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
-                                .setUserAuthenticationRequired(true)
-                                .build());
+    public static synchronized KeyPairGenerator providesKeyPairGenerator() {
+        if(keyPairGenerator == null) {
+            try {
+                keyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore");
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (NoSuchProviderException e) {
+                e.printStackTrace();
             }
-            keyPairGenerator.generateKeyPair();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
         }
+        return keyPairGenerator;
     }
 
-    public void genPubKey() {
-        try {
-            getKeyStore();
-            keyStore.load(null);
-            publicKey = keyStore.getCertificate(KEY_NAME).getPublicKey();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+    public static synchronized KeyStore providesKeystore() {
+        if(keyStore == null) {
+            try {
+                keyStore = KeyStore.getInstance("AndroidKeyStore");
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            }
         }
+        return keyStore;
     }
 
-    public void genPrivateKey() {
-        try {
-            getKeyStore();
-            keyStore.load(null);
-            key = (PrivateKey) keyStore.getKey(KEY_NAME, null);
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnrecoverableKeyException e) {
-            e.printStackTrace();
+    public static synchronized Signature providesSignature() {
+        if(signature == null) {
+            try {
+                signature = Signature.getInstance("SHA256withECDSA");
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
         }
-    }
-
-    public static KeyStore getKeyStore() {
-        try {
-            keyStore = KeyStore.getInstance("AndroidKeyStore");
-            return keyStore;
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static Signature getSignature() {
-        try {
-            signature = Signature.getInstance("SHA256withECDSA");
-            return signature;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public PublicKey getPublicKey() {
-        return publicKey;
-    }
-
-    public PrivateKey getKey() {
-        return key;
+        return signature;
     }
 }

@@ -25,6 +25,7 @@ import android.os.CancellationSignal;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.util.Log;
@@ -38,6 +39,7 @@ import android.widget.Toast;
 import com.kma.security.KeyPair;
 import com.kma.security.StoreBackend;
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.TaskApplication;
 import com.kma.taskmanagement.biometric.BiometricCallback;
 import com.kma.taskmanagement.biometric.BiometricManager;
 import com.kma.taskmanagement.data.model.LoginRequest;
@@ -56,8 +58,11 @@ import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.kma.taskmanagement.utils.Utils;
 
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -68,6 +73,10 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.security.spec.ECGenParameterSpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 import java.util.concurrent.Executor;
 
 import javax.crypto.Cipher;
@@ -104,6 +113,9 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
     private UserRepository userRepository = new UserRepositoryImpl();
     private String password = "";
     BiometricManager mBiometricManager;
+    private KeyStore keyStore;
+    private KeyPairGenerator keyPairGenerator;
+    private Signature signature;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +123,9 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
         setContentView(R.layout.activity_login);
 
         ButterKnife.bind(this);
+
+        createKeyPair();
+        enroll();
         progressDialog = new ProgressDialog(this);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(true);
@@ -147,7 +162,6 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
             }
         });
 
-       KeyPair.generateKeyPair();
        setOnclick();
     }
 
@@ -184,16 +198,20 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
         });
 
         ivFinger.setOnClickListener(view -> {
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 initSignature();
             }
+
             mBiometricManager = new BiometricManager.BiometricBuilder(LoginActivity.this)
                     .setTitle(getString(R.string.biometric_title))
                     .setSubtitle(getString(R.string.biometric_subtitle))
                     .setDescription(getString(R.string.biometric_description))
                     .setNegativeButtonText(getString(R.string.biometric_negative_button_text))
                     .build();
-
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                mBiometricManager.setCryptoObject(new BiometricPrompt.CryptoObject(signature));
+            }
             mBiometricManager.authenticate(LoginActivity.this);
         });
     }
@@ -288,20 +306,22 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
 //        String email = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.EMAIL);
 //        String pass = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.PASSWORD);
 //        userViewModel.login(email, pass);
-        Signature signature = KeyPair.getSignature();
+//        Signature signature = null;
+//
 //        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
 //            signature = result.getCryptoObject().getSignature();
 //        }
-
-        Transaction transaction = new Transaction(1, new SecureRandom().nextLong());
+        signature = KeyPair.providesSignature();
+        Transaction transaction = new Transaction(1, 1, new SecureRandom().nextLong());
         try {
             signature.update(transaction.toByteArray());
             byte[] sigBytes = signature.sign();
+            Log.d("TAG", "client sign b " + Arrays.toString(sigBytes));
             // Send the transaction and signedTransaction to the dummy backend
             if (StoreBackend.verify(transaction, sigBytes)) {
-                Log.d("TAG", "suc");
+                Toast.makeText(getApplicationContext(), "success", Toast.LENGTH_LONG).show();
             } else {
-                Log.d("TAG", "fail");
+                Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_LONG).show();
             }
         } catch (SignatureException e) {
             throw new RuntimeException(e);
@@ -318,21 +338,59 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
 //        Toast.makeText(getApplicationContext(), errString, Toast.LENGTH_LONG).show();
     }
 
+    private void createKeyPair() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                keyPairGenerator = KeyPair.providesKeyPairGenerator();
+                keyPairGenerator.initialize(
+                        new KeyGenParameterSpec.Builder(com.kma.security.utils.Constants.KEY_NAME,
+                                KeyProperties.PURPOSE_SIGN)
+                                .setDigests(KeyProperties.DIGEST_SHA256)
+                                .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
+                                // Require the user to authenticate with a fingerprint to authorize
+                                // every use of the private key
+                                .setUserAuthenticationRequired(false)
+                                .build());
+                keyPairGenerator.generateKeyPair();
+
+                SharedPreferencesUtil.getInstance(TaskApplication.getAppContext()).storeBooleanInSharedPreferences("INIT", true);
+            }
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        }
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     private boolean initSignature() {
         try {
-            KeyPair.getKeyStore();
-            KeyPair.keyStore.load(null);
-            PrivateKey key = (PrivateKey) KeyPair.keyStore.getKey(com.kma.security.utils.Constants.KEY_NAME, null);
-            Log.d("TAG", "private 2" + key.toString());
-            KeyPair.getSignature();
-            KeyPair.signature.initSign(key);
+            keyStore = KeyPair.providesKeystore();
+            keyStore.load(null);
+            PrivateKey key = (PrivateKey) keyStore.getKey(com.kma.security.utils.Constants.KEY_NAME, null);
+            Log.d("TAG", "private 2 " + key.getAlgorithm());
+            signature = KeyPair.providesSignature();
+            signature.initSign(key);
             return true;
         } catch (KeyPermanentlyInvalidatedException e) {
             return false;
         } catch (KeyStoreException | CertificateException | UnrecoverableKeyException | IOException
                 | NoSuchAlgorithmException | InvalidKeyException e) {
             throw new RuntimeException("Failed to init Cipher", e);
+        }
+    }
+
+    private void enroll() {
+        try {
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            PublicKey publicKey = keyStore.getCertificate(com.kma.security.utils.Constants.KEY_NAME).getPublicKey();
+            //Log.d("TAG", "client regis pub" + publicKey.toString());
+            KeyFactory factory = KeyFactory.getInstance(publicKey.getAlgorithm());
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKey.getEncoded());
+            PublicKey verificationKey = factory.generatePublic(spec);
+            Log.d("TAG", "client regis pub" + publicKey.toString());
+            StoreBackend.enroll(1, verificationKey);
+        } catch (CertificateException | NoSuchAlgorithmException | IOException | InvalidKeySpecException | KeyStoreException e) {
+            e.printStackTrace();
         }
     }
 

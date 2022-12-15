@@ -121,9 +121,8 @@ public class RegisterActivity extends AppCompatActivity {
             String username = inputUsername.getText().toString();
             String password = inputPassword.getText().toString();
             if(validateFields(email, phone, username, password)) {
-                //progressDialog.show();
-                //userViewModel.singup(new RegisterRequest(email, 0, password, phone, "", username));
-                enroll();
+                progressDialog.show();
+                userViewModel.singup(new RegisterRequest(email, 0, password, phone, "", username));
             }
         });
     }
@@ -156,21 +155,4 @@ public class RegisterActivity extends AppCompatActivity {
         }
         return true;
     }
-
-    private void enroll() {
-        try {
-            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-            keyStore.load(null);
-            PublicKey publicKey = keyStore.getCertificate(Constants.KEY_NAME).getPublicKey();
-            KeyFactory factory = KeyFactory.getInstance(publicKey.getAlgorithm());
-            X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKey.getEncoded());
-            PublicKey verificationKey = factory.generatePublic(spec);
-            Log.d("TAG", verificationKey.toString());
-            StoreBackend.enroll(1, verificationKey);
-        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException |
-                IOException | InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

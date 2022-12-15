@@ -9,28 +9,26 @@ import java.util.Objects;
 
 public class Transaction {
 
-    private long userId;
-    private long secrete;
+    /** The unique ID of the item of the purchase */
+    private final Long mItemId;
 
-    public Transaction(long userId, long secrete) {
-        this.userId = userId;
-        this.secrete = secrete;
+    /** The unique user ID who made the transaction */
+    private final Long mUserId;
+
+    /**
+     * The random long value that will be also signed by the private key and verified in the server
+     * that the same nonce can't be reused to prevent replay attacks.
+     */
+    private final Long mClientNonce;
+
+    public Transaction(long userId, long itemId, long clientNonce) {
+        mItemId = itemId;
+        mUserId = userId;
+        mClientNonce = clientNonce;
     }
 
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public long getSecrete() {
-        return secrete;
-    }
-
-    public void setSecrete(long secrete) {
-        this.secrete = secrete;
+    public Long getUserId() {
+        return mUserId;
     }
 
     public byte[] toByteArray() {
@@ -38,8 +36,9 @@ public class Transaction {
         DataOutputStream dataOutputStream = null;
         try {
             dataOutputStream = new DataOutputStream(byteArrayOutputStream);
-            dataOutputStream.writeLong(userId);
-            dataOutputStream.writeLong(secrete);
+            dataOutputStream.writeLong(mItemId);
+            dataOutputStream.writeLong(mUserId);
+            dataOutputStream.writeLong(mClientNonce);
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -67,12 +66,12 @@ public class Transaction {
         }
 
         Transaction that = (Transaction) o;
-        return  Objects.equals(userId, that.userId) &&
-                Objects.equals(secrete, that.secrete);
+        return Objects.equals(mItemId, that.mItemId) && Objects.equals(mUserId, that.mUserId) &&
+                Objects.equals(mClientNonce, that.mClientNonce);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, secrete);
+        return Objects.hash(mItemId, mUserId, mClientNonce);
     }
 }
