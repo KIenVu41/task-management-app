@@ -20,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kma.security.StoreBackend;
+import com.kma.security.utils.Constants;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.data.model.LoginRequest;
 import com.kma.taskmanagement.data.model.RegisterRequest;
@@ -29,9 +31,18 @@ import com.kma.taskmanagement.data.remote.UserService;
 import com.kma.taskmanagement.data.repository.UserRepository;
 import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
 import com.kma.taskmanagement.ui.main.MainActivity;
-import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.kma.taskmanagement.utils.TextUtils;
+
+import java.io.IOException;
+import java.security.KeyFactory;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -110,8 +121,9 @@ public class RegisterActivity extends AppCompatActivity {
             String username = inputUsername.getText().toString();
             String password = inputPassword.getText().toString();
             if(validateFields(email, phone, username, password)) {
-                progressDialog.show();
-                userViewModel.singup(new RegisterRequest(email, 0, password, phone, "", username));
+                //progressDialog.show();
+                //userViewModel.singup(new RegisterRequest(email, 0, password, phone, "", username));
+                enroll();
             }
         });
     }
@@ -144,4 +156,21 @@ public class RegisterActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    private void enroll() {
+        try {
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            PublicKey publicKey = keyStore.getCertificate(Constants.KEY_NAME).getPublicKey();
+            KeyFactory factory = KeyFactory.getInstance(publicKey.getAlgorithm());
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKey.getEncoded());
+            PublicKey verificationKey = factory.generatePublic(spec);
+            Log.d("TAG", verificationKey.toString());
+            StoreBackend.enroll(1, verificationKey);
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException |
+                IOException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

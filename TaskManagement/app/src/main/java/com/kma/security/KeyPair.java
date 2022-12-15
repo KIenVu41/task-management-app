@@ -15,17 +15,20 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Signature;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.ECGenParameterSpec;
 
 public class KeyPair {
 
-    public KeyPairGenerator keyPairGenerator = null;
-    private PublicKey publicKey = null;
-    private PrivateKey key = null;
+    public static KeyPairGenerator keyPairGenerator = null;
+    public static PublicKey publicKey = null;
+    public static PrivateKey key = null;
+    public static KeyStore keyStore = null;
+    public static Signature signature = null;
 
-    public void generateKeyPair() {
+    public static void generateKeyPair() {
         try {
             keyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -49,7 +52,7 @@ public class KeyPair {
 
     public void genPubKey() {
         try {
-            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            getKeyStore();
             keyStore.load(null);
             publicKey = keyStore.getCertificate(KEY_NAME).getPublicKey();
         } catch (KeyStoreException e) {
@@ -65,7 +68,7 @@ public class KeyPair {
 
     public void genPrivateKey() {
         try {
-            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            getKeyStore();
             keyStore.load(null);
             key = (PrivateKey) keyStore.getKey(KEY_NAME, null);
         } catch (KeyStoreException e) {
@@ -79,6 +82,26 @@ public class KeyPair {
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
+    }
+
+    public static KeyStore getKeyStore() {
+        try {
+            keyStore = KeyStore.getInstance("AndroidKeyStore");
+            return keyStore;
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Signature getSignature() {
+        try {
+            signature = Signature.getInstance("SHA256withECDSA");
+            return signature;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public PublicKey getPublicKey() {

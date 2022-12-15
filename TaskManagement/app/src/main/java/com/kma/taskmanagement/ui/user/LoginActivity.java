@@ -5,6 +5,7 @@ import static androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTI
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -24,6 +25,7 @@ import android.os.CancellationSignal;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.util.Log;
 import android.widget.Button;
@@ -34,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kma.security.KeyPair;
+import com.kma.security.StoreBackend;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.biometric.BiometricCallback;
 import com.kma.taskmanagement.biometric.BiometricManager;
@@ -53,11 +56,18 @@ import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.kma.taskmanagement.utils.Utils;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.Executor;
 
 import javax.crypto.Cipher;
@@ -137,6 +147,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
             }
         });
 
+       KeyPair.generateKeyPair();
        setOnclick();
     }
 
@@ -173,6 +184,9 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
         });
 
         ivFinger.setOnClickListener(view -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                initSignature();
+            }
             mBiometricManager = new BiometricManager.BiometricBuilder(LoginActivity.this)
                     .setTitle(getString(R.string.biometric_title))
                     .setSubtitle(getString(R.string.biometric_subtitle))
@@ -267,13 +281,31 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
 
     @Override
     public void onAuthenticationSuccessful(BiometricPrompt.AuthenticationResult result) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            Toast.makeText(getApplicationContext(), getString(R.string.biometric_success) + result.getCryptoObject().getSignature(), Toast.LENGTH_LONG).show();
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//            Toast.makeText(getApplicationContext(), getString(R.string.biometric_success) + result.getCryptoObject().getSignature(), Toast.LENGTH_LONG).show();
+//        }
 
-        String email = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.EMAIL);
-        String pass = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.PASSWORD);
-        userViewModel.login(email, pass);
+//        String email = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.EMAIL);
+//        String pass = SharedPreferencesUtil.getInstance(getApplicationContext()).getStringFromSharedPreferences(Constants.PASSWORD);
+//        userViewModel.login(email, pass);
+        Signature signature = KeyPair.getSignature();
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+//            signature = result.getCryptoObject().getSignature();
+//        }
+
+        Transaction transaction = new Transaction(1, new SecureRandom().nextLong());
+        try {
+            signature.update(transaction.toByteArray());
+            byte[] sigBytes = signature.sign();
+            // Send the transaction and signedTransaction to the dummy backend
+            if (StoreBackend.verify(transaction, sigBytes)) {
+                Log.d("TAG", "suc");
+            } else {
+                Log.d("TAG", "fail");
+            }
+        } catch (SignatureException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -284,6 +316,24 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
     @Override
     public void onAuthenticationError(int errorCode, CharSequence errString) {
 //        Toast.makeText(getApplicationContext(), errString, Toast.LENGTH_LONG).show();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private boolean initSignature() {
+        try {
+            KeyPair.getKeyStore();
+            KeyPair.keyStore.load(null);
+            PrivateKey key = (PrivateKey) KeyPair.keyStore.getKey(com.kma.security.utils.Constants.KEY_NAME, null);
+            Log.d("TAG", "private 2" + key.toString());
+            KeyPair.getSignature();
+            KeyPair.signature.initSign(key);
+            return true;
+        } catch (KeyPermanentlyInvalidatedException e) {
+            return false;
+        } catch (KeyStoreException | CertificateException | UnrecoverableKeyException | IOException
+                | NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new RuntimeException("Failed to init Cipher", e);
+        }
     }
 
     @Override
