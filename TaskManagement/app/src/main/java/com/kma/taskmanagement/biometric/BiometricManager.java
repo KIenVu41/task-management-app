@@ -6,9 +6,11 @@ import android.content.DialogInterface;
 import android.hardware.biometrics.BiometricPrompt;
 import android.os.Build;
 import android.os.CancellationSignal;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.kma.security.KeyPair;
 import com.kma.security.utils.Constants;
 import com.kma.taskmanagement.utils.BiometricUtils;
 
@@ -122,12 +124,13 @@ public class BiometricManager extends BiometricManagerV23 {
 
     @TargetApi(Build.VERSION_CODES.P)
     private void displayBiometricPrompt(final BiometricCallback biometricCallback) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, UnrecoverableKeyException, InvalidKeyException {
-        Signature signature = Signature.getInstance("SHA256withECDSA");
-        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-        keyStore.load(null);
-        PrivateKey key = (PrivateKey) keyStore.getKey(Constants.KEY_NAME, null);
-        signature.initSign(key);
-        BiometricPrompt.CryptoObject cryptObject = new  BiometricPrompt.CryptoObject(signature);
+//        Signature signature = Signature.getInstance("SHA256withECDSA");
+//        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+//        keyStore.load(null);
+//        PrivateKey key = (PrivateKey) KeyPair.keyStore.getKey(Constants.KEY_NAME, null);
+//        signature.initSign(key);
+//        Log.d("TAG", "client sign" + signature.toString());
+        BiometricPrompt.CryptoObject cryptObject = new  BiometricPrompt.CryptoObject(KeyPair.signature);
         new BiometricPrompt.Builder(context)
                 .setTitle(title)
                 .setSubtitle(subtitle)
