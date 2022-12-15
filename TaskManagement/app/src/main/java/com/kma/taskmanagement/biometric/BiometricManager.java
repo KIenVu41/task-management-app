@@ -28,6 +28,7 @@ public class BiometricManager extends BiometricManagerV23 {
 
 
     protected CancellationSignal mCancellationSignal = new CancellationSignal();
+    protected BiometricPrompt.CryptoObject cryptoObject;
 
     protected BiometricManager(final BiometricBuilder biometricBuilder) {
         this.context = biometricBuilder.context;
@@ -86,6 +87,10 @@ public class BiometricManager extends BiometricManagerV23 {
         displayBiometricDialog(biometricCallback);
     }
 
+    public void setCryptoObject(BiometricPrompt.CryptoObject cryptoObject) {
+        this.cryptoObject = cryptoObject;
+    }
+
     public void cancelAuthentication(){
         if(BiometricUtils.isBiometricPromptEnabled()) {
             if (!mCancellationSignal.isCanceled())
@@ -124,13 +129,6 @@ public class BiometricManager extends BiometricManagerV23 {
 
     @TargetApi(Build.VERSION_CODES.P)
     private void displayBiometricPrompt(final BiometricCallback biometricCallback) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, UnrecoverableKeyException, InvalidKeyException {
-//        Signature signature = Signature.getInstance("SHA256withECDSA");
-//        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-//        keyStore.load(null);
-//        PrivateKey key = (PrivateKey) KeyPair.keyStore.getKey(Constants.KEY_NAME, null);
-//        signature.initSign(key);
-//        Log.d("TAG", "client sign" + signature.toString());
-        BiometricPrompt.CryptoObject cryptObject = new  BiometricPrompt.CryptoObject(KeyPair.signature);
         new BiometricPrompt.Builder(context)
                 .setTitle(title)
                 .setSubtitle(subtitle)
@@ -142,7 +140,7 @@ public class BiometricManager extends BiometricManagerV23 {
                     }
                 })
                 .build()
-                .authenticate(cryptObject, mCancellationSignal, context.getMainExecutor(),
+                .authenticate(cryptoObject, mCancellationSignal, context.getMainExecutor(),
                         new BiometricCallbackV28(biometricCallback));
     }
 
