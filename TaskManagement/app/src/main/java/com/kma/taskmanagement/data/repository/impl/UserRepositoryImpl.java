@@ -77,26 +77,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void refresh(String refreshToken, HandleResponse handleResponse) {
-        Call<Token> refreshCall = userService.refreshToken(refreshToken);
-        refreshCall.enqueue(new Callback<Token>() {
-            @Override
-            public void onResponse(Call<Token> call, Response<Token> response) {
-                if(response.isSuccessful()) {
-                    handleResponse.onResponse(response.body(), 200);
-                } else {
-                    handleResponse.onResponse(null, response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Token> call, Throwable t) {
-                handleResponse.onFailure(t);
-            }
-        });
-    }
-
-    @Override
     public Completable changepass(String authHeader, ChangePassRequest changePassRequest) {
         return userService.changepass(authHeader, changePassRequest);
     }

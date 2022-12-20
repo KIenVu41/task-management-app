@@ -25,8 +25,6 @@ public interface UserRepository {
 
     void singin(LoginRequest loginRequest, HandleResponse handleResponse);
 
-    void refresh(String refreshToken, HandleResponse handleResponse);
-
     Completable changepass(String authHeader, ChangePassRequest changePassRequest);
 
     Completable forgotPass(String authHeader, ChangePassRequest changePassRequest);

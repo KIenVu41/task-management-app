@@ -29,9 +29,6 @@ public interface UserService {
     @POST("login")
     Call<Token> login(@Body LoginRequest loginRequest);
 
-    @POST("refreshtoken")
-    Call<Token> refreshToken(@Body String refreshToken);
-
     @GET("api/v1/users/{id}")
     Observable<User> getInfo(@Header("Authorization") String authHeader, @Path("id") long userId);
 

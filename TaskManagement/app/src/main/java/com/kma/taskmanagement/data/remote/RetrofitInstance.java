@@ -59,6 +59,8 @@ public class RetrofitInstance {
     private static Retrofit retrofit = null;
     private static final int TIMEOUT = 10;
     private static OkHttpClient.Builder httpClientBuilder = null;
+
+    public static AuthService authService;
     /**
      * The overridden cache duration to keep data from GET requests.
      * Currently set to 10 minutes
@@ -92,9 +94,11 @@ public class RetrofitInstance {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
+            TokenAuthenticator tokenAuthenticator = new TokenAuthenticator();
             httpClientBuilder = new OkHttpClient.Builder()
                         .addInterceptor(interceptor)
                         //.addInterceptor(rewriteRequestInterceptor)
+                        .authenticator(tokenAuthenticator)
                         .connectTimeout(1, TimeUnit.MINUTES)
                         .readTimeout(30, TimeUnit.SECONDS)
                         .hostnameVerifier(new HostnameVerifier() {
@@ -114,6 +118,8 @@ public class RetrofitInstance {
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(httpClientBuilder.build())
                     .build();
+
+            authService = createService(AuthService.class);
         }
         return retrofit;
     }
@@ -215,8 +221,6 @@ public class RetrofitInstance {
             return chain.proceed(request);
         }
     };
-
-
 
     // this for only response interceptor is invoked for online responses
     private static final Interceptor REWRITE_RESPONSE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
