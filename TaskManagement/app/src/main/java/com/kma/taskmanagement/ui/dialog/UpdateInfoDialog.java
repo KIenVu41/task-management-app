@@ -113,7 +113,7 @@ public class UpdateInfoDialog extends AppCompatDialogFragment {
 
                         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
 
-                        userViewModel.update(Constants.BEARER + token, GlobalInfor.id, new User(null, email, "kocopass", phone, sex, "", null));
+                        userViewModel.update(token, GlobalInfor.id, new User(null, email, "kocopass", phone, sex, "", null));
                     }
                 });
 

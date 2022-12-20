@@ -86,7 +86,7 @@ public class MyTaskFragment extends Fragment {
         // Inflate the layout for this fragment
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
         taskViewModel = new ViewModelProvider(requireActivity(), new TaskViewModelFactory(taskRepository)).get(TaskViewModel.class);
-        taskViewModel.getAllTasks(Constants.BEARER + token);
+        taskViewModel.getAllTasks(token);
         return inflater.inflate(R.layout.fragment_my_task, container, false);
     }
 
@@ -155,7 +155,7 @@ public class MyTaskFragment extends Fragment {
             @Override
             public void onTaskClick(Task task, String status) {
                 task.setStatus(status);
-                taskViewModel.update(Constants.BEARER + token, task.getId(), task);
+                taskViewModel.update(token, task.getId(), task);
             }
 
             @Override
@@ -189,11 +189,11 @@ public class MyTaskFragment extends Fragment {
                 String status = spinnerStatus.getSelectedItem().toString();
                 String prio = spinnerPrio.getSelectedItem().toString();
                 if(!status.equals("") && prio.equals("")) {
-                    taskViewModel.getAllTasksByStatus(Constants.BEARER + token, status);
+                    taskViewModel.getAllTasksByStatus(token, status);
                 } else if(status.equals("") && !prio.equals("")) {
-                    taskViewModel.getAllTasksByPrio(Constants.BEARER + token, prio);
+                    taskViewModel.getAllTasksByPrio(token, prio);
                 } else if(!status.equals("") && !prio.equals("")) {
-                    taskViewModel.getAllTasksByStatusAndPrio(Constants.BEARER + token, prio, status);
+                    taskViewModel.getAllTasksByStatusAndPrio(token, prio, status);
                 }
                 filterDialog.dismiss();
             }
@@ -223,19 +223,19 @@ public class MyTaskFragment extends Fragment {
 
                 builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        taskViewModel.deleteTask(Constants.BEARER + token, task.getId());
+                        taskViewModel.deleteTask(token, task.getId());
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                taskViewModel.getAllTasks(Constants.BEARER + token);
+                                taskViewModel.getAllTasks(token);
                             }
                         },1000);
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        taskViewModel.getAllTasks(Constants.BEARER + token);
+                        taskViewModel.getAllTasks(token);
                     }
                 });
 

@@ -268,15 +268,15 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
         if(Utils.isNetworkConnected(requireActivity())) {
             if(isEdit) {
                 cancleAlarm();
-                taskViewModel.update(Constants.BEARER + token, task.getId(), new Task("", cateId, "", desc, endDateFormat,null,  title, GlobalInfor.username, prio,  startDateFormat, status, null));
+                taskViewModel.update(token, task.getId(), new Task("", cateId, "", desc, endDateFormat,null,  title, GlobalInfor.username, prio,  startDateFormat, status, null));
             } else {
-                taskViewModel.addTask(Constants.BEARER + token, new Task("", cateId, "", desc, endDateFormat, null,  title, GlobalInfor.username, prio,  startDateFormat, status, null));
+                taskViewModel.addTask(token, new Task("", cateId, "", desc, endDateFormat, null,  title, GlobalInfor.username, prio,  startDateFormat, status, null));
             }
 
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    taskViewModel.getTasksByCategory(Constants.BEARER + token, cateId);
+                    taskViewModel.getTasksByCategory(token, cateId);
                 }
             },500);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

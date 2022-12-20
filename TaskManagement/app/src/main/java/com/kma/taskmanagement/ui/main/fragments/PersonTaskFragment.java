@@ -118,7 +118,7 @@ public class PersonTaskFragment extends Fragment {
         categoryViewModel =  new ViewModelProvider(requireActivity(), new CategoryViewModelFactory(categoryRepository)).get(CategoryViewModel.class);
         taskViewModel = new ViewModelProvider(requireActivity(), new TaskViewModelFactory(taskRepository)).get(TaskViewModel.class);
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
-        categoryViewModel.getAllCategories(Constants.BEARER + token);
+        categoryViewModel.getAllCategories(token);
         db = new DatabaseHelper(requireActivity());
         //taskViewModel.getAllTasks(Constants.BEARER + token);
         return inflater.inflate(R.layout.fragment_person_task, container, false);
@@ -225,7 +225,7 @@ public class PersonTaskFragment extends Fragment {
                         String prio = cursor.getString(7);
                         String startDateFormat = cursor.getString(8);
                         String status = cursor.getString(9);
-                        taskViewModel.addTask(Constants.BEARER + token, new Task("", cateId, "", desc, endDateFormat, null,  title, GlobalInfor.username, prio,  startDateFormat, status, null));
+                        taskViewModel.addTask(token, new Task("", cateId, "", desc, endDateFormat, null,  title, GlobalInfor.username, prio,  startDateFormat, status, null));
                     } while (cursor.moveToNext());
                 }
                 GlobalInfor.IS_SEND = true;
@@ -282,11 +282,11 @@ public class PersonTaskFragment extends Fragment {
         });
         ivFind.setOnClickListener(view -> {
             long id = customAdapter.getItem(dropdown.getSelectedItemPosition()).getId();
-            taskViewModel.getTasksByCategory(Constants.BEARER + token, id);
+            taskViewModel.getTasksByCategory(token, id);
         });
 
         ivRefresh.setOnClickListener(view -> {
-            taskViewModel.getAllTasks(Constants.BEARER + token);
+            taskViewModel.getAllTasks(token);
         });
         ivFilter.setOnClickListener(view -> {
             openFilterDialog();
@@ -330,12 +330,12 @@ public class PersonTaskFragment extends Fragment {
 
         builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-               categoryViewModel.deleteCategory(Constants.BEARER + token, cateId);
+               categoryViewModel.deleteCategory(token, cateId);
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        categoryViewModel.getAllCategories(Constants.BEARER + token);
+                        categoryViewModel.getAllCategories(token);
                     }
                 },1000);
             }
@@ -378,14 +378,14 @@ public class PersonTaskFragment extends Fragment {
                     Category category = new Category();
                     category.setName(cate);
                     if(!isEdit) {
-                        categoryViewModel.addCategory(Constants.BEARER + token, category);
+                        categoryViewModel.addCategory(token, category);
                     } else {
-                        categoryViewModel.updateCategory(Constants.BEARER + token, id, category );
+                        categoryViewModel.updateCategory(token, id, category );
                     }
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            categoryViewModel.getAllCategories(Constants.BEARER + token);
+                            categoryViewModel.getAllCategories(token);
                         }
                         },1000);
                 }
@@ -405,7 +405,7 @@ public class PersonTaskFragment extends Fragment {
             public void onTaskClick(Task task, String status) {
                 task.setStatus(status);
                 task.setCategory_id(cateId);
-                taskViewModel.update(Constants.BEARER + token, task.getId(), task);
+                taskViewModel.update(token, task.getId(), task);
             }
 
             @Override
@@ -431,7 +431,7 @@ public class PersonTaskFragment extends Fragment {
 
                     builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            taskViewModel.deleteTask(Constants.BEARER + token, task.getId());
+                            taskViewModel.deleteTask(token, task.getId());
 
                             Intent intent  = new Intent(getActivity(), AlarmBroadcastReceiver.class);
                             intent.setAction(task.getName());
@@ -444,7 +444,7 @@ public class PersonTaskFragment extends Fragment {
                                 @Override
                                 public void run() {
                                     long id = customAdapter.getItem(dropdown.getSelectedItemPosition()).getId();
-                                    taskViewModel.getTasksByCategory(Constants.BEARER + token, id);
+                                    taskViewModel.getTasksByCategory(token, id);
                                 }
                             },500);
                         }
@@ -456,7 +456,7 @@ public class PersonTaskFragment extends Fragment {
                                 @Override
                                 public void run() {
                                     long id = customAdapter.getItem(dropdown.getSelectedItemPosition()).getId();
-                                    taskViewModel.getTasksByCategory(Constants.BEARER + token, id);                                }
+                                    taskViewModel.getTasksByCategory(token, id);                                }
                             },500);
                         }
                     });
@@ -510,11 +510,11 @@ public class PersonTaskFragment extends Fragment {
                 String status = spinnerStatus.getSelectedItem().toString();
                 String prio = spinnerPrio.getSelectedItem().toString();
                 if(!status.equals("") && prio.equals("")) {
-                    taskViewModel.filterPersonalTaskByStatus(Constants.BEARER + token, cateId, status);
+                    taskViewModel.filterPersonalTaskByStatus(token, cateId, status);
                 } else if(status.equals("") && !prio.equals("")) {
-                    taskViewModel.filterPersonalTaskByPrio(Constants.BEARER + token, cateId, prio);
+                    taskViewModel.filterPersonalTaskByPrio(token, cateId, prio);
                 } else if(!status.equals("") && !prio.equals("")) {
-                    taskViewModel.filterPersonalTaskByPrioAndStatus(Constants.BEARER + token, cateId, prio, status);
+                    taskViewModel.filterPersonalTaskByPrioAndStatus(token, cateId, prio, status);
                 }
                 filterDialog.dismiss();
             }

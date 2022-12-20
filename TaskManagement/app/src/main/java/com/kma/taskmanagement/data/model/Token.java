@@ -2,6 +2,7 @@ package com.kma.taskmanagement.data.model;
 
 public class Token {
     public String token;
+    public String refreshToken;
     public String username;
     public String sex;
     public String phone;
@@ -70,10 +71,19 @@ public class Token {
         this.userId = userId;
     }
 
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
     @Override
     public String toString() {
         return "Token{" +
                 "token='" + token + '\'' +
+                ", refreshToken='" + refreshToken + '\'' +
                 ", username='" + username + '\'' +
                 ", sex='" + sex + '\'' +
                 ", phone='" + phone + '\'' +

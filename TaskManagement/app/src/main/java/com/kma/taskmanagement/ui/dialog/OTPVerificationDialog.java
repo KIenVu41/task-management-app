@@ -208,7 +208,7 @@ public class OTPVerificationDialog extends Dialog {
                             // Update UI
                             token = SharedPreferencesUtil.getInstance(activity.getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
                             if(edtPass.getText().toString().trim().equals(edtRePass.getText().toString().trim())) {
-                                userViewModel.forgotPass(Constants.BEARER + token, new ChangePassRequest(null, edtPass.getText().toString().trim()));
+                                userViewModel.forgotPass(token, new ChangePassRequest(null, edtPass.getText().toString().trim()));
                             } else {
                                 Toast.makeText(getContext(), "Mật khẩu không trùng khớp", Toast.LENGTH_SHORT).show();
                             }

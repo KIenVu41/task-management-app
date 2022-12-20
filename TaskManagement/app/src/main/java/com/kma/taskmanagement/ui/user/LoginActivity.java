@@ -153,7 +153,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
                 if(token != null) {
                     saveGlobalInfor(token);
                     SharedPreferencesUtil.getInstance(getApplicationContext()).storeUserToken(Constants.TOKEN + GlobalInfor.username, token.getToken() );
-                    SharedPreferencesUtil.getInstance(getApplicationContext()).storeStringInSharedPreferences(Constants.EMAIL, GlobalInfor.username);
+                    SharedPreferencesUtil.getInstance(getApplicationContext()).storeUserToken(Constants.REFRESHTOKEN + GlobalInfor.username, token.getRefreshToken() );
 
                     Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
                     startActivity(intent);
@@ -309,7 +309,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
                 startActivity(intent);
                 finish();
             } else {
-                Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_LONG).show();
             }
         } catch (SignatureException e) {
             throw new RuntimeException(e);

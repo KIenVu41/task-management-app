@@ -2,6 +2,8 @@ package com.kma.taskmanagement.ui.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.BlurMaskFilter;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +19,15 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.TaskApplication;
 import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.listener.HandleClickListener;
 import com.kma.taskmanagement.ui.dialog.UpdateGroupDialog;
 import com.kma.taskmanagement.ui.main.fragments.GroupChatFragment;
 import com.kma.taskmanagement.ui.main.fragments.GroupTaskBottomSheetFragment;
+import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.GlobalInfor;
+import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -103,7 +108,17 @@ public class GroupAdapter extends ListAdapter<Group, GroupAdapter.GroupHolder> {
                        AlertDialog.Builder completeAlertDialog = new AlertDialog.Builder(context);
                        completeAlertDialog.setTitle(R.string.secureconfirmation).setMessage(R.string.sureToMarkAsComplete).
                                setPositiveButton(R.string.yes, (dialog, which) -> {
-
+                                    int type = SharedPreferencesUtil.getInstance(TaskApplication.getAppContext()).getIntFromSharedPreferences(Constants.SECURE + GlobalInfor.username);
+                                    if(type == 1) {
+                                        if (Build.VERSION.SDK_INT >= 11) {
+                                            tvTitle.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                                        }
+                                        float radius = tvTitle.getTextSize() / 3;
+                                        BlurMaskFilter filter = new BlurMaskFilter(radius, BlurMaskFilter.Blur.NORMAL);
+                                        tvTitle.getPaint().setMaskFilter(filter);
+                                    } else {
+                                        tvTitle.getPaint().setMaskFilter(null);
+                                    }
                                })
                                .setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel()).show();
                        break;

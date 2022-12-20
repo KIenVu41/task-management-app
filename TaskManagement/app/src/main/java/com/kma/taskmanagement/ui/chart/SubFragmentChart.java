@@ -86,9 +86,9 @@ public class SubFragmentChart extends Fragment {
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
         taskViewModel = new ViewModelProvider(this, new TaskViewModelFactory(taskRepository)).get(TaskViewModel.class);
         if(mParam2.equals("personal")) {
-            taskViewModel.getPersonalChart(Constants.BEARER + token);
+            taskViewModel.getPersonalChart(token);
         } else {
-            taskViewModel.getGroupChart(Constants.BEARER + token);
+            taskViewModel.getGroupChart(token);
         }
         return inflater.inflate(R.layout.fragment_sub_chart, container, false);
     }

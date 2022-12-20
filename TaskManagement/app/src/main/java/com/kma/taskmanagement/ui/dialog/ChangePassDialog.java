@@ -77,7 +77,7 @@ public class ChangePassDialog extends AppCompatDialogFragment {
                         }
                         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
 
-                        userViewModel.changePass(Constants.BEARER + token, new ChangePassRequest(oldpass, newpass));
+                        userViewModel.changePass(token, new ChangePassRequest(oldpass, newpass));
                     }
                 });
 

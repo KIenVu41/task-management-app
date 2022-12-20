@@ -91,7 +91,7 @@ public class AddGroupDialog extends AppCompatDialogFragment {
                         GroupRequest groupRequest = new GroupRequest();
                         groupRequest.setName(name);
                         groupRequest.setMember_name(member);
-                        groupViewModel.addGroup(Constants.BEARER + token, groupRequest);
+                        groupViewModel.addGroup(token, groupRequest);
                     }
                 });
 

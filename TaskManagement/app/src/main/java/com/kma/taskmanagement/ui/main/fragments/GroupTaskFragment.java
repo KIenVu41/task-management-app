@@ -92,7 +92,7 @@ public class GroupTaskFragment extends Fragment {
         enableSwipeToDelete();
 
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
-        groupViewModel.getGroups(Constants.BEARER + token);
+        groupViewModel.getGroups(token);
 
         groupViewModel.getGroupResponse().observe(getActivity(), new Observer<List<Group>>() {
             @Override
@@ -159,7 +159,7 @@ public class GroupTaskFragment extends Fragment {
 
             @Override
             public void onGroupClick(Group group) {
-                taskViewModel.getAllTasksByGroupId(Constants.BEARER + token, (int) group.getId());
+                taskViewModel.getAllTasksByGroupId(token, (int) group.getId());
             }
         });
         groupTaskRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -183,19 +183,19 @@ public class GroupTaskFragment extends Fragment {
 
                 builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        groupViewModel.delete(Constants.BEARER + token, group.getId());
+                        groupViewModel.delete(token, group.getId());
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                groupViewModel.getGroups(Constants.BEARER + token);
+                                groupViewModel.getGroups(token);
                             }
                         },1000);
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        groupViewModel.getGroups(Constants.BEARER + token);
+                        groupViewModel.getGroups(token);
                     }
                 });
 

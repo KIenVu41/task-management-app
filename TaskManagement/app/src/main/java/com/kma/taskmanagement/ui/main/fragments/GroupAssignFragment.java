@@ -126,7 +126,7 @@ public class GroupAssignFragment extends Fragment {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Task task = mParam1.stream().filter(item -> item.getName().equals(name)).findAny()
                             .orElse(null);
-                    taskViewModel.deleteTask(Constants.BEARER + token, task.getId());
+                    taskViewModel.deleteTask(token, task.getId());
                 }
             }
         });

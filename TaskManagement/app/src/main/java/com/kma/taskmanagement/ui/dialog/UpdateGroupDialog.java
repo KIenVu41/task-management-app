@@ -85,7 +85,7 @@ public class UpdateGroupDialog extends AppCompatDialogFragment {
                         GroupRequest groupRequest = new GroupRequest();
                         groupRequest.setName(name);
                         groupRequest.setMember_name(member);
-                        groupViewModel.updateGroup(Constants.BEARER + token, id,  groupRequest);
+                        groupViewModel.updateGroup(token, id,  groupRequest);
                     }
                 });
 

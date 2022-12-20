@@ -229,15 +229,15 @@ public class GroupTaskBottomSheetFragment extends BottomSheetDialogFragment {
         String endDateFormat =  DateUtils.convert(ddEnd, monthEnd, yearEnd) + "T" + DateUtils.convertTime(hourEnd, minEnd) + ":00.000Z";
 
         if(isEdit) {
-            taskViewModel.update(Constants.BEARER + token, task.getId(), new Task(GlobalInfor.username, null, "", desc, endDateFormat, group.getId(), title, performer, prio,  startDateFormat, status, null));
+            taskViewModel.update(token, task.getId(), new Task(GlobalInfor.username, null, "", desc, endDateFormat, group.getId(), title, performer, prio,  startDateFormat, status, null));
         } else {
-            taskViewModel.addTask(Constants.BEARER + token, new Task(GlobalInfor.username, null, "", desc, endDateFormat, group.getId(), title, performer, prio,  startDateFormat, status, null));
+            taskViewModel.addTask(token, new Task(GlobalInfor.username, null, "", desc, endDateFormat, group.getId(), title, performer, prio,  startDateFormat, status, null));
         }
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                taskViewModel.getAssign(Constants.BEARER + token);
+                taskViewModel.getAssign(token);
             }
         },500);
 //        new Handler().postDelayed(new Runnable() {

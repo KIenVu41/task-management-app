@@ -87,7 +87,7 @@ public class AssignedTaskFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        taskViewModel.getAssign(Constants.BEARER + token);
+        taskViewModel.getAssign(token);
         initView(view);
         setOnClick();
         setAdapter();
@@ -168,11 +168,11 @@ public class AssignedTaskFragment extends Fragment {
                 String status = spinnerStatus.getSelectedItem().toString();
                 String prio = spinnerPrio.getSelectedItem().toString();
                 if(!status.equals("") && prio.equals("")) {
-                    taskViewModel.getAssignByStatus(Constants.BEARER + token, status);
+                    taskViewModel.getAssignByStatus(token, status);
                 } else if(status.equals("") && !prio.equals("")) {
-                    taskViewModel.getAssignByPrio(Constants.BEARER + token, prio);
+                    taskViewModel.getAssignByPrio(token, prio);
                 } else if(!status.equals("") && !prio.equals("")) {
-                    taskViewModel.getAssignByPrioAndStatus(Constants.BEARER + token, prio, status);
+                    taskViewModel.getAssignByPrioAndStatus(token, prio, status);
                 }
                 filterDialog.dismiss();
             }
@@ -202,19 +202,19 @@ public class AssignedTaskFragment extends Fragment {
 
                 builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        taskViewModel.deleteTask(Constants.BEARER + token, task.getId());
+                        taskViewModel.deleteTask(token, task.getId());
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                taskViewModel.getAssign(Constants.BEARER + token);
+                                taskViewModel.getAssign(token);
                             }
                         },1000);
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        taskViewModel.getAssign(Constants.BEARER + token);
+                        taskViewModel.getAssign(token);
                     }
                 });
 

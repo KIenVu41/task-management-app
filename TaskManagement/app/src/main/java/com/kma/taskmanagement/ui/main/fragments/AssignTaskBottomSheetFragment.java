@@ -232,6 +232,6 @@ public class AssignTaskBottomSheetFragment extends BottomSheetDialogFragment {
         String startDateFormat = now.format(format).replace(" ", "T") + "Z";
         String endDateFormat =  DateUtils.convert(ddEnd, monthEnd, yearEnd) + "T" + DateUtils.convertTime(hourEnd, minEnd) + ":00.000Z";
 
-        taskViewModel.update(Constants.BEARER + token, task.getId(), new Task(GlobalInfor.username, null, "", desc, endDateFormat, (long) groupId, title, performer, prio,  startDateFormat, status, null));
+        taskViewModel.update(token, task.getId(), new Task(GlobalInfor.username, null, "", desc, endDateFormat, (long) groupId, title, performer, prio,  startDateFormat, status, null));
     }
 }

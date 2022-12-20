@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         ir.setIs_accept(true);
-                        groupViewModel.join(Constants.BEARER + token, ir);
+                        groupViewModel.join(token, ir);
                     }
                 });
         alertDialog2.setNegativeButton(getResources().getString(R.string.no),
@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // Write your code here to execute after dialog
                         ir.setIs_accept(false);
-                        groupViewModel.join(Constants.BEARER + token, ir);
+                        groupViewModel.join(token, ir);
                         dialog.cancel();
                     }
                 });
