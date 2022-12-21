@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.TaskApplication;
 import com.kma.taskmanagement.broadcastReceiver.NetworkChangeReceiver;
 import com.kma.taskmanagement.data.local.DatabaseHelper;
 import com.kma.taskmanagement.data.model.Task;
@@ -28,6 +29,7 @@ import com.kma.taskmanagement.data.remote.request.InviteRequest;
 import com.kma.taskmanagement.data.repository.GroupRepository;
 import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
 import com.kma.taskmanagement.listener.NetworkReceiverCallback;
+import com.kma.taskmanagement.ui.BaseActivity;
 import com.kma.taskmanagement.ui.intro.IntroActivity;
 import com.kma.taskmanagement.ui.main.fragments.ChartFragment;
 import com.kma.taskmanagement.ui.main.fragments.GroupTaskFragment;
@@ -47,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import tech.gusavila92.websocketclient.WebSocketClient;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
 //    @BindView(R.id.tab_layout)
 //    public TabLayout tabLayout;
@@ -239,70 +241,6 @@ public class MainActivity extends AppCompatActivity {
         alertDialog2.show();
 
         //createWebSocketClient();
-    }
-
-    private void createWebSocketClient() {
-        URI uri;
-        try {
-            // Connect to local host
-            uri = new URI("ws://10.0.2.2:8080/websocket");
-        }
-        catch (URISyntaxException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        webSocketClient = new WebSocketClient(uri) {
-            @Override
-            public void onOpen() {
-                Log.i("WebSocket", "Session is starting");
-                webSocketClient.send("Hello World!");
-            }
-
-            @Override
-            public void onTextReceived(String s) {
-                Log.i("WebSocket", "Message received");
-                final String message = s;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try{
-
-                        } catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onBinaryReceived(byte[] data) {
-            }
-
-            @Override
-            public void onPingReceived(byte[] data) {
-            }
-
-            @Override
-            public void onPongReceived(byte[] data) {
-            }
-
-            @Override
-            public void onException(Exception e) {
-                System.out.println(e.getMessage());
-            }
-
-            @Override
-            public void onCloseReceived() {
-                Log.i("WebSocket", "Closed ");
-                System.out.println("onCloseReceived");
-            }
-        };
-
-        webSocketClient.setConnectTimeout(10000);
-        webSocketClient.setReadTimeout(60000);
-        webSocketClient.enableAutomaticReconnection(5000);
-        webSocketClient.connect();
     }
 
     private void registerNetworkBroadcastForNougat() {

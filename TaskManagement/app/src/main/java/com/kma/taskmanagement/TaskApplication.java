@@ -7,18 +7,21 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-
-import androidx.lifecycle.ViewModelProvider;
+import android.util.Log;
 
 import com.kma.taskmanagement.broadcastReceiver.NetworkChangeReceiver;
-import com.kma.taskmanagement.data.repository.GroupRepository;
-import com.kma.taskmanagement.data.repository.impl.GroupRepositoryImpl;
-import com.kma.taskmanagement.ui.main.GroupViewModel;
-import com.kma.taskmanagement.ui.main.GroupViewModelFactory;
+
+import com.kma.taskmanagement.listener.LogoutListener;
+
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TaskApplication extends Application {
     private static Context appContext;
     private BroadcastReceiver mNetworkReceiver;
+    private static LogoutListener logoutListener = null;
+    private static Timer timer = null;
 
     @Override
     public void onCreate() {
@@ -26,6 +29,7 @@ public class TaskApplication extends Application {
         appContext = getApplicationContext();
         mNetworkReceiver = new NetworkChangeReceiver();
         registerNetworkBroadcastForNougat();
+        //ApplockManager.getInstance().enableDefaultAppLockIfAvailable(TaskApplication.this);
     }
 
     public static Context getAppContext() {
@@ -41,5 +45,29 @@ public class TaskApplication extends Application {
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 //            registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 //        }
+    }
+
+    public static void userSessionStart() {
+        if (timer != null) {
+            timer.cancel();
+        }
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (logoutListener != null) {
+                    logoutListener.onSessionLogout();
+                    Log.d("App", "Session Destroyed");
+                }
+            }
+        },  (1000 * 30) );
+    }
+
+    public static void resetSession() {
+        userSessionStart();
+    }
+
+    public static void registerSessionListener(LogoutListener listener) {
+        logoutListener = listener;
     }
 }
