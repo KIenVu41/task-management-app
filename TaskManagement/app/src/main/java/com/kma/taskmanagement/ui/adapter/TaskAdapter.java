@@ -130,7 +130,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.taskList = taskList;
         notifyDataSetChanged();
     }
-//
+
 //    public void showCompleteDialog(int taskId, int position) {
 //        Dialog dialog = new Dialog(context, R.style.AppTheme);
 //        dialog.setContentView(R.layout.dialog_completed_theme);

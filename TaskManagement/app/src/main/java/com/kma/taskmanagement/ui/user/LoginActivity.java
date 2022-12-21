@@ -104,8 +104,8 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
     Button btnLogin;
     @BindView(R.id.forgotPassword)
     TextView tvForgotPassword;
-    @BindView(R.id.ivFinger)
-    ImageView ivFinger;
+//    @BindView(R.id.ivFinger)
+//    ImageView ivFinger;
 
     ProgressDialog progressDialog;
 
@@ -180,6 +180,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
             String pass = edtPass.getText().toString();
             password = pass;
             if(validateField(username, pass)) {
+                Utils.hideKeyboard(this);
                 userViewModel.login(username, pass);
                 SharedPreferencesUtil.getInstance(getApplicationContext()).storeStringInSharedPreferences(Constants.PASSWORD, pass);
             }
@@ -197,23 +198,23 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
             finish();
         });
 
-        ivFinger.setOnClickListener(view -> {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                initSignature();
-            }
-
-            mBiometricManager = new BiometricManager.BiometricBuilder(LoginActivity.this)
-                    .setTitle(getString(R.string.biometric_title))
-                    .setSubtitle(getString(R.string.biometric_subtitle))
-                    .setDescription(getString(R.string.biometric_description))
-                    .setNegativeButtonText(getString(R.string.biometric_negative_button_text))
-                    .build();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                mBiometricManager.setCryptoObject(new BiometricPrompt.CryptoObject(signature));
-            }
-            mBiometricManager.authenticate(LoginActivity.this);
-        });
+//        ivFinger.setOnClickListener(view -> {
+//
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                initSignature();
+//            }
+//
+//            mBiometricManager = new BiometricManager.BiometricBuilder(LoginActivity.this)
+//                    .setTitle(getString(R.string.biometric_title))
+//                    .setSubtitle(getString(R.string.biometric_subtitle))
+//                    .setDescription(getString(R.string.biometric_description))
+//                    .setNegativeButtonText(getString(R.string.biometric_negative_button_text))
+//                    .build();
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                mBiometricManager.setCryptoObject(new BiometricPrompt.CryptoObject(signature));
+//            }
+//            mBiometricManager.authenticate(LoginActivity.this);
+//        });
     }
 
     private boolean validateField(String username, String password) {
@@ -299,21 +300,21 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
 
     @Override
     public void onAuthenticationSuccessful(BiometricPrompt.AuthenticationResult result) {
-        signature = KeyPair.providesSignature();
-        Transaction transaction = new Transaction(1, 1, new SecureRandom().nextLong());
-        try {
-            signature.update(transaction.toByteArray());
-            byte[] sigBytes = signature.sign();
-            if (StoreBackend.verify(transaction, sigBytes)) {
-                Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_LONG).show();
-            }
-        } catch (SignatureException e) {
-            throw new RuntimeException(e);
-        }
+//        signature = KeyPair.providesSignature();
+//        Transaction transaction = new Transaction(1, 1, new SecureRandom().nextLong());
+//        try {
+//            signature.update(transaction.toByteArray());
+//            byte[] sigBytes = signature.sign();
+//            if (StoreBackend.verify(transaction, sigBytes)) {
+//                Intent intent = new Intent(LoginActivity.this, IntroActivity.class);
+//                startActivity(intent);
+//                finish();
+//            } else {
+//                Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_LONG).show();
+//            }
+//        } catch (SignatureException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     @Override

@@ -3,6 +3,9 @@ package com.kma.taskmanagement.ui.main.fragments;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.hardware.biometrics.BiometricPrompt;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +27,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kma.taskmanagement.R;
+import com.kma.taskmanagement.biometric.BiometricCallback;
+import com.kma.taskmanagement.biometric.BiometricManager;
 import com.kma.taskmanagement.data.model.Group;
 import com.kma.taskmanagement.data.model.Task;
 import com.kma.taskmanagement.data.repository.TaskRepository;
@@ -34,6 +41,7 @@ import com.kma.taskmanagement.ui.adapter.MyTaskAdapter;
 import com.kma.taskmanagement.ui.common.CustomSpinner;
 import com.kma.taskmanagement.ui.main.TaskViewModel;
 import com.kma.taskmanagement.ui.main.TaskViewModelFactory;
+import com.kma.taskmanagement.ui.user.LoginActivity;
 import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
@@ -47,7 +55,7 @@ import java.util.List;
  * Use the {@link MyTaskFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MyTaskFragment extends Fragment {
+public class MyTaskFragment extends Fragment implements BiometricCallback {
 
     private LinearLayout llAnimation;
     private RecyclerView myTaskRecycler;
@@ -56,6 +64,8 @@ public class MyTaskFragment extends Fragment {
     private ProgressDialog progressDialog;
     private TaskRepository taskRepository = new TaskRepositoryImpl();
     private String token = "";
+    private BiometricManager mBiometricManager;
+    private int position = 0;
     Dialog filterDialog;
     ImageView ivFilter;
     TextView okay_text, cancel_text;
@@ -213,34 +223,45 @@ public class MyTaskFragment extends Fragment {
         SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getActivity().getApplicationContext()) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                final int position = viewHolder.getAdapterPosition();
-                final Task task = myTaskAdapter.taskList.get(position);
+                int typeSecure = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getIntFromSharedPreferences(Constants.SECURE + GlobalInfor.username);
+                position = viewHolder.getAbsoluteAdapterPosition();
+                if (typeSecure == 1) {
+                    mBiometricManager = new BiometricManager.BiometricBuilder(requireActivity())
+                            .setTitle(getString(R.string.biometric_title))
+                            .setSubtitle(getString(R.string.biometric_subtitle))
+                            .setDescription(getString(R.string.biometric_description))
+                            .setNegativeButtonText(getString(R.string.biometric_negative_button_text))
+                            .build();
+                    mBiometricManager.authenticate(MyTaskFragment.this);
+                } else {
+                    final Task task = myTaskAdapter.taskList.get(position);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                builder.setMessage("Xóa việc?")
-                        .setTitle("Xác nhận");
+                    builder.setMessage("Xóa việc?")
+                            .setTitle("Xác nhận");
 
-                builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        taskViewModel.deleteTask(token, task.getId());
+                    builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            taskViewModel.deleteTask(token, task.getId());
 
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                taskViewModel.getAllTasks(token);
-                            }
-                        },1000);
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        taskViewModel.getAllTasks(token);
-                    }
-                });
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    taskViewModel.getAllTasks(token);
+                                }
+                            },1000);
+                        }
+                    });
+                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            taskViewModel.getAllTasks(token);
+                        }
+                    });
 
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
             }
         };
 
@@ -249,4 +270,107 @@ public class MyTaskFragment extends Fragment {
 
     }
 
+    @Override
+    public void onSdkVersionNotSupported() {
+        Toast.makeText(requireActivity(), getString(R.string.biometric_error_sdk_not_supported), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onBiometricAuthenticationNotSupported() {
+        Toast.makeText(requireActivity(), getString(R.string.biometric_error_hardware_not_supported), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onBiometricAuthenticationNotAvailable() {
+        Toast.makeText(requireActivity(), getString(R.string.biometric_error_fingerprint_not_available), Toast.LENGTH_LONG).show();
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(requireActivity());
+        dialog.setCancelable(false);
+        dialog.setTitle(getResources().getString(R.string.prompt_title));
+        dialog.setMessage(getResources().getString(R.string.prompt_message));
+        dialog.setPositiveButton(getResources().getString(R.string.enable), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    Intent intent = new Intent(Settings.ACTION_FINGERPRINT_ENROLL);
+                    startActivityForResult(intent, Constants.REQUESTCODE_FINGERPRINT_ENROLLMENT);
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+                    startActivityForResult(intent, Constants.REQUESTCODE_SECURITY_SETTINGS);
+                }
+            }
+        })
+                .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        final AlertDialog alert = dialog.create();
+        alert.show();
+    }
+
+    @Override
+    public void onBiometricAuthenticationPermissionNotGranted() {
+        Toast.makeText(requireActivity(), getString(R.string.biometric_error_permission_not_granted), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onBiometricAuthenticationInternalError(String error) {
+        Toast.makeText(requireActivity(), error, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onAuthenticationFailed() {
+        Toast.makeText(requireActivity(), getString(R.string.biometric_failure), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onAuthenticationCancelled() {
+        Toast.makeText(requireActivity(), getString(R.string.biometric_cancelled), Toast.LENGTH_LONG).show();
+        mBiometricManager.cancelAuthentication();
+    }
+
+    @Override
+    public void onAuthenticationSuccessful(BiometricPrompt.AuthenticationResult result) {
+        final Task task = myTaskAdapter.taskList.get(position);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setMessage("Xóa việc?")
+                .setTitle("Xác nhận");
+
+        builder.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                taskViewModel.deleteTask(token, task.getId());
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        taskViewModel.getAllTasks(token);
+                    }
+                },1000);
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                taskViewModel.getAllTasks(token);
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    @Override
+    public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+        Toast.makeText(requireActivity(), helpString, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onAuthenticationError(int errorCode, CharSequence errString) {
+        Toast.makeText(requireActivity(), errString, Toast.LENGTH_LONG).show();
+    }
 }

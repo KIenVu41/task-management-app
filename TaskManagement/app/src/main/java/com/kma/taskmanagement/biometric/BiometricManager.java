@@ -140,7 +140,7 @@ public class BiometricManager extends BiometricManagerV23 {
                     }
                 })
                 .build()
-                .authenticate(cryptoObject, mCancellationSignal, context.getMainExecutor(),
+                .authenticate(mCancellationSignal, context.getMainExecutor(),
                         new BiometricCallbackV28(biometricCallback));
     }
 
