@@ -60,7 +60,7 @@ public class TaskApplication extends Application {
                     Log.d("App", "Session Destroyed");
                 }
             }
-        },  (1000 * 30) );
+        },  (1000 * 10) );
     }
 
     public static void resetSession() {

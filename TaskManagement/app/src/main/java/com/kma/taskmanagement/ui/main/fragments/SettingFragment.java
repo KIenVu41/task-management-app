@@ -154,10 +154,9 @@ public class SettingFragment extends Fragment implements BiometricCallback {
                 String key = Constants.INTRO;
                 String token = Constants.TOKEN;
                 SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).storeBooleanInSharedPreferences(key, false);
-                SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).storeUserToken(token, "");
+                SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).storeUserToken(token + GlobalInfor.username, "");
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
-                getActivity().onBackPressed();
             }
         });
     }
