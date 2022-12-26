@@ -13,6 +13,8 @@
     <string name="google_icon">google icon</string>
     <string name="facebook_icon">facebook icon</string>
     <string name="new_user_register_now">Người dùng mới? Đăng ký ngay</string>
+    <string name="OK">Đồng ý</string>
+    <string name="rooted">Thiết bị đã root, không thể sử dụng được ứng dụng này</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="onProcess">Đang xử lý....</string>
 

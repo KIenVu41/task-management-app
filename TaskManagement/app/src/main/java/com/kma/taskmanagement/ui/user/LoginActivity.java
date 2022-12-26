@@ -51,11 +51,13 @@ import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
 import com.kma.taskmanagement.ui.dialog.OTPVerificationDialog;
 import com.kma.taskmanagement.ui.intro.IntroActivity;
 import com.kma.taskmanagement.ui.main.MainActivity;
+import com.kma.taskmanagement.ui.popup.Popup_AlertDialog;
 import com.kma.taskmanagement.ui.user.RegisterActivity;
 import com.kma.taskmanagement.utils.Constants;
 import com.kma.taskmanagement.utils.GlobalInfor;
 import com.kma.taskmanagement.utils.SharedPreferencesUtil;
 import com.kma.taskmanagement.utils.Utils;
+import com.scottyab.rootbeer.RootBeer;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -162,7 +164,20 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
             }
         });
 
+       checkRoot();
        setOnclick();
+    }
+
+    private void checkRoot() {
+        RootBeer rootBeer = new RootBeer(this);
+        if (rootBeer.isRooted()) {
+            edtEmail.setEnabled(false);
+            edtPass.setEnabled(false);
+            btnLogin.setEnabled(false);
+            Popup_AlertDialog.showDialogNotify(this,getResources().getString(R.string.rooted));
+            btnLogin.setBackground(getResources().getDrawable(R.drawable.bg_gray_border));
+        } else {
+        }
     }
 
     public void saveGlobalInfor(Token token) {

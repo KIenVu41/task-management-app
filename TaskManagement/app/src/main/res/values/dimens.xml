@@ -22,6 +22,7 @@
     <dimen name="dp16">16dp</dimen>
     <dimen name="dp20">20dp</dimen>
     <dimen name="dp24">24dp</dimen>
+    <dimen name="dp25">25dp</dimen>
     <dimen name="dp30">30dp</dimen>
     <dimen name="dp32">32dp</dimen>
     <dimen name="dp40">40dp</dimen>
@@ -43,6 +44,7 @@
     <dimen name="sp21">21sp</dimen>
     <dimen name="sp25">25sp</dimen>
     <dimen name="sp30">30sp</dimen>
+    <dimen name="line_space">1dip</dimen>
 
     <dimen name="margin_xxsmall">3dp</dimen>
     <dimen name="margin_xsmall">5dp</dimen>
@@ -52,8 +54,6 @@
     <dimen name="margin_large">15dp</dimen>
     <dimen name="margin_xlarge">18dp</dimen>
     <dimen name="margin_xxlarge">22dp</dimen>
-
-
 
     <dimen name="padding_large">14dp</dimen>
 
