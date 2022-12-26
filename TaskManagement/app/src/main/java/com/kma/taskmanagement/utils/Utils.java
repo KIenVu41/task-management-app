@@ -16,16 +16,20 @@ import java.io.ObjectOutputStream;
 public class Utils {
 
     public static boolean isNetworkConnected(Context context) {
-//        ConnectivityManager cm =
-//                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-//        return activeNetwork != null &&
-//                activeNetwork.isConnected();
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        //NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        NetworkInfo mWifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        final ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        return mWifi.isConnected() ? true: false;
+        if (connMgr != null) {
+            NetworkInfo activeNetworkInfo = connMgr.getActiveNetworkInfo();
+
+            if (activeNetworkInfo != null) { // connected to the internet
+                // connected to the mobile provider's data plan
+                if (activeNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                    // connected to wifi
+                    return true;
+                } else return activeNetworkInfo.getType() == ConnectivityManager.TYPE_MOBILE;
+            }
+        }
+        return false;
     }
 
     public static void hideKeyboard(Activity activity) {

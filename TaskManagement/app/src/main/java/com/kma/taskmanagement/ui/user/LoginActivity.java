@@ -174,6 +174,8 @@ public class LoginActivity extends AppCompatActivity implements BiometricCallbac
             edtEmail.setEnabled(false);
             edtPass.setEnabled(false);
             btnLogin.setEnabled(false);
+            tvForgotPassword.setOnClickListener(null);
+            gotoRegister.setOnClickListener(null);
             Popup_AlertDialog.showDialogNotify(this,getResources().getString(R.string.rooted));
             btnLogin.setBackground(getResources().getDrawable(R.drawable.bg_gray_border));
         } else {

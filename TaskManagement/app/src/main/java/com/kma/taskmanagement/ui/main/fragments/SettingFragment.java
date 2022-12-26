@@ -38,6 +38,7 @@ import com.kma.taskmanagement.data.repository.UserRepository;
 import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
 import com.kma.taskmanagement.ui.dialog.ChangePassDialog;
 import com.kma.taskmanagement.ui.dialog.UpdateInfoDialog;
+import com.kma.taskmanagement.ui.popup.Popup_AlertDialog;
 import com.kma.taskmanagement.ui.user.LoginActivity;
 import com.kma.taskmanagement.ui.user.UserViewModel;
 import com.kma.taskmanagement.ui.user.UserViewModelFactory;
@@ -226,20 +227,24 @@ public class SettingFragment extends Fragment implements BiometricCallback {
     }
 
     private void onChangeSecureType(int typeSecure) {
-        if(typeSecure == 0) {
-            mBiometricManager = new BiometricManager.BiometricBuilder(requireActivity())
-                    .setTitle(getString(R.string.biometric_title))
-                    .setSubtitle(getString(R.string.biometric_subtitle))
-                    .setDescription(getString(R.string.biometric_description))
-                    .setNegativeButtonText(getString(R.string.biometric_negative_button_text))
-                    .build();
-            mBiometricManager.authenticate(SettingFragment.this);
-        } else if(typeSecure == 1) {
-            tvOn.setBackgroundResource(R.drawable.chart_bg_right_focus);
-            tvOn.setTextColor(this.getResources().getColor(R.color.WHITE_COLOR));
-            tvOff.setBackgroundResource(R.drawable.chart_bg_left_default);
-            tvOff.setTextColor(this.getResources().getColor(R.color.COLOR_BUTTON));
-            SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).storeIntInSharedPreferences(Constants.SECURE + GlobalInfor.username, typeSecure);
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            if(typeSecure == 0) {
+                mBiometricManager = new BiometricManager.BiometricBuilder(requireActivity())
+                        .setTitle(getString(R.string.biometric_title))
+                        .setSubtitle(getString(R.string.biometric_subtitle))
+                        .setDescription(getString(R.string.biometric_description))
+                        .setNegativeButtonText(getString(R.string.biometric_negative_button_text))
+                        .build();
+                mBiometricManager.authenticate(SettingFragment.this);
+            } else if(typeSecure == 1) {
+                tvOn.setBackgroundResource(R.drawable.chart_bg_right_focus);
+                tvOn.setTextColor(this.getResources().getColor(R.color.WHITE_COLOR));
+                tvOff.setBackgroundResource(R.drawable.chart_bg_left_default);
+                tvOff.setTextColor(this.getResources().getColor(R.color.COLOR_BUTTON));
+                SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).storeIntInSharedPreferences(Constants.SECURE + GlobalInfor.username, typeSecure);
+            }
+        } else {
+            Popup_AlertDialog.showDialogNotify(requireActivity() ,getResources().getString(R.string.check_version));
         }
     }
 

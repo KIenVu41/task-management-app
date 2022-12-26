@@ -102,6 +102,7 @@
     <string name="otp_sub_title">Chúng tôi đã gửi mã đến sđt:</string>
     <string name="otp_resend">Gửi lại mã</string>
     <string name="otp_verify">Xác thực</string>
+    <string name="check_version">Thiết bị của bạn không hỗ trợ chức năng này</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
