@@ -31,6 +31,8 @@ public class Constants {
     public static final String REMIND = "DATE_REMINDER_";
     public static final String SECURE = "SECURE_";
     public static final String CATE_INDEX = "CATE_INDEX_";
+    public static final String SALT = "salt_";
+    public static final String SECRET_KEY = "secret_";
 
     // sync
     public static final int NAME_SYNCED_WITH_SERVER = 1;

@@ -7,13 +7,16 @@ import android.security.keystore.KeyProperties;
 
 import androidx.annotation.RequiresApi;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
+import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -25,55 +28,52 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AES {
 
-    private static final String SECRET_KEY = "my_super_secret_key";
-    private static final String SALT = "ssshhhhhhhhhhh!!!!";
-    public static SecretKey secretKey = null;
+    public static byte[] salt;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public static void generateSecretKey(String keyAlias) {
-        try {
-            KeyGenParameterSpec.Builder builder = new KeyGenParameterSpec.Builder("key1",
-                    KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT);
-            KeyGenParameterSpec keySpec = builder
-                    .setKeySize(256)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                    .setRandomizedEncryptionRequired(true)
-                    .setUserAuthenticationRequired(true)
-                    .setUserAuthenticationValidityDurationSeconds(5 * 60)
-                    .build();
-
-            KeyGenerator kg = KeyGenerator.getInstance("AES", "AndroidKeyStore");
-            kg.init(keySpec);
-            secretKey = kg.generateKey();
-        }catch (Exception e) {
-
-        }
+    public static byte[] generateSalt() {
+        SecureRandom random = new SecureRandom();
+        salt = new byte[20];
+        random.nextBytes(salt);
+        return salt;
     }
 
-    public static SecretKey getSecretKey() {
-        try {
-            KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
-            ks.load(null);
+    public static String getAlphaNumericString(int n)
+    {
+        byte[] array = new byte[256];
+        new Random().nextBytes(array);
 
-            KeyStore.SecretKeyEntry entry = (KeyStore.SecretKeyEntry)ks.getEntry("key1", null);
-            secretKey = entry.getSecretKey();
-            return secretKey;
-        } catch (Exception e) {
+        String randomString
+                = new String(array, Charset.forName("UTF-8"));
 
+        // Create a StringBuffer to store the result
+        StringBuffer r = new StringBuffer();
+
+        for (int k = 0; k < randomString.length(); k++) {
+
+            char ch = randomString.charAt(k);
+
+            if (((ch >= 'a' && ch <= 'z')
+                    || (ch >= 'A' && ch <= 'Z')
+                    || (ch >= '0' && ch <= '9'))
+                    && (n > 0)) {
+
+                r.append(ch);
+                n--;
+            }
         }
-        return null;
+
+        return r.toString();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static String encrypt(String strToEncrypt) {
+    public static String encrypt(String strToEncrypt, String secret, byte[] salt) {
         try {
             byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             IvParameterSpec ivspec = new IvParameterSpec(iv);
 
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            KeySpec spec = new PBEKeySpec(SECRET_KEY.toCharArray(), SALT.getBytes(), 65536, 256);
-            //KeySpec spec = new PBEKeySpec(Base64.getEncoder().encodeToString(getSecretKey().getEncoded()).toCharArray(), SALT.getBytes(), 65536, 256);
+            //KeySpec spec = new PBEKeySpec(SECRET_KEY.toCharArray(), SALT.getBytes(), 65536, 256);
+            KeySpec spec = new PBEKeySpec(secret.toCharArray(), salt, 65536, 256);
             SecretKey tmp = factory.generateSecret(spec);
             SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
 
@@ -87,14 +87,14 @@ public class AES {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static String decrypt(String strToDecrypt) {
+    public static String decrypt(String strToDecrypt, String secret, byte[] salt) {
         try {
             byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             IvParameterSpec ivspec = new IvParameterSpec(iv);
 
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            //KeySpec spec = new PBEKeySpec(Base64.getEncoder().encodeToString(getSecretKey().getEncoded()).toCharArray(), SALT.getBytes(), 65536, 256);
-            KeySpec spec = new PBEKeySpec(SECRET_KEY.toCharArray(), SALT.getBytes(), 65536, 256);
+            //KeySpec spec = new PBEKeySpec(SECRET_KEY.toCharArray(), SALT.getBytes(), 65536, 256);
+            KeySpec spec = new PBEKeySpec(secret.toCharArray(), salt, 65536, 256);
             SecretKey tmp = factory.generateSecret(spec);
             SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
 

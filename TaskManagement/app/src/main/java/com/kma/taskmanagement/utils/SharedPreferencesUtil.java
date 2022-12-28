@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
+import android.util.Base64;
 
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
@@ -87,6 +88,18 @@ public class SharedPreferencesUtil {
 
     public Boolean getBooleanFromSharedPreferences(String key) {
         return privateSharedPreferences.getBoolean(key, false);
+    }
+
+    public void storeBytesInSharedPreferences(String key, byte[] bytes) {
+        SharedPreferences.Editor editor = privateSharedPreferences.edit();
+        String byteStr = Base64.encodeToString(bytes, Base64.DEFAULT);
+        editor.putString(key, byteStr);
+        editor.apply();
+    }
+
+    public byte[] getBytesFromSharedPreferences(String key) {
+        String stringFromSharedPrefs =  privateSharedPreferences.getString(key, "");
+        return Base64.decode(stringFromSharedPrefs, Base64.DEFAULT);
     }
 
     public void storeUserToken(String key, String content) {

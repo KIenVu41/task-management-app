@@ -16,10 +16,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.kma.security.AES;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.TaskApplication;
 import com.kma.taskmanagement.broadcastReceiver.NetworkChangeReceiver;
@@ -64,7 +67,6 @@ public class MainActivity extends BaseActivity {
     private DatabaseHelper db;
     private BroadcastReceiver broadcastReceiver;
     private BroadcastReceiver noNWBroadcastReceiver;
-    private WebSocketClient webSocketClient;
     int color1=0;
     Class fragmentClass;
     public static Fragment fragment;
@@ -86,15 +88,8 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
 //        ButterKnife.bind(this);
-//        String[] labels = getResources().getStringArray(R.array.mainTab);
-//        adapter = new TaskPagerAdapter(this);
-//        viewPager2.setAdapter(adapter);
-//
-//        new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> {
-//            tab.setText(labels[position]);
-//        }).attach();
-//
-//        viewPager2.setCurrentItem(0, false);
+        db = new DatabaseHelper(this);
+        generateCrypto();
 
         if(getSupportActionBar()!=null) {
             getSupportActionBar().hide();
@@ -239,16 +234,14 @@ public class MainActivity extends BaseActivity {
                 });
 
         alertDialog2.show();
-
-        //createWebSocketClient();
     }
 
-    private void registerNetworkBroadcastForNougat() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    private void generateCrypto() {
+        Cursor cursor = db.getUnsyncedTasks();
+        if(!cursor.moveToFirst()) {
+            db.deleteAll();
+            SharedPreferencesUtil.getInstance(TaskApplication.getAppContext()).storeBytesInSharedPreferences(Constants.SALT + GlobalInfor.username, AES.generateSalt());
+            SharedPreferencesUtil.getInstance(TaskApplication.getAppContext()).storeStringInSharedPreferences(Constants.SECRET_KEY + GlobalInfor.username, AES.getAlphaNumericString(10));
         }
     }
 

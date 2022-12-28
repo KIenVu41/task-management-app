@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.hardware.biometrics.BiometricPrompt;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,6 +44,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kma.security.AES;
 import com.kma.taskmanagement.R;
 import com.kma.taskmanagement.TaskApplication;
 import com.kma.taskmanagement.biometric.BiometricCallback;
@@ -221,16 +223,36 @@ public class PersonTaskFragment extends Fragment implements BiometricCallback {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                String secret = SharedPreferencesUtil.getInstance(TaskApplication.getAppContext()).getStringFromSharedPreferences(Constants.SECRET_KEY + GlobalInfor.username);
+                byte[] salt =   SharedPreferencesUtil.getInstance(TaskApplication.getAppContext()).getBytesFromSharedPreferences(Constants.SALT + GlobalInfor.username);
                 Cursor cursor = db.getUnsyncedTasks();
                 if (cursor.moveToFirst()) {
                     do {
-                        long cateId =  cursor.getInt(10);
-                        String desc = cursor.getString(3);
-                        String endDateFormat = cursor.getString(4);
-                        String title = cursor.getString(5);
-                        String prio = cursor.getString(7);
-                        String startDateFormat = cursor.getString(8);
-                        String status = cursor.getString(9);
+                        long cateId = 0l;
+                        String desc = "";
+                        String endDateFormat = "";
+                        String title = "";
+                        String prio = "";
+                        String startDateFormat = "";
+                        String status = "";
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                             cateId =  cursor.getInt(10);
+                             desc = AES.decrypt(cursor.getString(3), secret, salt);
+                             endDateFormat = AES.decrypt(cursor.getString(4), secret, salt);
+                             title = AES.decrypt(cursor.getString(5), secret, salt);
+                             prio = AES.decrypt(cursor.getString(7), secret, salt);
+                             startDateFormat = AES.decrypt(cursor.getString(8), secret, salt);
+                             status = AES.decrypt(cursor.getString(9), secret, salt);
+                        } else {
+                             cateId =  cursor.getInt(10);
+                             desc = cursor.getString(3);
+                             endDateFormat = cursor.getString(4);
+                             title = cursor.getString(5);
+                             prio = cursor.getString(7);
+                             startDateFormat = cursor.getString(8);
+                             status = cursor.getString(9);
+                        }
                         taskViewModel.addTask(token, new Task("", cateId, "", desc, endDateFormat, null,  title, GlobalInfor.username, prio,  startDateFormat, status, null));
                     } while (cursor.moveToNext());
                 }

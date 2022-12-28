@@ -160,19 +160,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
        //checkRoot();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(AES.getSecretKey() == null) {
-                AES.generateSecretKey("key1");
-            }
-            AES.generateSecretKey("key1");
-        }
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            String en = AES.encrypt("easss");
-            Log.d("TAG", "en" + en);
-            Log.d("TAG", "de" + AES.decrypt(en));
-        }
-
         setOnclick();
     }
 
