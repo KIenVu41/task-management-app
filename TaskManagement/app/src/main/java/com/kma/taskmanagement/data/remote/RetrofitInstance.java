@@ -98,7 +98,9 @@ public class RetrofitInstance {
             httpClientBuilder = new OkHttpClient.Builder()
                         .addInterceptor(interceptor)
                         //.addInterceptor(rewriteRequestInterceptor)
-                        .authenticator(tokenAuthenticator)
+                        .followRedirects(false)
+                        .followSslRedirects(false)
+                        //.authenticator(tokenAuthenticator)
                         .connectTimeout(1, TimeUnit.MINUTES)
                         .readTimeout(30, TimeUnit.SECONDS)
                         .hostnameVerifier(new HostnameVerifier() {
@@ -108,8 +110,7 @@ public class RetrofitInstance {
                             }
                         })
                         .writeTimeout(15, TimeUnit.SECONDS);
-                        //.cache(myCache)
-                        //.addNetworkInterceptor(REWRITE_RESPONSE_CACHE_CONTROL_INTERCEPTOR)
+
 
 
             retrofit = new Retrofit.Builder()

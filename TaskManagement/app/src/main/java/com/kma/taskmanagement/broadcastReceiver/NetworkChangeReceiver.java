@@ -25,7 +25,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(!Utils.isNetworkConnected(context)) {
+        if(Utils.isNetworkConnected(context)) {
             context.sendBroadcast(new Intent(Constants.DATA_SAVED_BROADCAST));
         }
     }

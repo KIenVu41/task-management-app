@@ -24,6 +24,7 @@ public class TaskViewModel extends ViewModel {
     private TaskRepository taskRepository;
     MutableLiveData<String> mResponseMutableData = new MutableLiveData<>();
     MutableLiveData<List<Task>> mResultMutableData = new MutableLiveData<>();
+    MutableLiveData<List<Task>> mResultMutableData2 = new MutableLiveData<>();
     MutableLiveData<Task> mSyncMutableData = new MutableLiveData<>();
     MutableLiveData<List<Task>> mAssignResultMutableData = new MutableLiveData<>();
     MutableLiveData<Chart> mChartResultMutableData = new MutableLiveData<>();
@@ -71,7 +72,7 @@ public class TaskViewModel extends ViewModel {
 
                     @Override
                     public void onNext(List<Task> tasks) {
-                        mResultMutableData.setValue(tasks);
+                        mResultMutableData2.setValue(tasks);
                     }
 
                     @Override
@@ -99,7 +100,7 @@ public class TaskViewModel extends ViewModel {
 
                     @Override
                     public void onNext(List<Task> tasks) {
-                        mResultMutableData.setValue(tasks);
+                        mResultMutableData2.setValue(tasks);
                     }
 
                     @Override
@@ -127,7 +128,7 @@ public class TaskViewModel extends ViewModel {
 
                     @Override
                     public void onNext(List<Task> tasks) {
-                        mResultMutableData.setValue(tasks);
+                        mResultMutableData2.setValue(tasks);
                     }
 
                     @Override
@@ -155,7 +156,7 @@ public class TaskViewModel extends ViewModel {
 
                     @Override
                     public void onNext(List<Task> tasks) {
-                        mResultMutableData.setValue(tasks);
+                        mResultMutableData2.setValue(tasks);
                     }
 
                     @Override
@@ -482,6 +483,10 @@ public class TaskViewModel extends ViewModel {
 
     public LiveData<List<Task>> getResult() {
         return mResultMutableData;
+    }
+
+    public LiveData<List<Task>> getResult2() {
+        return mResultMutableData2;
     }
 
     public LiveData<List<Task>> getAssignResult() {

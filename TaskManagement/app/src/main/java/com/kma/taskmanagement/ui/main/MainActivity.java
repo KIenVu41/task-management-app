@@ -89,7 +89,7 @@ public class MainActivity extends BaseActivity {
 
 //        ButterKnife.bind(this);
         db = new DatabaseHelper(this);
-        generateCrypto();
+       generateCrypto();
 
         if(getSupportActionBar()!=null) {
             getSupportActionBar().hide();
@@ -238,7 +238,7 @@ public class MainActivity extends BaseActivity {
 
     private void generateCrypto() {
         Cursor cursor = db.getUnsyncedTasks();
-        if(!cursor.moveToFirst()) {
+        if(!cursor.moveToNext()) {
             db.deleteAll();
             SharedPreferencesUtil.getInstance(TaskApplication.getAppContext()).storeBytesInSharedPreferences(Constants.SALT + GlobalInfor.username, AES.generateSalt());
             SharedPreferencesUtil.getInstance(TaskApplication.getAppContext()).storeStringInSharedPreferences(Constants.SECRET_KEY + GlobalInfor.username, AES.getAlphaNumericString(10));

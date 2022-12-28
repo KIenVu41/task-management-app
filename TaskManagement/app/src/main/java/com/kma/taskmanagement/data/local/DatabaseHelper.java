@@ -128,10 +128,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return c;
     }
 
-    public void deleteAll()
+    public int deleteAll()
     {
-        SQLiteDatabase db = this.getReadableDatabase();
-        db.execSQL("delete from "+ TABLE_NAME);
+        SQLiteDatabase db = this.getWritableDatabase();
+        int i = db.delete(TABLE_NAME, "1", null);
         db.close();
+        return i;
     }
 }

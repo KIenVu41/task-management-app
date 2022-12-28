@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,7 +108,6 @@ public class MyTaskFragment extends Fragment implements BiometricCallback {
         setOnClick();
         setAdapter();
         enableSwipeToDelete();
-
         taskViewModel.getResponse().observe(getActivity(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
@@ -123,7 +123,7 @@ public class MyTaskFragment extends Fragment implements BiometricCallback {
                 progressDialog.show();
             }
         });
-        taskViewModel.getResult().observe(getActivity(), new Observer<List<Task>>() {
+        taskViewModel.getResult2().observe(getActivity(), new Observer<List<Task>>() {
             @Override
             public void onChanged(List<Task> tasks) {
                 if(tasks.size() != 0) {

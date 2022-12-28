@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,7 +129,6 @@ public class PersonTaskFragment extends Fragment implements BiometricCallback {
         token = SharedPreferencesUtil.getInstance(getActivity().getApplicationContext()).getUserToken(Constants.TOKEN + GlobalInfor.username);
         categoryViewModel.getAllCategories(token);
         db = new DatabaseHelper(requireActivity());
-        //taskViewModel.getAllTasks(Constants.BEARER + token);
         return inflater.inflate(R.layout.fragment_person_task, container, false);
     }
 
@@ -189,9 +189,11 @@ public class PersonTaskFragment extends Fragment implements BiometricCallback {
                     taskList = tasks;
                     taskAdapter.setList(taskList);
                     showCalendarViewBottomSheet.setList(taskList);
+                    Log.d("TAG", "co");
                 } else {
                     llAnimation.setVisibility(View.VISIBLE);
                     taskRecycler.setVisibility(View.GONE);
+                    Log.d("TAG", "ko");
                 }
             }
         });
@@ -313,9 +315,9 @@ public class PersonTaskFragment extends Fragment implements BiometricCallback {
             taskViewModel.getTasksByCategory(token, id);
         });
 
-        ivRefresh.setOnClickListener(view -> {
-            taskViewModel.getAllTasks(token);
-        });
+//        ivRefresh.setOnClickListener(view -> {
+//            taskViewModel.getAllTasks(token);
+//        });
         ivFilter.setOnClickListener(view -> {
             openFilterDialog();
         });
