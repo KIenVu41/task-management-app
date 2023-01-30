@@ -57,10 +57,9 @@ public class TaskApplication extends Application {
             public void run() {
                 if (logoutListener != null) {
                     logoutListener.onSessionLogout();
-                    Log.d("App", "Session Destroyed");
                 }
             }
-        },  (1000 * 60 * 5) );
+        },  (1000 * 10) );
     }
 
     public static void resetSession() {
@@ -69,5 +68,9 @@ public class TaskApplication extends Application {
 
     public static void registerSessionListener(LogoutListener listener) {
         logoutListener = listener;
+    }
+
+    public static void unregisterSessionListener() {
+        logoutListener = null;
     }
 }

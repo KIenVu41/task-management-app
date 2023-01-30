@@ -11,9 +11,4 @@
         android:title="Invite"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/menuLock"
-        android:title="Secure"
-        app:showAsAction="ifRoom" />
-
 </menu>

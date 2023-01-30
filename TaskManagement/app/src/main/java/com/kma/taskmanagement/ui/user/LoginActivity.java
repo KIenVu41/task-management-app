@@ -49,6 +49,7 @@ import com.kma.taskmanagement.data.model.Transaction;
 import com.kma.taskmanagement.data.model.User;
 import com.kma.taskmanagement.data.repository.UserRepository;
 import com.kma.taskmanagement.data.repository.impl.UserRepositoryImpl;
+import com.kma.taskmanagement.ui.BaseActivity;
 import com.kma.taskmanagement.ui.dialog.OTPVerificationDialog;
 import com.kma.taskmanagement.ui.intro.IntroActivity;
 import com.kma.taskmanagement.ui.main.MainActivity;
@@ -161,6 +162,10 @@ public class LoginActivity extends AppCompatActivity {
 
        //checkRoot();
         setOnclick();
+        int timeout = getIntent().getIntExtra(GlobalInfor.actionTimeout, 1);
+        if(timeout < 0) {
+            showDialog();
+        }
     }
 
     private void checkRoot() {
@@ -209,6 +214,16 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+    }
+
+    private void showDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder.setTitle("Đăng xuất");
+        alertDialogBuilder.setMessage("Phiên đăng nhập đã hết hạn").setCancelable(false);
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
     }
 
     private boolean validateField(String username, String password) {

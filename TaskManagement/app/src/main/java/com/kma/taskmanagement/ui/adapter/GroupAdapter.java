@@ -104,24 +104,24 @@ public class GroupAdapter extends ListAdapter<Group, GroupAdapter.GroupHolder> {
                        updateGroupDialog.setId(group.getId());
                        updateGroupDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "update group dialog");
                        break;
-                   case R.id.menuLock:
-                       AlertDialog.Builder completeAlertDialog = new AlertDialog.Builder(context);
-                       completeAlertDialog.setTitle(R.string.secureconfirmation).setMessage(R.string.sureToMarkAsComplete).
-                               setPositiveButton(R.string.yes, (dialog, which) -> {
-                                    int type = SharedPreferencesUtil.getInstance(TaskApplication.getAppContext()).getIntFromSharedPreferences(Constants.SECURE + GlobalInfor.username);
-                                    if(type == 1) {
-                                        if (Build.VERSION.SDK_INT >= 11) {
-                                            tvTitle.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                                        }
-                                        float radius = tvTitle.getTextSize() / 3;
-                                        BlurMaskFilter filter = new BlurMaskFilter(radius, BlurMaskFilter.Blur.NORMAL);
-                                        tvTitle.getPaint().setMaskFilter(filter);
-                                    } else {
-                                        tvTitle.getPaint().setMaskFilter(null);
-                                    }
-                               })
-                               .setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel()).show();
-                       break;
+//                   case R.id.menuLock:
+//                       AlertDialog.Builder completeAlertDialog = new AlertDialog.Builder(context);
+//                       completeAlertDialog.setTitle(R.string.secureconfirmation).setMessage(R.string.sureToMarkAsComplete).
+//                               setPositiveButton(R.string.yes, (dialog, which) -> {
+//                                    int type = SharedPreferencesUtil.getInstance(TaskApplication.getAppContext()).getIntFromSharedPreferences(Constants.SECURE + GlobalInfor.username);
+//                                    if(type == 1) {
+//                                        if (Build.VERSION.SDK_INT >= 11) {
+//                                            tvTitle.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+//                                        }
+//                                        float radius = tvTitle.getTextSize() / 3;
+//                                        BlurMaskFilter filter = new BlurMaskFilter(radius, BlurMaskFilter.Blur.NORMAL);
+//                                        tvTitle.getPaint().setMaskFilter(filter);
+//                                    } else {
+//                                        tvTitle.getPaint().setMaskFilter(null);
+//                                    }
+//                               })
+//                               .setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel()).show();
+//                       break;
                }
                return false;
            });

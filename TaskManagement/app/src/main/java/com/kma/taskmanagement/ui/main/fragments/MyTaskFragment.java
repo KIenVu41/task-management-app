@@ -107,7 +107,7 @@ public class MyTaskFragment extends Fragment implements BiometricCallback {
         initView(view);
         setOnClick();
         setAdapter();
-        enableSwipeToDelete();
+        //enableSwipeToDelete();
         taskViewModel.getResponse().observe(getActivity(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
